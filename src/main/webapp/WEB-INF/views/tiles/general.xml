@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<tiles-definitions>
+
+<definition name="header" template="/WEB-INF/views/layouts/main.jsp">
+<put-attribute name="header" value="/WEB-INF/views/layouts/header.jsp" />
+</definition>
+ <definition name="homepage" extends="header"   template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Home Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+ </definition>
+  <definition name="aboutus" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt AboutUs Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+   <definition name="register" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Register Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+   <definition name="services" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Services Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+  <definition name="contactus" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Contactus Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+   <definition name="loginpage" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Login Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+
+  <definition name="shipperHome" template="/WEB-INF/views/layouts/shipperMain.jsp">
+  	<put-attribute name="title" value="CargoBolt ShipperHome Page" />
+    <put-attribute name="header" value="/WEB-INF/views/layouts/shipperHeader.jsp" />
+    <put-attribute name="shipperMenu" value="/WEB-INF/views/layouts/shipperMenu.jsp" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+  <definition name="register-bookTruck" extends="header" template="/WEB-INF/views/layouts/main.jsp">
+    <put-attribute name="title" value="CargoBolt Contactus Page" />
+    <put-attribute name="footer" value="/WEB-INF/views/layouts/footer.jsp" />
+  </definition>
+  <definition name="admin" template="/WEB-INF/views/layouts/admin/home.jsp">
+  
+  </definition>
+  <definition name="adminUserRegistration" template="/WEB-INF/views/layouts/admin.jsp">
+  	<put-attribute name="title" value="CargoBolt Admin User Registration Page" />
+  	<put-attribute name="header" value="/WEB-INF/views/layouts/admin/head.jsp" />
+  </definition>
+</tiles-definitions>
