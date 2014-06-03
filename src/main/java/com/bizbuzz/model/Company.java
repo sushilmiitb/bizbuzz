@@ -18,6 +18,10 @@ public class Company extends Party{
   private CompanyRegistrationType companyRegistrationType;
   private String registrationId;
   
+  /**
+   * 
+   * getters and setters
+   */
   public String getCompanyName() {
     return companyName;
   }

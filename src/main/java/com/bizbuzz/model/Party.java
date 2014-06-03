@@ -11,6 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -39,6 +43,17 @@ public abstract class Party implements Serializable{
   
   @OneToMany(mappedBy="toParty", fetch=FetchType.EAGER)
   private List<Connection> fromPartys;
+  
+  @ManyToOne
+  @JoinColumn(name="category_root", referencedColumnName="id")
+  private CategoryTree categoryRoot;
+  
+  @ManyToMany
+  @JoinTable(
+      name="share",
+      joinColumns={@JoinColumn(name="party_id", referencedColumnName="id")},
+          inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
+  private List<Item> items;
   
   /**
    * This function models the addToParty function for many-to-many
@@ -120,4 +135,21 @@ public abstract class Party implements Serializable{
   public void setFromPartys(List<Connection> fromPartys) {
     this.fromPartys = fromPartys;
   }
+
+  public CategoryTree getCategoryRoot() {
+    return categoryRoot;
+  }
+
+  public void setCategoryRoot(CategoryTree categoryRoot) {
+    this.categoryRoot = categoryRoot;
+  }
+
+  public List<Item> getItems() {
+    return items;
+  }
+
+  public void setItems(List<Item> items) {
+    this.items = items;
+  }
+  
 }
