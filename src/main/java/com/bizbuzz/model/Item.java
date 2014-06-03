@@ -32,6 +32,9 @@ public class Item implements Serializable{
   @ManyToMany(mappedBy="items")
   private List<Party> parties;
   
+  @OneToMany(mappedBy="item")
+  private List<Chat> chats;
+  
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
    * @param propertyMetadata
@@ -97,6 +100,14 @@ public class Item implements Serializable{
 
   public void setParties(List<Party> parties) {
     this.parties = parties;
+  }
+
+  public List<Chat> getChats() {
+    return chats;
+  }
+
+  public void setChats(List<Chat> chats) {
+    this.chats = chats;
   }
   
 }

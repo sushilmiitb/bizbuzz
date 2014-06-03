@@ -55,6 +55,12 @@ public abstract class Party implements Serializable{
           inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
   private List<Item> items;
   
+  @OneToMany(mappedBy="sender")
+  private List<ChatRoom> sentChatRooms;
+  
+  @ManyToMany(mappedBy="recipients")
+  private List<ChatRoom> receivedChatRooms;
+  
   /**
    * This function models the addToParty function for many-to-many
    * relationship Connection. Using this function one can add Target
@@ -150,6 +156,22 @@ public abstract class Party implements Serializable{
 
   public void setItems(List<Item> items) {
     this.items = items;
+  }
+
+  public List<ChatRoom> getSentChatRooms() {
+    return sentChatRooms;
+  }
+
+  public void setSentChatRooms(List<ChatRoom> sentChatRooms) {
+    this.sentChatRooms = sentChatRooms;
+  }
+
+  public List<ChatRoom> getReceivedChatRooms() {
+    return receivedChatRooms;
+  }
+
+  public void setReceivedChatRooms(List<ChatRoom> receivedChatRooms) {
+    this.receivedChatRooms = receivedChatRooms;
   }
   
 }
