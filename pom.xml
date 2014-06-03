@@ -166,7 +166,7 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>cargo</finalName>
+    <finalName>bizbuzz</finalName>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

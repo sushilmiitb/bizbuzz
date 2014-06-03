@@ -7,25 +7,46 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 
 /**
  * 
- * @author mukesh
+ * @author Sushil
  *
  */
 @Entity
 public class PhoneNumber implements Serializable {
   private static final long serialVersionUID = 5138928529207030760L;
+  public static enum PhoneType{MOBILE, LANDLINE, FAX};
   
   @Id
   @GeneratedValue
   private Long id;
+  private PhoneType phoneType;
   private String countryCode;
   private String areaCode;
   private String contactNumber;
+  
   @ManyToOne
   @JoinColumn(name="party_id")
   private Party party;
+  
+  /**
+   * 
+   * getters and setters
+   */
+  public Long getId() {
+    return id;
+  }
+  public void setId(Long id) {
+    this.id = id;
+  }
+  public PhoneType getPhoneType() {
+    return phoneType;
+  }
+  public void setPhoneType(PhoneType phoneType) {
+    this.phoneType = phoneType;
+  }
   public String getCountryCode() {
     return countryCode;
   }
@@ -49,8 +70,5 @@ public class PhoneNumber implements Serializable {
   }
   public void setParty(Party party) {
     this.party = party;
-  }
-  public Long getId() {
-    return id;
   }
 }

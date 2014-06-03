@@ -16,44 +16,51 @@ import javax.persistence.ManyToOne;
 @Entity
 public class Address implements Serializable {
   private static final long serialVersionUID = -1321487893947285680L;
+  public static enum AddressType{OFFICE, BILLING, FACTORY};
   
   @Id
   @GeneratedValue
   private Long id;
-  private String toName;
-  private String address1;
-  private String address2;
+  private String attendantName;
+  private String addressLine1;
+  private String addressLine2;
   private String landmark;
   private String city;
   private String postalCode;
   private String stateGeoId;
+  private AddressType addressType;
   
   @ManyToOne
   @JoinColumn(name="party_id")
   private Party party;
 
-  public String getToName() {
-    return toName;
+  /**
+   * 
+   * getters and setters
+   */
+  
+  public String getName() {
+    return attendantName;
   }
 
-  public void setToName(String toName) {
-    this.toName = toName;
+  public void setName(String name) {
+    this.attendantName = name;
   }
 
-  public String getAddress1() {
-    return address1;
+  public String getAddressLine1() {
+    return addressLine1;
   }
 
-  public void setAddress1(String address1) {
-    this.address1 = address1;
+  public void setAddressLine1(String addressLine1) {
+    this.addressLine1 = addressLine1;
   }
 
-  public String getAddress2() {
-    return address2;
+  public String getAddressLine2() {
+    return addressLine2;
   }
 
-  public void setAddress2(String address2) {
-    this.address2 = address2;
+  public void setAddressLine2(String addressLine2) {
+    this.addressLine2 = addressLine2;
   }
 
   public String getLandmark() {
@@ -88,16 +95,20 @@ public class Address implements Serializable {
     this.stateGeoId = stateGeoId;
   }
 
+  public AddressType getAddressType() {
+    return addressType;
+  }
+
+  public void setAddressType(AddressType addressType) {
+    this.addressType = addressType;
+  }
+
   public Party getParty() {
     return party;
   }
 
   public void setParty(Party party) {
     this.party = party;
-  }
-
-  public Long getId() {
-    return id;
   }
 
   @Override

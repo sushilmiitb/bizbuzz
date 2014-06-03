@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -24,13 +26,12 @@ import com.bizbuzz.model.SecurityGroup;
  *
  */
 @Entity
+@Table(name="user_login")
 public class UserLogin implements Serializable {
   private static final long serialVersionUID = -5498033954327208834L;
 
   @Id
-  @GeneratedValue
-  private Long id;
-  private String username;
+  private String userId;//can be phone number or email id
   private String passwordHash;
   private boolean enabled;
   @ManyToMany(fetch=FetchType.EAGER)
@@ -41,33 +42,27 @@ public class UserLogin implements Serializable {
   )
   private Set<SecurityGroup> securityGroups = new HashSet<SecurityGroup>();
   
+  @OneToOne(mappedBy="userId")
+  private Person person;
+  
   //private Party party;
   
   @CreatedDate
   private Date createdAt;
   @LastModifiedDate
   private Date updatedAt;
-
-  public Long getId() {
-    return id;
+  
+  public String getUserId() {
+    return userId;
   }
-  public String getEmail() {
-    return username;
-  }
-  public void setEmail(String email) {
-    this.username = email;
+  public void setUserId(String userId) {
+    this.userId = userId;
   }
   public String getPasswordHash() {
     return passwordHash;
   }
   public void setPasswordHash(String passwordHash) {
     this.passwordHash = passwordHash;
-  }
-  public String getUsername() {
-    return username;
-  }
-  public void setUsername(String username) {
-    this.username = username;
   }
   public boolean isEnabled() {
     return enabled;
@@ -78,20 +73,26 @@ public class UserLogin implements Serializable {
   public Set<SecurityGroup> getSecurityGroups() {
     return securityGroups;
   }
-  public void addSecurityGroup(SecurityGroup securityGroup) {
-    this.securityGroups.add(securityGroup);
+  public void setSecurityGroups(Set<SecurityGroup> securityGroups) {
+    this.securityGroups = securityGroups;
   }
   public Date getCreatedAt() {
     return createdAt;
   }
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
   public Date getUpdatedAt() {
     return updatedAt;
+  }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
   }
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((username == null) ? 0 : username.hashCode());
+    result = prime * result + ((userId == null) ? 0 : userId.hashCode());
     return result;
   }
   @Override
@@ -103,10 +104,10 @@ public class UserLogin implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     UserLogin other = (UserLogin) obj;
-    if (username == null) {
-      if (other.username != null)
+    if (userId == null) {
+      if (other.userId != null)
         return false;
-    } else if (!username.equals(other.username))
+    } else if (!userId.equals(other.userId))
       return false;
     return true;
   }
