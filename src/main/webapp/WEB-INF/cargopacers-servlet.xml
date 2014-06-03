@@ -15,7 +15,7 @@
         http://www.springframework.org/schema/security/spring-security.xsd">
 
   <mvc:annotation-driven />
-  <context:component-scan base-package="com.cargopacers" />
+  <context:component-scan base-package="com.bizbuzz" />
   <!-- <util:properties id="applicationProps" location="classpath:config/app.properties" /> <mvc:resources 
     mapping="/static-#{applicationProps[app.version]}/**" location="/static/" /> <mvc:view-controller path="/" 
     view-name="home" /> -->
