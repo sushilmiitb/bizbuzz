@@ -31,7 +31,7 @@ public class UserLogin implements Serializable {
   private static final long serialVersionUID = -5498033954327208834L;
 
   @Id
-  private String userId;//can be phone number or email id
+  private String id;//can be phone number or email id
   private String passwordHash;
   private boolean enabled;
   @ManyToMany(fetch=FetchType.EAGER)
@@ -52,11 +52,11 @@ public class UserLogin implements Serializable {
   @LastModifiedDate
   private Date updatedAt;
   
-  public String getUserId() {
-    return userId;
+  public String getId() {
+    return id;
   }
-  public void setUserId(String userId) {
-    this.userId = userId;
+  public void setId(String id) {
+    this.id = id;
   }
   public String getPasswordHash() {
     return passwordHash;
@@ -88,11 +88,14 @@ public class UserLogin implements Serializable {
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
   }
+  public void addSecurityGroup(SecurityGroup securityGroup) {
+    this.securityGroups.add(securityGroup);
+  }
   @Override
   public int hashCode() {
     final int prime = 31;
     int result = 1;
-    result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+    result = prime * result + ((id == null) ? 0 : id.hashCode());
     return result;
   }
   @Override
@@ -104,10 +107,10 @@ public class UserLogin implements Serializable {
     if (getClass() != obj.getClass())
       return false;
     UserLogin other = (UserLogin) obj;
-    if (userId == null) {
-      if (other.userId != null)
+    if (id == null) {
+      if (other.id != null)
         return false;
-    } else if (!userId.equals(other.userId))
+    } else if (!id.equals(other.id))
       return false;
     return true;
   }

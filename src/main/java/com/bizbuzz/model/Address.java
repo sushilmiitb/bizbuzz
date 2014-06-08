@@ -39,6 +39,10 @@ public class Address implements Serializable {
    * getters and setters
    */
   
+  public Long getId(){
+    return id;
+  }
+  
   public String getName() {
     return attendantName;
   }

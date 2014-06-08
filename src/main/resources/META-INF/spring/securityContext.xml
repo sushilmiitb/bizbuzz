@@ -36,8 +36,8 @@
         <user name="trucker" password="trucker" authorities="ROLE_TRUCKER" />
       </user-service>
     </authentication-provider>
-    <authentication-provider user-service-ref='userDetailsService'>
-      <!--  <password-encoder ref="bcryptEncoder"/> -->
-    </authentication-provider>
+    <!-- <authentication-provider user-service-ref='userDetailsService'>
+        <password-encoder ref="bcryptEncoder"/>
+    </authentication-provider> -->
   </authentication-manager>
 </beans:beans>

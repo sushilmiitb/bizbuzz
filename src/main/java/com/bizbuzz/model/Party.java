@@ -1,6 +1,7 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.DiscriminatorColumn;
@@ -18,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hsqldb.lib.ArrayListIdentity;
+
 @Entity
 @Table(name="party")
 @Inheritance(strategy=InheritanceType.JOINED)
@@ -33,16 +36,16 @@ public abstract class Party implements Serializable{
    * BioData of the party
    */
   @OneToMany(mappedBy="party", fetch=FetchType.LAZY)
-  private List<PhoneNumber> phoneNumbers;
+  private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
   
   @OneToMany(mappedBy="party", fetch=FetchType.LAZY)
-  private List<Address> addresses;
+  private List<Address> addresses = new ArrayList<Address>();
   
   @OneToMany(mappedBy="fromParty", fetch=FetchType.EAGER)
-  private List<Connection> toPartys;
+  private List<Connection> toParties = new ArrayList<Connection>();
   
   @OneToMany(mappedBy="toParty", fetch=FetchType.EAGER)
-  private List<Connection> fromPartys;
+  private List<Connection> fromParties = new ArrayList<Connection>();
   
   @ManyToOne
   @JoinColumn(name="category_root", referencedColumnName="id")
@@ -53,13 +56,13 @@ public abstract class Party implements Serializable{
       name="share",
       joinColumns={@JoinColumn(name="party_id", referencedColumnName="id")},
           inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
-  private List<Item> items;
+  private List<Item> items = new ArrayList<Item>();
   
   @OneToMany(mappedBy="sender")
-  private List<ChatRoom> sentChatRooms;
+  private List<ChatRoom> sentChatRooms = new ArrayList<ChatRoom>();
   
   @ManyToMany(mappedBy="recipients")
-  private List<ChatRoom> receivedChatRooms;
+  private List<ChatRoom> receivedChatRooms = new ArrayList<ChatRoom>();
   
   /**
    * This function models the addToParty function for many-to-many
@@ -75,8 +78,12 @@ public abstract class Party implements Serializable{
     connection.setToPartyId(toParty.getId());
     connection.setFromPartyId(this.getId());
     connection.setConnectionType(connectionType);
-    this.toPartys.add(connection);    
-    toParty.getFromPartys().add(connection);
+    this.toParties.add(connection);
+    toParty.getFromParties().add(connection);
+  }
+  
+  public void addToParty(Connection con){
+    this.toParties.add(con);
   }
   
   /**
@@ -93,8 +100,12 @@ public abstract class Party implements Serializable{
     connection.setFromPartyId(fromParty.getId());
     connection.setToPartyId(this.getId());
     connection.setConnectionType(connectionType);
-    this.fromPartys.add(connection);    
-    fromParty.getToPartys().add(connection);
+    this.fromParties.add(connection);
+    fromParty.getToParties().add(connection);
+  }
+  
+  public void addFromParty(Connection con){
+    this.fromParties.add(con);
   }
 
   
@@ -104,10 +115,6 @@ public abstract class Party implements Serializable{
   
   public Long getId() {
     return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
   }
 
   public List<PhoneNumber> getPhoneNumbers() {
@@ -126,20 +133,20 @@ public abstract class Party implements Serializable{
     this.addresses = addresses;
   }
 
-  public List<Connection> getToPartys() {
-    return toPartys;
+  public List<Connection> getToParties() {
+    return toParties;
   }
 
-  public void setToPartys(List<Connection> toPartys) {
-    this.toPartys = toPartys;
+  public void setToParties(List<Connection> toParties) {
+    this.toParties = toParties;
   }
 
-  public List<Connection> getFromPartys() {
-    return fromPartys;
+  public List<Connection> getFromParties() {
+    return fromParties;
   }
 
-  public void setFromPartys(List<Connection> fromPartys) {
-    this.fromPartys = fromPartys;
+  public void setFromParties(List<Connection> fromParties) {
+    this.fromParties = fromParties;
   }
 
   public CategoryTree getCategoryRoot() {

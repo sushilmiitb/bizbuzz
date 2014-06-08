@@ -1,10 +1,12 @@
 package com.bizbuzz.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
+
 
 @Entity
 @IdClass(ConnectionId.class)
@@ -27,6 +29,25 @@ public class Connection{
   private ConnectionType connectionType;
 
 
+  public Connection(){
+    
+  }
+  
+  public Connection(Party fromParty, Party toParty, ConnectionType connectionType){
+    this.setFromParty(fromParty);
+    this.setToParty(toParty);
+    this.fromPartyId = fromParty.getId();
+    this.toPartyId = toParty.getId();
+    this.connectionType = connectionType;
+  }
+  
+  public Connection(Party fromParty, Party toParty){
+    this.setFromParty(fromParty);
+    this.setToParty(toParty);
+    this.fromPartyId = fromParty.getId();
+    this.toPartyId = toParty.getId();
+  }
+  
   /**
    * getters and setters
    */
