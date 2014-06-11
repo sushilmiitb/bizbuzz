@@ -92,10 +92,10 @@ public class ConnectionRepositoryTest {
     partyRepository.save(savedPerson);
     partyRepository.save(savedCompany);
     connectionRepository.save(newConnection);
-    
+    /*
     TestUtils tu = new TestUtils();
     System.out.println("test");
-    tu.testing(savedCompany.getId());
+    tu.testing(savedCompany.getId());*/
     
 //    assertEquals("Asserting number of connection", 1, connectionRepository.findAll().size());
 //    assertEquals("Asserting number of toParties", 1, partyRepository.findOne(savedCompany.getId()).getToParties().size());

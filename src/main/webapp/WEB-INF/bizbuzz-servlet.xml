@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+     xmlns:util="http://www.springframework.org/schema/util"
+     xmlns:mvc="http://www.springframework.org/schema/mvc"
+     xmlns:context="http://www.springframework.org/schema/context"
+     xmlns:security="http://www.springframework.org/schema/security"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:task="http://www.springframework.org/schema/task"
+	 xsi:schemaLocation="
+	        http://www.springframework.org/schema/beans
+	        http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/task
+			http://www.springframework.org/schema/task/spring-task.xsd
+	        http://www.springframework.org/schema/util
+	        http://www.springframework.org/schema/util/spring-util.xsd
+	        http://www.springframework.org/schema/mvc
+	        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	        http://www.springframework.org/schema/context
+	        http://www.springframework.org/schema/context/spring-context.xsd
+	        http://www.springframework.org/schema/security
+	        http://www.springframework.org/schema/security/spring-security.xsd">
+
+  <mvc:annotation-driven />
+  <context:component-scan base-package="com.bizbuzz" />
+  <!-- <util:properties id="applicationProps" location="classpath:config/app.properties" /> <mvc:resources 
+    mapping="/static-#{applicationProps[app.version]}/**" location="/static/" /> <mvc:view-controller path="/" 
+    view-name="home" /> -->
+  <mvc:resources mapping="/static/**" location="/static/" />
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean
+				class="com.bizbuzz.utils.AtmosphereArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="prefix" value="/WEB-INF/views/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
+  
+  
+	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+		<property name="objectMapper" ref="jaxbJacksonObjectMapper" />
+	</bean>
+
+	<bean id="jaxbJacksonObjectMapper" class="com.bizbuzz.utils.JaxbJacksonObjectMapper" />
+
+<!-- 	<bean class="org.springframework.mvc.samples.atmosphere.service.TwitterService"/>
+ -->
+	<task:executor id="executor" pool-size="5"/>
+  	<task:scheduler id="scheduler" pool-size="5"/>
+  	<task:annotation-driven scheduler="scheduler" executor="executor"/>
+
+</beans>
