@@ -35,6 +35,9 @@ public abstract class Party implements Serializable{
   /**
    * BioData of the party
    */
+  
+  private String email;
+  
   @OneToMany(mappedBy="party", fetch=FetchType.LAZY)
   private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
   
@@ -108,6 +111,9 @@ public abstract class Party implements Serializable{
     this.fromParties.add(con);
   }
 
+  public void addPhoneNumber(PhoneNumber phoneNumber){
+    this.phoneNumbers.add(phoneNumber);
+  }
   
   /**
    * Getters and Setters
@@ -179,6 +185,14 @@ public abstract class Party implements Serializable{
 
   public void setReceivedChatRooms(List<ChatRoom> receivedChatRooms) {
     this.receivedChatRooms = receivedChatRooms;
+  }
+
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
   }
   
 }

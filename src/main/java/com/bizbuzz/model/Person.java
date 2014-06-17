@@ -10,13 +10,13 @@ import javax.persistence.OneToOne;
 public class Person extends Party{
   private static final long serialVersionUID = 1L;
 
-  public static enum PersonRole {SOLO_OWNER, CO_OWNER, PROMOTER, EMPLOYEE};
+  //public static enum PersonRole {SOLO_OWNER, CO_OWNER, PROMOTER, EMPLOYEE};
   
   private String firstName;
   private String lastName;
   private String middleName;
   private char gender;
-  private PersonRole personRole;
+  private String personRole;
   @OneToOne
   @JoinColumn(name="user_id")
   private UserLogin userId;
@@ -44,12 +44,17 @@ public class Person extends Party{
   public void setGender(char gender) {
     this.gender = gender;
   }
-  public PersonRole getPersonRole() {
+  public String getPersonRole() {
     return personRole;
   }
-  public void setPersonRole(PersonRole personRole) {
+  public void setPersonRole(String personRole) {
     this.personRole = personRole;
   }
-  
+  public UserLogin getUserId() {
+    return userId;
+  }
+  public void setUserId(UserLogin userId) {
+    this.userId = userId;
+  }
   
 }

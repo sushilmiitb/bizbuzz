@@ -13,11 +13,11 @@
   <http pattern="/static/**" security="none" />
 
   <http auto-config="true">
-    <intercept-url pattern="/register*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+    <intercept-url pattern="/register*/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
     <intercept-url pattern="/home" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
     <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-    <intercept-url pattern="/shipper*/**" access="ROLE_SHIPPER"/>
-    <intercept-url pattern="/trucker*/**" access="ROLE_TRUCKER"/>
+    <intercept-url pattern="/buyer*/**" access="ROLE_BUYER"/>
+    <intercept-url pattern="/seller*/**" access="ROLE_SELLER"/>
     <form-login login-page='/register' authentication-failure-url="/register?error=1" 
       default-target-url="/"/>
     <logout invalidate-session="true"/>
@@ -32,8 +32,8 @@
       <user-service>
         <user name="admin" password="admin" authorities="ROLE_USER, ROLE_ADMIN" />
         <user name="user" password="user" authorities="ROLE_USER" />
-        <user name="shipper" password="shipper" authorities="ROLE_SHIPPER" />
-        <user name="trucker" password="trucker" authorities="ROLE_TRUCKER" />
+        <user name="buyer" password="buyer" authorities="ROLE_BUYER" />
+        <user name="seller" password="seller" authorities="ROLE_SELLER" />
       </user-service>
     </authentication-provider>
     <!-- <authentication-provider user-service-ref='userDetailsService'>

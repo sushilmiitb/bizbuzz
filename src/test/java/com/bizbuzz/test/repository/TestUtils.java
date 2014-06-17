@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.Part;
 
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -31,5 +32,5 @@ public class TestUtils {
     System.out.println("test4");
     System.out.println("testin"+company.getCompanyName()+person.getFirstName());
     assertEquals("Asserting number of toParties", 1, partyRepository.findOne(id).getToParties().size());
-  }
+  }  
 }

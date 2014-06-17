@@ -19,9 +19,9 @@ import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.Connection.ConnectionType;
-import com.bizbuzz.model.Person.PersonRole;
 import com.bizbuzz.model.PhoneNumber.PhoneType;
 import com.bizbuzz.repository.PartyRepository;
+import com.bizbuzz.utils.HelperFunctions;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -58,7 +58,7 @@ public class PartyRepositoryTest {
     person.setLastName(lastName);
     char gender = 'm';
     person.setGender(gender);
-    Person.PersonRole personRole = Person.PersonRole.CO_OWNER;
+    String personRole = "Co Owner";
     person.setPersonRole(personRole);
     
     /**
@@ -118,11 +118,11 @@ public class PartyRepositoryTest {
      * Creating a few Persons
      */
     String firstName[]={"Shaunak", "Sushil", "Radhika", "Hardik"};
-    List<Person.PersonRole> personRoles = new ArrayList<Person.PersonRole>();
-    personRoles.add(PersonRole.CO_OWNER);
-    personRoles.add(PersonRole.EMPLOYEE);
-    personRoles.add(PersonRole.PROMOTER);
-    personRoles.add(PersonRole.SOLO_OWNER);
+    List<String> personRoles = new ArrayList<String>();
+    personRoles.add("Employee");
+    personRoles.add("Co Owner");
+    personRoles.add("Promoter");
+    personRoles.add("Solo Owner");
     List<Person> persons = new ArrayList<Person>();
     System.out.println("before");
     for(int i=0;i<4;i++){
@@ -165,11 +165,11 @@ public class PartyRepositoryTest {
     
     Person person1 = new Person();
     person1.setFirstName("Shaunak");
-    person1.setPersonRole(PersonRole.EMPLOYEE);
+    person1.setPersonRole("Employee");
     
     Person person2 = new Person();
     person2.setFirstName("Bimal");
-    person2.setPersonRole(PersonRole.PROMOTER);
+    person2.setPersonRole("Promoter");
     
     partyRepository.save(company);
     partyRepository.save(person1);

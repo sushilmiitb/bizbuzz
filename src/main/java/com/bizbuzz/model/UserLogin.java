@@ -7,13 +7,14 @@ import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.*;
+import javax.validation.constraints.Size;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,6 +32,7 @@ public class UserLogin implements Serializable {
   private static final long serialVersionUID = -5498033954327208834L;
 
   @Id
+  @Size(min=5, max=20)
   private String id;//can be phone number or email id
   private String passwordHash;
   private boolean enabled;
