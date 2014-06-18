@@ -20,7 +20,7 @@ import com.bizbuzz.repository.PartyRepository;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:META-INF/spring/*.xml")
+@ContextConfiguration({"classpath:META-INF/spring/applicationContext.xml", "classpath:META-INF/spring/datasource-beans.xml", "classpath:META-INF/spring/securityContext.xml"})
 @Transactional
 public class ConnectionRepositoryTest {
   @Autowired

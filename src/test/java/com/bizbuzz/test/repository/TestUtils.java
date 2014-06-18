@@ -16,7 +16,7 @@ import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.repository.PartyRepository;
 
-@ContextConfiguration("classpath:META-INF/spring/*.xml")
+@ContextConfiguration({"classpath:META-INF/spring/applicationContext.xml", "classpath:META-INF/spring/datasource-beans.xml", "classpath:META-INF/spring/securityContext.xml"})
 public class TestUtils {
   @Autowired
   PartyRepository partyRepository;
