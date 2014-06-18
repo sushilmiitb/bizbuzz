@@ -63,7 +63,7 @@ public class RegistrationController {
   public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated PersonRegistrationDTO personRegistration, BindingResult bindingResult){
     if (bindingResult.hasErrors()) {
       logger.info("Form validation Error.");
-      return "register/personregistration";
+      return "jsp/register/personregistration";
     }
     partyManagementService.savePersonRegistrationForm(personRegistration);
     return "jsp/register/personregistration";

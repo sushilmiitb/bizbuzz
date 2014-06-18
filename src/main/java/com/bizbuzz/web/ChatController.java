@@ -62,7 +62,7 @@ public class ChatController {
 	 */
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home() {
-		return "home";
+		return "jsp/seller/groupmanagement";
 	}
 
 	@RequestMapping(value = "/websockets", method = RequestMethod.POST)

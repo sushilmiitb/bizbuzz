@@ -12,3 +12,8 @@
   -webkit-border-bottom-right-radius: inherit;
   border-bottom-right-radius: inherit;
 }
+.error{
+	color: red;
+	font-size: 0.8 em;
+	font-weight: normal;
+}
