@@ -16,7 +16,7 @@
 					<form:errors path="userLogin.id" class="error"/>
 					<form:label path="userLogin.passwordHash" for="register.personregistration.password">Password</form:label>
 					<form:input path="userLogin.passwordHash" id="register.personregistration.password" autocomplete="off" type="password" />
-					<form:errors path="userLogin.passwordHash class="error"" />
+					<form:errors path="userLogin.passwordHash" class="error" />
 				</div>
 			</div>
 			<div class="ui-corner-all custom-corners">
@@ -26,27 +26,27 @@
 				<div class="ui-body ui-body-a">
 					<form:label path="person.firstName" for="register.personregistration.firstname">First Name</form:label>
 					<form:input path="person.firstName" id="register.personregistration.firstname" type="text" />
-					<form:errors path="person.firstName class="error"" />
+					<form:errors path="person.firstName" class="error" />
 					
 					<form:label path="person.lastName" for="register.personregistration.lastname">Last Name</form:label>
 					<form:input path="person.lastName" id="register.personregistration.lastname" type="text" />
-					<form:errors path="person.lastName class="error"" />
+					<form:errors path="person.lastName" class="error" />
 					
 					<form:label path="person.middleName" for="register.personregistration.middlename">Middle Name</form:label>
 					<form:input path="person.middleName" id="register.personregistration.middlename" type="text" />
-					<form:errors path="person.middleName class="error"" />
+					<form:errors path="person.middleName" class="error" />
 					
 					<form:label path="phoneNumber.contactNumber" for="register.personregistration.contactnumber">Contact Number</form:label>
 					<form:input path="phoneNumber.contactNumber" id="register.personregistration.contactnumber" type="tel" />
-					<form:errors path="phoneNumber.contactNumber class="error"" />
+					<form:errors path="phoneNumber.contactNumber" class="error" />
 					
 					<form:label path="person.email" for="register.personregistration.email">Username</form:label>
 					<form:input path="person.email" id="register.personregistration.email" type="text" />
-					<form:errors path="person.email class="error"" />
+					<form:errors path="person.email" class="error" />
 					
 					<form:label path="company.companyName" for="register.personregistration.companyname">Username</form:label>
 					<form:input path="company.companyName" id="register.personregistration.companyname" type="text" />
-					<form:errors path="company.companyName class="error"" />
+					<form:errors path="company.companyName" class="error" />
 					
 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label>
 					<form:select path="person.personRole" id="register.personregistration.personrole" >
