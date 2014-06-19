@@ -44,9 +44,8 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     PhoneNumber phoneNumber = new PhoneNumber();
     personRegistration.setPhoneNumber(phoneNumber);
     m.addAttribute("personRegistration", personRegistration);
-
-    List<String> personRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppStaticValues.xml"), "personrole");
-    m.addAttribute("personRoleList", personRoleList);
+    //m.addAttribute("personRoleList", this.getListOfPersonRole());
+    m.addAttribute("companyRoleList", this.getListOfCompanyRole());
   }
   
   public void savePersonRegistrationForm(Person person, Company company, PhoneNumber phoneNumber, UserLogin userLogin){
@@ -84,6 +83,16 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     person.addFromParty(connection);
     personRepository.save(person);
     companyRepository.save(company);
+  }
+  
+  public List<String> getListOfPersonRole(){
+    List<String> personRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppStaticValues.xml"), "personrole");
+    return personRoleList;
+  }
+  
+  public List<String> getListOfCompanyRole(){
+    List<String> companyRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppStaticValues.xml"), "companyrole");
+    return companyRoleList;
   }
   
   public void getAddBuyerFormForSeller(Model m){

@@ -9,12 +9,11 @@ import javax.persistence.Entity;
 public class Company extends Party{
   private static final long serialVersionUID = 1L;
 
-  public static enum CompanyRole{SELLER, BUYER, AGENT};
   public static enum CompanyRegistrationType {SOLE_PROPRIETORSHIP, PARTNERSHIP, LLP, PVT_LTD, PUBLIC};
   
   
   private String companyName;
-  private CompanyRole companyRole;
+  private String companyRole;
   private CompanyRegistrationType companyRegistrationType;
   private String registrationId;
   
@@ -28,12 +27,6 @@ public class Company extends Party{
   public void setCompanyName(String companyName) {
     this.companyName = companyName;
   }
-  public CompanyRole getCompanyRole() {
-    return companyRole;
-  }
-  public void setCompanyRole(CompanyRole companyRole) {
-    this.companyRole = companyRole;
-  }
   public CompanyRegistrationType getCompanyRegistrationType() {
     return companyRegistrationType;
   }
@@ -46,5 +39,11 @@ public class Company extends Party{
   }
   public void setRegistrationId(String registrationId) {
     this.registrationId = registrationId;
+  }
+  public String getCompanyRole() {
+    return companyRole;
+  }
+  public void setCompanyRole(String companyRole) {
+    this.companyRole = companyRole;
   }
 }

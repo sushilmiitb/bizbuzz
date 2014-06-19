@@ -1,1 +1,1 @@
-BizBuzz- Register
+<h1>BizBuzz- Register</h1>

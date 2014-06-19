@@ -161,7 +161,7 @@ public class PartyRepositoryTest {
     Company company = new Company();
     company.setCompanyName("ABC sarees");
     company.setCompanyRegistrationType(Company.CompanyRegistrationType.PVT_LTD);
-    company.setCompanyRole(Company.CompanyRole.SELLER);
+    company.setCompanyRole("Seller");
     
     Person person1 = new Person();
     person1.setFirstName("Shaunak");

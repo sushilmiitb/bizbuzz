@@ -48,10 +48,18 @@
 					<form:input path="company.companyName" id="register.personregistration.companyname" type="text" />
 					<form:errors path="company.companyName" class="error" />
 					
-					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label>
-					<form:select path="person.personRole" id="register.personregistration.personrole" >
-						<form:option value="None">None</form:option>
-						<c:forEach var="item" items="${personRoleList}">
+<%-- 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label> --%>
+<%-- 					<form:select path="person.personRole" id="register.personregistration.personrole" > --%>
+<%-- 						<form:option value="None">None</form:option> --%>
+<%-- 						<c:forEach var="item" items="${personRoleList}"> --%>
+<%-- 							<form:option value="${item}">${item}</form:option> --%>
+<%-- 						</c:forEach> --%>
+<%-- 					</form:select> --%>
+					
+					<form:label path="company.companyRole" for="register.personregistration.companyrole" class="select">User Type</form:label>
+					<form:select path="company.companyRole" id="register.personregistration.companyrole" >
+						
+						<c:forEach var="item" items="${companyRoleList}">
 							<form:option value="${item}">${item}</form:option>
 						</c:forEach>
 					</form:select>

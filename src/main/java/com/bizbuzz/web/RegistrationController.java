@@ -60,9 +60,11 @@ public class RegistrationController {
   }*/
   
   @RequestMapping(value="/register/personregistration", method = RequestMethod.POST)
-  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated PersonRegistrationDTO personRegistration, BindingResult bindingResult){
+  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated PersonRegistrationDTO personRegistration, BindingResult bindingResult, Model model){
     if (bindingResult.hasErrors()) {
       logger.info("Form validation Error.");
+      //model.addAttribute("personRoleList", partyManagementService.getListOfPersonRole());
+      model.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
       return "jsp/register/personregistration";
     }
     partyManagementService.savePersonRegistrationForm(personRegistration);

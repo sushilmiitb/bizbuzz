@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<person>
-    <personrole>Solo Owner</personrole>
-    <personrole>Co Owner</personrole>
-    <personrole>Promoter</personrole>
-    <personrole>Employee</personrole>
-</person>
+<company>
+    <companyrole>Seller</companyrole>
+    <companyrole>Buyer</companyrole>
+    <companyrole>Agent</companyrole>
+</company>
