@@ -15,7 +15,7 @@
   <http auto-config="true">
     <intercept-url pattern="/register*/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
     <intercept-url pattern="/home" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-    <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+    <intercept-url pattern="/" access="ROLE_BUYER"/>
     <intercept-url pattern="/buyer*/**" access="ROLE_BUYER"/>
     <intercept-url pattern="/seller*/**" access="ROLE_SELLER"/>
     <form-login login-page='/register' authentication-failure-url="/register?error=1" 
