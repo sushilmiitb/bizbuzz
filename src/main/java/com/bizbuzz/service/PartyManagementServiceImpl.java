@@ -86,12 +86,12 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   }
   
   public List<String> getListOfPersonRole(){
-    List<String> personRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppStaticValues.xml"), "personrole");
+    List<String> personRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), "personrole");
     return personRoleList;
   }
   
   public List<String> getListOfCompanyRole(){
-    List<String> companyRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppStaticValues.xml"), "companyrole");
+    List<String> companyRoleList = HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), "companyrole");
     return companyRoleList;
   }
   

@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<company>
-    <companyrole>Seller</companyrole>
-    <companyrole>Buyer</companyrole>
-    <companyrole>Agent</companyrole>
-</company>
+<root>
+	<company>
+	    <companyrole>Buyer</companyrole>
+	    <companyrole>Seller</companyrole>
+	    <companyrole>Agent</companyrole>
+	</company>
+	<person>
+	    <personrole>Solo Owner</personrole>
+	    <personrole>Co Owner</personrole>
+	    <personrole>Promoter</personrole>
+	    <personrole>Employee</personrole>
+	</person>
+</root>
