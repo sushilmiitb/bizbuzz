@@ -14,6 +14,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,5 +70,16 @@ public class RegistrationController {
     }
     partyManagementService.savePersonRegistrationForm(personRegistration);
     return "jsp/register/personregistration";
+  }
+  
+  @RequestMapping(value="register/login/{error}", method = RequestMethod.GET)
+  public String errorInLogin(Model model, @PathVariable final String error){
+    model.addAttribute("error", error);
+    return "jsp/register/login";
+  }
+  
+  @RequestMapping(value="register/login", method = RequestMethod.GET)
+  public String login(){
+    return "jsp/register/login";
   }
 }

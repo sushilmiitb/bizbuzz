@@ -1,46 +1,162 @@
+
+
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Bizbuzz-Register</title>
 	<link rel="stylesheet" href="../../../../static/css/mobile/jquery.mobile-1.4.2.min.css" />
 	<link rel="stylesheet" href="../../../../static/css/mobile/main.css" />
 	<script src="../../../../static/js/jquery/jquery-1.11.1.min.js"></script>
-	<script src="../../../../static/js/mobile/jquery.mobile-1.4.2.min.js"></script>
+<script src="../../../../static/js/mobile/jquery.mobile-1.4.2.min.js"></script>
+	<script src="../../../../static/js/jquery/jquery.validate.min.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		var debug = true;
+		function emptyErrorDisplay(elem, errorMsg){
+			if(debug){
+				console.log ("Element Value", elem.val());
+			}
+			if(!elem.val()){
+				$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
+				elem.toggleClass("error");
+			}
+		}
+		
+		function noneSelectErrorDisplay(elem, errorMsg){
+			if(debug){
+				console.log ("Element Value", elem.val());
+			}
+			if(elem.val()=="None"){
+				$("<span>"+errorMsg+"</span>").insertAfter(elem.parent().parent()).toggleClass("error");
+			}
+		}
+		
+		function isValidEmailAddress(emailAddress) {
+		    var pattern = new RegExp(/^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?$/i);
+		    return pattern.test(emailAddress);
+		}
+		
+		function isValidPhoneNumber(phoneNumber){
+			var pattern = /^[0-9-+]+$/;
+			return pattern.test(phoneNumber);
+		}
+		
+		function invalidEmailErrorDisplay(elem, errorMsg){
+			if(debug){
+				console.log ("Element Value", elem.val());
+			}
+			if(!elem.val()){
+				return;
+			}
+			if(!isValidEmailAddress(elem.val())){
+				$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
+				elem.toggleClass("error");
+			}
+		}
+		
+		function invalidPhoneErrorDisplay(elem, errorMsg){
+			if(debug){
+				console.log ("Element Value", elem.val());
+			}
+			if(!elem.val()){
+				return;
+			}
+			if(!isValidPhoneNumber(elem.val())){
+				$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
+				elem.toggleClass("error");
+			}
+		}
+		
+		function passwordMisMatchErrorDisplay(repass, pass, errorMsg){
+			if(pass.val()!=repass.val()){
+				$("<span>"+errorMsg+"</span>").insertAfter(repass.parent()).toggleClass("error");
+				repass.toggleClass("error");
+				pass.toggleClass("error");
+			}
+		}
+		
+		$("#register_personregistration_submit").click(function(event){
+			event.preventDefault();
+			$("span.error").remove();
+			$(".error").toggleClass("error");
+			emptyErrorDisplay($('#register_personregistration_username'), "Username cannot be empty");
+			emptyErrorDisplay($('#register_personregistration_password'), "Password cannot be empty");
+			emptyErrorDisplay($('#register_personregistration_firstname'), "First name cannot be empty");
+			emptyErrorDisplay($('#register_personregistration_contactnumber'), "Contact number cannot be empty");
+			noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
+			invalidEmailErrorDisplay($('#register_personregistration_email'), "Please enter a valid email address");
+			passwordMisMatchErrorDisplay($('#register_personregistration_repassword'), $('#register_personregistration_password'), "Password mismatch");
+			invalidPhoneErrorDisplay($('#register_personregistration_contactnumber'), "Please enter a valid phone number");
+			if($(".error").length == 0){
+				$("#register_personregistration_form").submit();
+			}
+		});
+	});
+</script>
 </head>
 <body>
-	<div data-role="page">
-		<div data-role="header">
+	<div >
+		<div >
 			<h2>Bizbuzz-Register</h2>
 		</div>
-		<div data-role="main ">
+		<div >
 			<br/>
-			<form>
-				<div class="ui-corner-all custom-corners">
-					<div class="ui-bar ui-bar-a">
-						<h3>Login Details</h3>
-					</div>
-					<div class="ui-body ui-body-a">
-						<label for="register.personregistration.username">Username</label>
-						<input name="username" id="register.personregistration.username" value="Enter username here" type="text" />
-						<label for="register.personregistration.password">Password</label>
-						<input name="password" id="register.personregistration.password" value="" type="password" autocomplete="off" />
-					</div>
+			<form method="POST" action="personregistration" id="register_personregistration_form" class="registration_form" modelAttribute="personRegistration">
+			<div class="ui-corner-all custom-corners">
+				<div class="ui-bar ui-bar-a">
+					<h3>Login Details</h3>
 				</div>
-				<div class="ui-corner-all custom-corners">
-					<br/>
-					<div class="ui-bar ui-bar-a">
-						<h3>Person Details</h3>
-					</div>
-					<div class="ui-body ui-body-a">
-						<label for="register.personregistration.username">Username</label>
-						<input name="username" id="register.personregistration.username" value="Enter username here" type="text" />
-						<label for="register.personregistration.password">Password</label>
-						<input name="password" id="register.personregistration.password" value="" type="password" autocomplete="off" />
-					</div>
+				<div class="ui-body ui-body-a">
+					<label for="register_personregistration_username">Username</label>
+					<input id="register_personregistration_username" type="text" />
+					<label for="register_personregistration_password">Password</label>
+					<input id="register_personregistration_password" autocomplete="off" type="password" />
+					<label for="register_personregistration_repassword">Re-enter password</label>
+					<input id="register_personregistration_repassword" type="password"/>
 				</div>
-			</form>
+			</div>
+			<div class="ui-corner-all custom-corners">
+				<div class="ui-bar ui-bar-a">
+					<h3>Person Details</h3>
+				</div>
+				<div class="ui-body ui-body-a">
+					<label for="register_personregistration_firstname">First Name</label>
+					<input id="register_personregistration_firstname" type="text" />
+					
+					
+					<label for="register_personregistration_lastname">Last Name</label>
+					<input id="register_personregistration_lastname" type="text" />
+					
+					
+					<label for="register_personregistration_middlename">Middle Name</label>
+					<input id="register_personregistration_middlename" type="text" />
+					
+					
+					<label for="register_personregistration_contactnumber">Contact Number</label>
+					<input id="register_personregistration_contactnumber" type="tel" />
+					
+					
+					<label for="register_personregistration_email">Email</label>
+					<input id="register_personregistration_email" type="text" />
+					
+					
+					<label for="register_personregistration_companyname">Company/Shop Name</label>
+					<input id="register_personregistration_companyname" type="text" />
+
+					
+					
+					<label for="register_personregistration_companyrole" class="select">User Type</label>
+					<select id="register_personregistration_companyrole" >
+						<option value="None">None</option>
+						<option value="Buyer">Buyer</option>
+						<option value="Seller">Seller</option>
+					</select>
+					<input type="submit" id="register_personregistration_submit"value="Register" />
+				</div>
+			</div>
+		</form>
 		</div>
 	</div>
 

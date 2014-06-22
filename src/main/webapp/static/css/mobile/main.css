@@ -12,11 +12,20 @@
   -webkit-border-bottom-right-radius: inherit;
   border-bottom-right-radius: inherit;
 }
-.error{
+span.error{
 	color: red;
-	font-size: 0.8 em;
+	font-size: 0.8em;
 	font-weight: normal;
-}	
+	background-repeat:no-repeat;
+    padding-left: 1.5em;
+	background-position: 0px 0px;
+	background-image: url("images/icons/unchecked.gif");
+}
+
+input.error{
+	border: solid red;
+	border-width: 1px;
+}
 
 body{
 	font-family: arial !important;

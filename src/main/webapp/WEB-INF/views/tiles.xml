@@ -5,6 +5,8 @@
 <tiles-definitions>
     <definition name="base.definition" template="/WEB-INF/views/layout/base_layout.jsp">
         <put-attribute name="title" value="" />
+        <put-attribute name="customJsCode" value="" />
+        <put-attribute name="include" value="" />
         <put-attribute name="header" value="/WEB-INF/views/jsp/header.jsp" />
         <put-attribute name="body" value="" />
         <put-attribute name="footer" value="/WEB-INF/views/jsp/footer.jsp" />
@@ -16,7 +18,6 @@
     </definition>
     
     <definition name="register" extends="base.definition">
-        <put-attribute name="header" value="/WEB-INF/views/jsp/register/header.jsp" />
         <put-attribute name="footer" value="/WEB-INF/views/jsp/register/footer.jsp" />
     </definition>
 </tiles-definitions>
