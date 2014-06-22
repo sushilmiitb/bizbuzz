@@ -14,11 +14,12 @@
 
   <http auto-config="true">
     <intercept-url pattern="/register*/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+    <intercept-url pattern="/register*/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
     <intercept-url pattern="/home" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
-    <intercept-url pattern="/" access="ROLE_BUYER"/>
+    <intercept-url pattern="/" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
     <intercept-url pattern="/buyer*/**" access="ROLE_BUYER"/>
     <intercept-url pattern="/seller*/**" access="ROLE_SELLER"/>
-    <form-login login-page='/register/login' authentication-failure-handler-ref="authenticationFailureHandler" 
+    <form-login login-page='/login' authentication-failure-handler-ref="authenticationFailureHandler" 
       default-target-url="/"/>
     <logout invalidate-session="true"/>
   </http>
@@ -37,8 +38,8 @@
 
   <beans:bean class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
 
-  <beans:bean name="bcryptEncoder"
-    class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+  <!-- <beans:bean name="bcryptEncoder"
+    class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/> -->
   <authentication-manager>
     <authentication-provider>
       <user-service>

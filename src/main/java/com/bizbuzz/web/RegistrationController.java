@@ -72,13 +72,13 @@ public class RegistrationController {
     return "jsp/register/personregistration";
   }
   
-  @RequestMapping(value="register/login/{error}", method = RequestMethod.GET)
+  @RequestMapping(value="login/{error}", method = RequestMethod.GET)
   public String errorInLogin(Model model, @PathVariable final String error){
     model.addAttribute("error", error);
     return "jsp/register/login";
   }
   
-  @RequestMapping(value="register/login", method = RequestMethod.GET)
+  @RequestMapping(value="login", method = RequestMethod.GET)
   public String login(){
     return "jsp/register/login";
   }
