@@ -12,9 +12,10 @@ import com.bizbuzz.model.UserLogin;
 
 
 public interface PartyManagementService {
-  public void getPersonRegistrationForm(Model m);
-  public void savePersonRegistrationForm(Person person, Company company, PhoneNumber phoneNumber, UserLogin userLogin);
-  public void savePersonRegistrationForm(PersonRegistrationDTO personRegistration);
+  public void savePhoneNumber(PhoneNumber phoneNumber);
+  public void saveUserLoginWithSecurityGroup(UserLogin userLogin, String securityGroupName);
+  public void savePersonWithUserName(Person person, UserLogin userLogin);
+  public void saveCompany(Company company);
   public List<String> getListOfPersonRole();
   public List<String> getListOfCompanyRole();
 }

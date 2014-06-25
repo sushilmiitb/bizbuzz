@@ -37,58 +37,21 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   @Autowired
   SecurityGroupRepository securityGroupRepository;
   
-  public void getPersonRegistrationForm(Model m){
-    PersonRegistrationDTO personRegistration = new PersonRegistrationDTO();
-    UserLogin userLogin = new UserLogin();
-    personRegistration.setUserLogin(userLogin);
-    Person person = new Person();
-    personRegistration.setPerson(person);
-    Company company = new Company();
-    personRegistration.setCompany(company);
-    PhoneNumber phoneNumber = new PhoneNumber();
-    personRegistration.setPhoneNumber(phoneNumber);
-    m.addAttribute("personRegistration", personRegistration);
-    //m.addAttribute("personRoleList", this.getListOfPersonRole());
-    m.addAttribute("companyRoleList", this.getListOfCompanyRole());
+  public void savePhoneNumber(PhoneNumber phoneNumber){
+    phoneNumberRepository.save(phoneNumber);
   }
   
-  public void savePersonRegistrationForm(Person person, Company company, PhoneNumber phoneNumber, UserLogin userLogin){
-    phoneNumberRepository.save(phoneNumber);
-    person.addPhoneNumber(phoneNumber);
+  public void saveUserLoginWithSecurityGroup(UserLogin userLogin, String securityGroupName){
+    userLogin.addSecurityGroup(securityGroupRepository.findByName(securityGroupName));
     userLoginRepository.save(userLogin);
-    companyRepository.save(company);
-    person.setUserId(userLogin);
-    personRepository.save(person);
-    
-    Connection connection = new Connection(company, person, ConnectionType.COMPANY_PERSON);
-    connectionRepository.save(connection);
-    company.addToParty(connection);
-    person.addFromParty(connection);
-    personRepository.save(person);
-    companyRepository.save(company);
   }
   
-  public void savePersonRegistrationForm(PersonRegistrationDTO personRegistration){
-    Person person = personRegistration.getPerson();
-    UserLogin userLogin = personRegistration.getUserLogin();
-    Company company = personRegistration.getCompany();
-    PhoneNumber phoneNumber = personRegistration.getPhoneNumber();
-    
-    phoneNumberRepository.save(phoneNumber);
-    person.addPhoneNumber(phoneNumber);
-    
-    userLogin.addSecurityGroup(securityGroupRepository.findByName(company.getCompanyRole().toLowerCase()));
-    
-    userLoginRepository.save(userLogin);
-    companyRepository.save(company);
+  public void savePersonWithUserName(Person person, UserLogin userLogin){
     person.setUserId(userLogin);
     personRepository.save(person);
-    
-    Connection connection = new Connection(company, person, ConnectionType.COMPANY_PERSON);
-    connectionRepository.save(connection);
-    company.addToParty(connection);
-    person.addFromParty(connection);
-    personRepository.save(person);
+  }
+  
+  public void saveCompany(Company company){
     companyRepository.save(company);
   }
   

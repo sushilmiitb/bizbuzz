@@ -96,7 +96,8 @@
 		</script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
-		<form:form method="POST" action="personregistration" id="register_personregistration_form" class="form" modelAttribute="personRegistration">
+		<c:url var="post_url" value="/register/personregistration"/>
+		<form:form method="POST" action="${post_url}" id="register_personregistration_form" class="form" modelAttribute="personRegistration">
 			<div class="ui-corner-all custom-corners">
 				<div class="ui-bar ui-bar-a">
 					<h3>Login Details</h3>

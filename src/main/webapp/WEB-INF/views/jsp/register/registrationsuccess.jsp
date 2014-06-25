@@ -15,7 +15,7 @@
 		<p style="text-align: center;">Registration Successful</p>
 		<br />
 		<p style="text-align: center;">
-			<a href="<c:url value='/bizbuzz/login' />">Login</a>
+			<a href="<c:url value='/login' />">Login</a>
 		</p>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

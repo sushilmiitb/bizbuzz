@@ -26,6 +26,8 @@ import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.UserLogin;
+import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PartyManagementServiceImpl;
 
@@ -35,6 +37,9 @@ public class RegistrationController {
   
   @Autowired
   PartyManagementService partyManagementService;
+  
+  @Autowired
+  ConnectionService connectionService;
   
   @Autowired
   @Qualifier("personRegistrationFormValidator")
@@ -52,7 +57,17 @@ public class RegistrationController {
   
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
-    partyManagementService.getPersonRegistrationForm(m);
+    PersonRegistrationDTO personRegistration = new PersonRegistrationDTO();
+    UserLogin userLogin = new UserLogin();
+    personRegistration.setUserLogin(userLogin);
+    Person person = new Person();
+    personRegistration.setPerson(person);
+    Company company = new Company();
+    personRegistration.setCompany(company);
+    PhoneNumber phoneNumber = new PhoneNumber();
+    personRegistration.setPhoneNumber(phoneNumber);
+    m.addAttribute("personRegistration", personRegistration);
+    m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
     return "jsp/register/personregistration";
   }
   
@@ -64,7 +79,12 @@ public class RegistrationController {
       model.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
       return "jsp/register/personregistration";
     }
-    partyManagementService.savePersonRegistrationForm(personRegistration);
+    partyManagementService.savePhoneNumber(personRegistration.getPhoneNumber());
+    partyManagementService.saveUserLoginWithSecurityGroup(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
+    partyManagementService.savePersonWithUserName(personRegistration.getPerson(), personRegistration.getUserLogin());
+    partyManagementService.saveCompany(personRegistration.getCompany());
+    connectionService.createConnection(personRegistration.getPerson(), personRegistration.getCompany(), ConnectionType.COMPANY_PERSON);
+    
     return "jsp/register/registrationsuccess";
   }
   
