@@ -24,31 +24,17 @@
 		</script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
-    <%--
-		<form method="POST" action="login" id="register_login_form" class="form">
-			<div class="ui-corner-all custom-corners">
-				<div class="ui-body ui-body-a">
-					<label for="register_login_username">Username</label>
-					<input id="register_login_username" type="text" />
-					<label for="register_login_password">Password</label>
-					<input id="register_login_password" autocomplete="off" type="password" />
-					<input type="submit" id="register_login_submit" value="Login" />
-				</div>
-			</div>
+		<form action="<c:url value='/j_spring_security_check' />" method="post" accept-charset="UTF-8">
+			<input id="j_username" type="text" name="j_username" placeholder="Username" />
+			<input id="j_password" type="password" name="j_password" placeholder="Password" />
+			<c:if test="${not empty error}">
+				<span class="error">Username or password doesn't match the records</span>
+			</c:if>
+			<input id="user_remember_me" type="checkbox" name="j_spring_security_check" value="1" />
+			<label class="string optional" for="user_remember_me">Remember me</label> 
+			<br/>
+			<a href="#" > Forgot Password? </a><br />
+			<input class="btn btn-default" type="submit" name="commit" value="Sign In" />
 		</form>
-     --%>
-     <form action="j_spring_security_check" method="post"
-                  accept-charset="UTF-8">
-                  <input id="j_username" style="margin-bottom: 15px;" type="text"
-                    name="j_username" size="30" placeholder="Username" /> <input
-                    id="j_password" style="margin-bottom: 15px;" type="password"
-                    name="j_password" size="30" placeholder="Password" /> <input
-                    id="user_remember_me" style="float: left; margin-right: 10px;"
-                    type="checkbox" name="j_spring_security_check" value="1" /> <label
-                    class="string optional" for="user_remember_me">Remember
-                    me</label> <br/><a href="#" > Forgot Password? </a><br /><input class="btn btn-default"
-                    style="clear: left; width: 100%; height: 32px; font-size: 13px;"
-                    type="submit" name="commit" value="Sign In" />
-                </form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

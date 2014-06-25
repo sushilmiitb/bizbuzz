@@ -10,5 +10,5 @@ import com.bizbuzz.model.Party;
 @Repository
 @Transactional
 public interface PartyRepository extends JpaRepository<Party, Long>{
-
+  
 }

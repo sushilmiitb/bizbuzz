@@ -32,15 +32,16 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     }
     
     Set<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
-    Collection<SecurityGroup> securityGroups = new UserLogin().getSecurityGroups();
+    Collection<SecurityGroup> securityGroups = userLogin.getSecurityGroups();
     
     for(SecurityGroup sg: securityGroups) {
       for(String authority: sg.getAuthorities()) {
         grantedAuthorities.add(new SimpleGrantedAuthority(authority));
       }
     }
-    User user = new User(userLogin.getId(), userLogin.getPasswordHash(), userLogin.isEnabled(),
-        userLogin.isEnabled(), userLogin.isEnabled(), userLogin.isEnabled(), grantedAuthorities);
+//    User user = new User(userLogin.getId(), userLogin.getPasswordHash(), userLogin.isEnabled(),
+//        userLogin.isEnabled(), userLogin.isEnabled(), userLogin.isEnabled(), grantedAuthorities);
+    User user = new User(userLogin.getId(), userLogin.getPasswordHash(), grantedAuthorities);
     return user;
   }
 

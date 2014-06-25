@@ -13,6 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.UniqueConstraint;
+
+import org.springframework.data.convert.ReadingConverter;
 
 /**
  * 
@@ -26,6 +29,7 @@ public class SecurityGroup implements Serializable {
   @Id
   @GeneratedValue
   private Long id;
+  
   private String name;
   @ElementCollection(fetch=FetchType.EAGER)
   @CollectionTable(name="security_group_authority", joinColumns=@JoinColumn(name="security_group_id"))

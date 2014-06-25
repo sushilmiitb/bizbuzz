@@ -10,5 +10,5 @@ import com.bizbuzz.model.SecurityGroup;
 @Transactional
 @Repository
 public interface SecurityGroupRepository extends JpaRepository<SecurityGroup, Long>{
-  
+  public SecurityGroup findByName(String name);
 }

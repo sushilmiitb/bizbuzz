@@ -216,4 +216,5 @@ public class PartyRepositoryTest {
     assertEquals(1, partyRepository.findAll().size());
     assertEquals(1, partyRepository.findOne(person1.getId()).getToParties().size());
   }
+  
 }

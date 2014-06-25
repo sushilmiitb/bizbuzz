@@ -2,6 +2,6 @@
 
 <tiles:insertDefinition name="groups">
 	<tiles:putAttribute name="body">
-		<p>This is groupmanagemnet</p>
+		<p>This is seller</p>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

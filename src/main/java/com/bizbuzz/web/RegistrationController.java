@@ -45,20 +45,16 @@ public class RegistrationController {
       binder.setValidator(validator);
   }
   
+  @RequestMapping(value={"/", "/home"}, method=RequestMethod.GET)
+  public String home(){
+    return "home";
+  }
+  
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
     partyManagementService.getPersonRegistrationForm(m);
     return "jsp/register/personregistration";
   }
-  
-  /*@RequestMapping(value="/personregistration", method = RequestMethod.POST)
-  public String savePersonRegistrationForm(@ModelAttribute("person") Person person, BindingResult personResult,
-      @ModelAttribute("company") Company company, BindingResult companyResult,
-      @ModelAttribute("phoneNumber") PhoneNumber phoneNumber, BindingResult phoneNumberResult,
-      @ModelAttribute("userLogin") UserLogin userLogin, BindingResult userLoginResult){
-    partyManagementService.savePersonRegistrationForm(person, company, phoneNumber, userLogin);
-    return "personregistration";
-  }*/
   
   @RequestMapping(value="/register/personregistration", method = RequestMethod.POST)
   public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated PersonRegistrationDTO personRegistration, BindingResult bindingResult, Model model){
@@ -69,16 +65,16 @@ public class RegistrationController {
       return "jsp/register/personregistration";
     }
     partyManagementService.savePersonRegistrationForm(personRegistration);
-    return "jsp/register/personregistration";
+    return "jsp/register/registrationsuccess";
   }
   
-  @RequestMapping(value="login/{error}", method = RequestMethod.GET)
+  @RequestMapping(value="/login/{error}", method = RequestMethod.GET)
   public String errorInLogin(Model model, @PathVariable final String error){
     model.addAttribute("error", error);
     return "jsp/register/login";
   }
   
-  @RequestMapping(value="login", method = RequestMethod.GET)
+  @RequestMapping(value="/login", method = RequestMethod.GET)
   public String login(){
     return "jsp/register/login";
   }

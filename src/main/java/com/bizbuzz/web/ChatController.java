@@ -57,14 +57,6 @@ public class ChatController {
 		return "test";
 	}
 
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home() {
-		return "jsp/seller/groupmanagement";
-	}
-
 	@RequestMapping(value = "/websockets", method = RequestMethod.POST)
 	@ResponseBody
 	public void post(final AtmosphereResource event, @RequestBody String msg)

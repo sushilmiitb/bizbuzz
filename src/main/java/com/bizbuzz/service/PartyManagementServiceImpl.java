@@ -12,11 +12,13 @@ import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
+import com.bizbuzz.model.SecurityGroup;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.repository.CompanyRepository;
 import com.bizbuzz.repository.ConnectionRepository;
 import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.repository.PhoneNumberRepository;
+import com.bizbuzz.repository.SecurityGroupRepository;
 import com.bizbuzz.repository.UserLoginRepository;
 import com.bizbuzz.utils.HelperFunctions;
 
@@ -32,6 +34,8 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   PersonRepository personRepository;
   @Autowired
   ConnectionRepository connectionRepository;
+  @Autowired
+  SecurityGroupRepository securityGroupRepository;
   
   public void getPersonRegistrationForm(Model m){
     PersonRegistrationDTO personRegistration = new PersonRegistrationDTO();
@@ -72,6 +76,9 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     
     phoneNumberRepository.save(phoneNumber);
     person.addPhoneNumber(phoneNumber);
+    
+    userLogin.addSecurityGroup(securityGroupRepository.findByName(company.getCompanyRole().toLowerCase()));
+    
     userLoginRepository.save(userLogin);
     companyRepository.save(company);
     person.setUserId(userLogin);
