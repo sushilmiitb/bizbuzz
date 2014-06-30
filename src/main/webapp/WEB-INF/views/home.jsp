@@ -57,7 +57,7 @@
           var message = response.responseBody;
           console.log('onMessage: Message is:'+message);
           try {
-            var json = JSON.parse(message);
+            $("#twitterMessages").append("<li>"+message+"</li>");
           } catch (e) {
             console.log('Error: ', message.data);
             return;
