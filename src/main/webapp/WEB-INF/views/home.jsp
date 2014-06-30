@@ -38,7 +38,7 @@
 
         var socket = $.atmosphere;
         var request = new $.atmosphere.AtmosphereRequest();
-        request.url = document.location.toString() + 'websockets';
+        request.url = document.location.toString() + '/../websockets';
         request.contentType = "application/json";
         request.transport = 'websocket';
         request.fallbackTransport = 'long-polling';
