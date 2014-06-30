@@ -13,6 +13,7 @@ create schema bizbuzz;
 
 modify user.properties for your environment
 modify db.properties to change username/password for your mysql (don't commit)
+db.properties: hibernate.hbm2ddl.auto=validate (if you don't want to recreate the tables in database from model of  MVC) or create (if you want to recreate tables. This will delete existing data and create new one. You have to set it to create for the first time).
 
 #build project
 mvn clean package
