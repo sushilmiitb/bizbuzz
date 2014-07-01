@@ -93,6 +93,13 @@ public class UserLogin implements Serializable {
   public void addSecurityGroup(SecurityGroup securityGroup) {
     this.securityGroups.add(securityGroup);
   }
+  
+  public Person getPerson() {
+    return person;
+  }
+  public void setPerson(Person person) {
+    this.person = person;
+  }
   @Override
   public int hashCode() {
     final int prime = 31;

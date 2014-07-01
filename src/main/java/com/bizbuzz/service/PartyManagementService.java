@@ -8,6 +8,7 @@ import com.bizbuzz.dto.PersonRegistrationDTO;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.UserLogin;
 
 
@@ -18,4 +19,6 @@ public interface PartyManagementService {
   public void saveCompany(Company company);
   public List<String> getListOfPersonRole();
   public List<String> getListOfCompanyRole();
+  public void savePrivateGroup(PrivateGroup privateGroup);
+  public Person getPersonFromUsername(String username);
 }

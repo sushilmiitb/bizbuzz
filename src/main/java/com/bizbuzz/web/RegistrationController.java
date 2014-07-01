@@ -83,7 +83,7 @@ public class RegistrationController {
     partyManagementService.saveUserLoginWithSecurityGroup(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
     partyManagementService.savePersonWithUserName(personRegistration.getPerson(), personRegistration.getUserLogin());
     partyManagementService.saveCompany(personRegistration.getCompany());
-    connectionService.createConnection(personRegistration.getPerson(), personRegistration.getCompany(), ConnectionType.COMPANY_PERSON);
+    connectionService.createCompanyPersonConnection(personRegistration.getCompany(), personRegistration.getPerson());
     
     return "jsp/register/registrationsuccess";
   }

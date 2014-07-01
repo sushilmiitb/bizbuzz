@@ -12,9 +12,7 @@
         <put-attribute name="footer" value="/WEB-INF/views/jsp/footer.jsp" />
     </definition>
     
-    <definition name="groups" extends="base.definition">
-        <put-attribute name="title" value="Group Management" />
-        <put-attribute name="body" value="/WEB-INF/views/jsp/seller/groupmanagement.jsp" />
+    <definition name="seller" extends="base.definition">
     </definition>
     
     <definition name="register" extends="base.definition">

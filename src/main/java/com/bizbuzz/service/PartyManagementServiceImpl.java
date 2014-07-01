@@ -12,12 +12,14 @@ import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.SecurityGroup;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.repository.CompanyRepository;
 import com.bizbuzz.repository.ConnectionRepository;
 import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.repository.PhoneNumberRepository;
+import com.bizbuzz.repository.PrivateGroupRepository;
 import com.bizbuzz.repository.SecurityGroupRepository;
 import com.bizbuzz.repository.UserLoginRepository;
 import com.bizbuzz.utils.HelperFunctions;
@@ -36,6 +38,8 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   ConnectionRepository connectionRepository;
   @Autowired
   SecurityGroupRepository securityGroupRepository;
+  @Autowired
+  PrivateGroupRepository privateGroupRepository;
   
   public void savePhoneNumber(PhoneNumber phoneNumber){
     phoneNumberRepository.save(phoneNumber);
@@ -65,7 +69,12 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     return companyRoleList;
   }
   
-  public void getAddBuyerFormForSeller(Model m){
-    
+  public void savePrivateGroup(PrivateGroup privateGroup){
+    privateGroupRepository.save(privateGroup);
+  }
+  
+  public Person getPersonFromUsername(String username){
+    UserLogin userLogin = userLoginRepository.findById(username);
+    return userLogin.getPerson();
   }
 }
