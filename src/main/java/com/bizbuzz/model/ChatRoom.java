@@ -23,17 +23,13 @@ public class ChatRoom implements Serializable{
   @Id
   @GeneratedValue
   private Long id;
-  
-  @ManyToOne
-  @JoinColumn(name="sender_id", referencedColumnName="id")
-  private Party sender;
-  
+    
   @ManyToMany
   @JoinTable(
-      name="chatroom_recipeint",
+      name="chatroom_members",
       joinColumns={@JoinColumn(name="chatroom_id", referencedColumnName="id")},
-      inverseJoinColumns={@JoinColumn(name="recipient_id", referencedColumnName="id")})
-  private List<Party> recipients;
+      inverseJoinColumns={@JoinColumn(name="member_id", referencedColumnName="id")})
+  private List<Party> members;
   
   @OneToMany(mappedBy="chatRoom")
   private List<Chat> chats;
@@ -41,21 +37,13 @@ public class ChatRoom implements Serializable{
   /**
    * setters and getters
    */
-  
-  public Party getSender() {
-    return sender;
+
+  public List<Party> getMembers() {
+    return members;
   }
 
-  public void setSender(Party sender) {
-    this.sender = sender;
-  }
-
-  public List<Party> getRecipients() {
-    return recipients;
-  }
-
-  public void setRecipients(List<Party> recipients) {
-    this.recipients = recipients;
+  public void setMembers(List<Party> members) {
+    this.members = members;
   }
 
   public List<Chat> getChats() {

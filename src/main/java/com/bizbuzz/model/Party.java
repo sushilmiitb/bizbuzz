@@ -61,11 +61,11 @@ public abstract class Party implements Serializable{
           inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
   private List<Item> items = new ArrayList<Item>();
   
-  @OneToMany(mappedBy="sender")
-  private List<ChatRoom> sentChatRooms = new ArrayList<ChatRoom>();
+  @ManyToMany(mappedBy="members")
+  private List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
   
-  @ManyToMany(mappedBy="recipients")
-  private List<ChatRoom> receivedChatRooms = new ArrayList<ChatRoom>();
+  @OneToMany(mappedBy="sender")
+  private List <Chat> sentChat = new ArrayList<Chat>();
   
   /**
    * This function models the addToParty function for many-to-many
@@ -171,20 +171,20 @@ public abstract class Party implements Serializable{
     this.items = items;
   }
 
-  public List<ChatRoom> getSentChatRooms() {
-    return sentChatRooms;
+  public List<Chat> getSentChat() {
+    return sentChat;
   }
 
-  public void setSentChatRooms(List<ChatRoom> sentChatRooms) {
-    this.sentChatRooms = sentChatRooms;
+  public void setSentChat(List<Chat> sentChat) {
+    this.sentChat = sentChat;
   }
 
-  public List<ChatRoom> getReceivedChatRooms() {
-    return receivedChatRooms;
+  public List<ChatRoom> getChatRooms() {
+    return chatRooms;
   }
 
-  public void setReceivedChatRooms(List<ChatRoom> receivedChatRooms) {
-    this.receivedChatRooms = receivedChatRooms;
+  public void setChatRooms(List<ChatRoom> chatRooms) {
+    this.chatRooms = chatRooms;
   }
 
   public String getEmail() {
@@ -194,5 +194,6 @@ public abstract class Party implements Serializable{
   public void setEmail(String email) {
     this.email = email;
   }
+  
   
 }

@@ -24,6 +24,11 @@ public class Chat implements Serializable{
   private String message;
   
   @ManyToOne
+  @JoinColumn(name="sender_id", referencedColumnName="id")
+  private Party sender;
+  
+  
+  @ManyToOne
   @JoinColumn(name="chat_room_id", referencedColumnName="id")
   private ChatRoom chatRoom;
   
@@ -61,6 +66,14 @@ public class Chat implements Serializable{
 
   public void setItem(Item item) {
     this.item = item;
+  }
+
+  public Party getSender() {
+    return sender;
+  }
+
+  public void setSender(Party sender) {
+    this.sender = sender;
   }
   
 }
