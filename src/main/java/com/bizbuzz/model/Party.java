@@ -19,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hsqldb.lib.ArrayListIdentity;
 
 @Entity
@@ -38,16 +40,20 @@ public abstract class Party implements Serializable{
   
   private String email;
   
-  @OneToMany(mappedBy="party", fetch=FetchType.LAZY)
+  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
   
-  @OneToMany(mappedBy="party", fetch=FetchType.LAZY)
+  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<Address> addresses = new ArrayList<Address>();
   
-  @OneToMany(mappedBy="fromParty", fetch=FetchType.EAGER)
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> toParties = new ArrayList<Connection>();
   
-  @OneToMany(mappedBy="toParty", fetch=FetchType.EAGER)
+  @OneToMany(mappedBy="toParty", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> fromParties = new ArrayList<Connection>();
   
   @ManyToOne
@@ -61,10 +67,12 @@ public abstract class Party implements Serializable{
           inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
   private List<Item> items = new ArrayList<Item>();
   
-  @ManyToMany(mappedBy="members")
+  @ManyToMany(mappedBy="members", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
   
-  @OneToMany(mappedBy="sender")
+  @OneToMany(mappedBy="sender", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List <Chat> sentChat = new ArrayList<Chat>();
   
   /**
@@ -105,6 +113,24 @@ public abstract class Party implements Serializable{
     connection.setConnectionType(connectionType);
     this.fromParties.add(connection);
     fromParty.getToParties().add(connection);
+  }
+  
+  public void deleteFromParty(Long fromPartyId){
+    for(int i=0; i<fromParties.size(); i++){
+      if(fromParties.get(i).getFromPartyId() == fromPartyId){
+        fromParties.remove(i);
+        break;
+      }
+    }
+  }
+  
+  public void deleteToParty(Long toPartyId){
+    for(int i=0; i<toParties.size(); i++){
+      if(toParties.get(i).getToPartyId() == toPartyId){
+        toParties.remove(i);
+        break;
+      }
+    }
   }
   
   public void addFromParty(Connection con){

@@ -43,23 +43,23 @@
 	</tiles:putAttribute>
 	
 	<tiles:putAttribute name="body">
-		<c:url var="post_url" value="/seller/addgroup"/>
-		<form:form method="POST" action="${post_url}" id="seller_viewgroup_form" class="form" modelAttribute="privateGroupForm">
+		<c:url var="post_url" value="/seller/editgroup/${privateGroup.privateGroupName}" />
+		<form:form method="POST" action="${post_url}" id="seller_viewsinglegroup_form" class="form" modelAttribute="privateGroup">
 			<div class="ui-corner-all custom-corners">
 				<div class="ui-body ui-body-a">
-					<form:label path="privateGroupName" for="seller_viewgroup_groupname">Group Name</form:label>
-					<form:input path="privateGroupName" id="seller_viewgroup_groupname" type="text"/>
-					<input id="seller_viewgroup_create" type="submit" value="Create" />
+					<form:label path="privateGroupName" for="seller_viewsinglegroup_groupname">Group Name</form:label>
+					<form:input path="privateGroupName" id="seller_viewsinglegroup_groupname" type="text"/>
+					<input id="seller_viewsinglegroup_edit" type="submit" value="Change Group Name" />
 				</div>
 			</div>
 		</form:form>
-		<c:url var="base_group_url" value="/seller/viewgroup/"/>
-		<div class="ui-corner-all custom-corners">
-			<div class="ui-body ui-body-a">
-				<c:forEach items="${privateGroups}" var="item" >
-					<span class="group"><a href="${base_group_url}${item.privateGroupName}">${item.privateGroupName}</a></span>
-				</c:forEach>
+		<c:url var="delete_url" value="/seller/deletegroup/${privateGroup.privateGroupName}" />
+		<form:form method="GET" action="${delete_url}" id="seller_viewsinglegroup_deleteform">
+			<div class="ui-corner-all custom-corners">
+				<div class="ui-body ui-body-a">
+					<input id="seller_viewsinglegroup_delete" type="submit" value="Delete Group" />
+				</div>
 			</div>
-		</div>
+		</form:form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

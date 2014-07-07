@@ -21,3 +21,5 @@ mvn clean package
 code will get deployed to your tomcat webapps
 
 access on browser http://localhost:8080/bizbuzz/
+
+You will have to run bizbuzz / src / test / resources / sql / test-data.sql in order to make register/personregistration form workable.

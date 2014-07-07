@@ -19,4 +19,5 @@ public class PrivateGroup extends Party{
   public void setPrivateGroupName(String privateGroupName) {
     this.privateGroupName = privateGroupName;
   }
+  
 }

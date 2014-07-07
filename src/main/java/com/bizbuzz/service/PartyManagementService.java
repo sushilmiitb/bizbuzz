@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 
 import com.bizbuzz.dto.PersonRegistrationDTO;
 import com.bizbuzz.model.Company;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.PrivateGroup;
@@ -21,4 +22,11 @@ public interface PartyManagementService {
   public List<String> getListOfCompanyRole();
   public void savePrivateGroup(PrivateGroup privateGroup);
   public Person getPersonFromUsername(String username);
+  public void updatePrivateGroup(PrivateGroup oldPrivateGroup, PrivateGroup updatedPrivateGroup);
+  public void deletePrivateGroup(PrivateGroup privateGroup);
+  public Person getPersonFromPhoneNumberUsername(String phonenumber);
+  public Party getParty(Long id);
+  public PrivateGroup getPrivateGroup(Long id);
+  public void deletePerson(Person person);
+  public Person getPerson(Long id);
 }

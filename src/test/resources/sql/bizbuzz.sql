@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jun 25, 2014 at 10:20 AM
+-- Generation Time: Jul 06, 2014 at 03:19 PM
 -- Server version: 5.6.17-0ubuntu0.14.04.1
 -- PHP Version: 5.5.9-1ubuntu4
 
@@ -79,22 +79,24 @@ CREATE TABLE IF NOT EXISTS `chat` (
   `message` varchar(255) DEFAULT NULL,
   `chat_room_id` bigint(20) DEFAULT NULL,
   `item_id` bigint(20) DEFAULT NULL,
+  `sender_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_m34p2qatj2b5o0bnc4obowq3k` (`chat_room_id`),
-  KEY `FK_s4h77hvdvrx91vnf9mpw60gwt` (`item_id`)
+  KEY `FK_s4h77hvdvrx91vnf9mpw60gwt` (`item_id`),
+  KEY `FK_joppaxlmxxjissbl8khuboe58` (`sender_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `chatroom_recipeint`
+-- Table structure for table `chatroom_members`
 --
 
-CREATE TABLE IF NOT EXISTS `chatroom_recipeint` (
+CREATE TABLE IF NOT EXISTS `chatroom_members` (
   `chatroom_id` bigint(20) NOT NULL,
-  `recipient_id` bigint(20) NOT NULL,
-  KEY `FK_gdrx4m02x5ai5c84n2r8hc4cu` (`recipient_id`),
-  KEY `FK_8sr1xquxnljdefg2xgspy1f8u` (`chatroom_id`)
+  `member_id` bigint(20) NOT NULL,
+  KEY `FK_2leox3pidlws6ealaa3cm80to` (`member_id`),
+  KEY `FK_dxooptuvtd1qn939j4bgbvsvv` (`chatroom_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -105,9 +107,7 @@ CREATE TABLE IF NOT EXISTS `chatroom_recipeint` (
 
 CREATE TABLE IF NOT EXISTS `chat_room` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `sender_id` bigint(20) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_erpdpphwlqhp25i963002orn0` (`sender_id`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -130,8 +130,12 @@ CREATE TABLE IF NOT EXISTS `company` (
 --
 
 INSERT INTO `company` (`company_name`, `company_registration_type`, `company_role`, `registration_id`, `id`) VALUES
-('bizbuzz', NULL, 'Buyer', NULL, 1),
-('bizbuzz', NULL, 'Seller', NULL, 3);
+('Bizbuzz', NULL, 'Seller', NULL, 2),
+('Bizbuzz', NULL, 'Buyer', NULL, 4),
+('bizbuzz', NULL, 'Seller', NULL, 25),
+('Bizbuzz', NULL, 'Buyer', NULL, 27),
+('surpirse', NULL, 'Buyer', NULL, 29),
+('UserJoy', NULL, 'Buyer', NULL, 31);
 
 -- --------------------------------------------------------
 
@@ -155,8 +159,13 @@ CREATE TABLE IF NOT EXISTS `connection` (
 --
 
 INSERT INTO `connection` (`from_party_id`, `to_party_id`, `connection_type`, `from_party`, `to_party`) VALUES
-(1, 2, 1, 1, 2),
-(3, 4, 1, 3, 4);
+(1, 23, 3, 1, 23),
+(2, 1, 1, 2, 1),
+(4, 3, 1, 4, 3),
+(25, 24, 1, 25, 24),
+(27, 26, 1, 27, 26),
+(29, 28, 1, 29, 28),
+(31, 30, 1, 31, 30);
 
 -- --------------------------------------------------------
 
@@ -204,17 +213,26 @@ CREATE TABLE IF NOT EXISTS `party` (
   `category_root` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_77s5qglac2e3y9krak4ko6t6x` (`category_root`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
 
 --
 -- Dumping data for table `party`
 --
 
 INSERT INTO `party` (`party_type`, `id`, `email`, `category_root`) VALUES
-('company', 1, NULL, NULL),
-('person', 2, 'sushil@gmail.com', NULL),
-('company', 3, NULL, NULL),
-('person', 4, 'sushil@gmail.com', NULL);
+('person', 1, 'sushil@gmail.com', NULL),
+('company', 2, NULL, NULL),
+('person', 3, 'virender@gmail.com', NULL),
+('company', 4, NULL, NULL),
+('private_group', 23, NULL, NULL),
+('person', 24, 'p12sushilkm@iimahd.ernet.in', NULL),
+('company', 25, NULL, NULL),
+('person', 26, 'virender@gmail.com', NULL),
+('company', 27, NULL, NULL),
+('person', 28, 'radhia@gmail.com', NULL),
+('company', 29, NULL, NULL),
+('person', 30, 'prateek@gmail.com', NULL),
+('company', 31, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -239,8 +257,12 @@ CREATE TABLE IF NOT EXISTS `person` (
 --
 
 INSERT INTO `person` (`first_name`, `gender`, `last_name`, `middle_name`, `person_role`, `id`, `user_id`) VALUES
-('sushil', '\0', 'sushil', 'sushil', NULL, 2, 'sushil'),
-('virender', '\0', 'virender', '', NULL, 4, 'virender');
+('sushil', '\0', '', '', NULL, 1, 'sushil'),
+('virenderr', '\0', '', '', NULL, 3, 'virender'),
+('sushil', '\0', 'sushil', 'sushil', NULL, 24, '9099043920'),
+('virender', '\0', 'virender', 'virender', NULL, 26, '9099043921'),
+('radhika', '\0', 'radhik', 'radhika', NULL, 28, '9099043922'),
+('prateek', '\0', 'prateek', 'prateek', NULL, 30, '9099043923');
 
 -- --------------------------------------------------------
 
@@ -257,7 +279,7 @@ CREATE TABLE IF NOT EXISTS `phone_number` (
   `party_id` bigint(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_rbivueliuv4a4y06jtd1bj5bg` (`party_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
 --
 -- Dumping data for table `phone_number`
@@ -266,7 +288,13 @@ CREATE TABLE IF NOT EXISTS `phone_number` (
 INSERT INTO `phone_number` (`id`, `area_code`, `contact_number`, `country_code`, `phone_type`, `party_id`) VALUES
 (1, NULL, '9099043920', NULL, NULL, NULL),
 (2, NULL, '9099043920', NULL, NULL, NULL),
-(3, NULL, '9099043920', NULL, NULL, NULL);
+(3, NULL, '9099043920', NULL, NULL, NULL),
+(4, NULL, '9099043920', NULL, NULL, NULL),
+(5, NULL, '9099043920', NULL, NULL, NULL),
+(6, NULL, '9099043920', NULL, NULL, NULL),
+(7, NULL, '9099043921', NULL, NULL, NULL),
+(8, NULL, '9099043922', NULL, NULL, NULL),
+(9, NULL, '9099043923', NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -279,6 +307,13 @@ CREATE TABLE IF NOT EXISTS `private_group` (
   `id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `private_group`
+--
+
+INSERT INTO `private_group` (`private_group_name`, `id`) VALUES
+('gre', 23);
 
 -- --------------------------------------------------------
 
@@ -383,8 +418,12 @@ CREATE TABLE IF NOT EXISTS `user_login` (
 --
 
 INSERT INTO `user_login` (`id`, `created_at`, `enabled`, `password_hash`, `updated_at`) VALUES
-('sushil', '2014-06-25 09:15:19', b'0', 'sushil', '2014-06-25 09:15:19'),
-('virender', '2014-06-25 09:18:17', b'0', 'virender', '2014-06-25 09:18:17');
+('9099043920', '2014-07-06 15:16:46', b'0', 'sushil', '2014-07-06 15:16:46'),
+('9099043921', '2014-07-06 15:17:27', b'0', 'virender', '2014-07-06 15:17:27'),
+('9099043922', '2014-07-06 15:18:03', b'0', 'radhika', '2014-07-06 15:18:03'),
+('9099043923', '2014-07-06 15:18:42', b'0', 'prateek', '2014-07-06 15:18:42'),
+('sushil', '2014-07-01 18:24:08', b'0', 'sushil', '2014-07-01 18:24:08'),
+('virender', '2014-07-01 18:24:48', b'0', 'virender', '2014-07-01 18:24:48');
 
 -- --------------------------------------------------------
 
@@ -404,8 +443,12 @@ CREATE TABLE IF NOT EXISTS `user_login_security_group` (
 --
 
 INSERT INTO `user_login_security_group` (`user_login_id`, `security_group_id`) VALUES
-('sushil', 1),
-('virender', 2);
+('9099043921', 1),
+('9099043922', 1),
+('9099043923', 1),
+('virender', 1),
+('9099043920', 2),
+('sushil', 2);
 
 --
 -- Constraints for dumped tables
@@ -421,8 +464,8 @@ ALTER TABLE `address`
 -- Constraints for table `category_property_metadata`
 --
 ALTER TABLE `category_property_metadata`
-  ADD CONSTRAINT `FK_or2h12a7jihol4gh2owy1by1r` FOREIGN KEY (`category_id`) REFERENCES `category_tree` (`id`),
-  ADD CONSTRAINT `FK_gxqmy0m3hlqi99cyc0v7k7qn8` FOREIGN KEY (`metadata_id`) REFERENCES `property_metadata` (`id`);
+  ADD CONSTRAINT `FK_gxqmy0m3hlqi99cyc0v7k7qn8` FOREIGN KEY (`metadata_id`) REFERENCES `property_metadata` (`id`),
+  ADD CONSTRAINT `FK_or2h12a7jihol4gh2owy1by1r` FOREIGN KEY (`category_id`) REFERENCES `category_tree` (`id`);
 
 --
 -- Constraints for table `category_tree`
@@ -434,21 +477,16 @@ ALTER TABLE `category_tree`
 -- Constraints for table `chat`
 --
 ALTER TABLE `chat`
-  ADD CONSTRAINT `FK_s4h77hvdvrx91vnf9mpw60gwt` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`),
-  ADD CONSTRAINT `FK_m34p2qatj2b5o0bnc4obowq3k` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`id`);
+  ADD CONSTRAINT `FK_joppaxlmxxjissbl8khuboe58` FOREIGN KEY (`sender_id`) REFERENCES `party` (`id`),
+  ADD CONSTRAINT `FK_m34p2qatj2b5o0bnc4obowq3k` FOREIGN KEY (`chat_room_id`) REFERENCES `chat_room` (`id`),
+  ADD CONSTRAINT `FK_s4h77hvdvrx91vnf9mpw60gwt` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`);
 
 --
--- Constraints for table `chatroom_recipeint`
+-- Constraints for table `chatroom_members`
 --
-ALTER TABLE `chatroom_recipeint`
-  ADD CONSTRAINT `FK_8sr1xquxnljdefg2xgspy1f8u` FOREIGN KEY (`chatroom_id`) REFERENCES `chat_room` (`id`),
-  ADD CONSTRAINT `FK_gdrx4m02x5ai5c84n2r8hc4cu` FOREIGN KEY (`recipient_id`) REFERENCES `party` (`id`);
-
---
--- Constraints for table `chat_room`
---
-ALTER TABLE `chat_room`
-  ADD CONSTRAINT `FK_erpdpphwlqhp25i963002orn0` FOREIGN KEY (`sender_id`) REFERENCES `party` (`id`);
+ALTER TABLE `chatroom_members`
+  ADD CONSTRAINT `FK_2leox3pidlws6ealaa3cm80to` FOREIGN KEY (`member_id`) REFERENCES `party` (`id`),
+  ADD CONSTRAINT `FK_dxooptuvtd1qn939j4bgbvsvv` FOREIGN KEY (`chatroom_id`) REFERENCES `chat_room` (`id`);
 
 --
 -- Constraints for table `company`
@@ -473,8 +511,8 @@ ALTER TABLE `item`
 -- Constraints for table `item_property_value`
 --
 ALTER TABLE `item_property_value`
-  ADD CONSTRAINT `FK_4bcr7qemgct8m9ao9hs25wd5v` FOREIGN KEY (`property_metadata`) REFERENCES `property_metadata` (`id`),
-  ADD CONSTRAINT `FK_49mbyxhrrf0rcns4dca6kdarf` FOREIGN KEY (`item`) REFERENCES `item` (`id`);
+  ADD CONSTRAINT `FK_49mbyxhrrf0rcns4dca6kdarf` FOREIGN KEY (`item`) REFERENCES `item` (`id`),
+  ADD CONSTRAINT `FK_4bcr7qemgct8m9ao9hs25wd5v` FOREIGN KEY (`property_metadata`) REFERENCES `property_metadata` (`id`);
 
 --
 -- Constraints for table `party`
@@ -523,15 +561,15 @@ ALTER TABLE `security_group_authority`
 -- Constraints for table `share`
 --
 ALTER TABLE `share`
-  ADD CONSTRAINT `FK_jtkro6er11qi15ou1wy20hd4i` FOREIGN KEY (`party_id`) REFERENCES `party` (`id`),
-  ADD CONSTRAINT `FK_isdr89ke03u76ylkft81757b0` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`);
+  ADD CONSTRAINT `FK_isdr89ke03u76ylkft81757b0` FOREIGN KEY (`item_id`) REFERENCES `item` (`id`),
+  ADD CONSTRAINT `FK_jtkro6er11qi15ou1wy20hd4i` FOREIGN KEY (`party_id`) REFERENCES `party` (`id`);
 
 --
 -- Constraints for table `user_login_security_group`
 --
 ALTER TABLE `user_login_security_group`
-  ADD CONSTRAINT `FK_tokikorfgavfw110i0dabt5wy` FOREIGN KEY (`user_login_id`) REFERENCES `user_login` (`id`),
-  ADD CONSTRAINT `FK_djxf4uqprp0syy6pcfp7srtmv` FOREIGN KEY (`security_group_id`) REFERENCES `security_group` (`id`);
+  ADD CONSTRAINT `FK_djxf4uqprp0syy6pcfp7srtmv` FOREIGN KEY (`security_group_id`) REFERENCES `security_group` (`id`),
+  ADD CONSTRAINT `FK_tokikorfgavfw110i0dabt5wy` FOREIGN KEY (`user_login_id`) REFERENCES `user_login` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
