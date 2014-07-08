@@ -20,9 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.bizbuzz.dto.PrivateGroupFormDTO;
+import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
+import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
 import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
@@ -49,61 +50,69 @@ public class SellerController {
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
     Person person = getSeller();
-    List<PrivateGroup> privateGroupList = connectionService.getListOfPrivateGroupsFromPerson(person);
+    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupByGroupOnwer(person);
     m.addAttribute("privateGroups", privateGroupList);
     PrivateGroup privateGroup = new PrivateGroup();
     m.addAttribute("privateGroupForm", privateGroup);
     return "jsp/seller/viewgroup";
   }
   
-  @RequestMapping(value="/seller/viewgroup/{groupname}", method = RequestMethod.GET)
-  public String viewAGroup(Model m, @PathVariable final String groupname){
+  @RequestMapping(value="/seller/viewgroup/{groupId}", method = RequestMethod.GET)
+  public String viewAGroup(Model m, @PathVariable final Long groupId){
     Person person = getSeller();
-    PrivateGroup privateGroup = connectionService.getPrivateGroupFromPerson(person, groupname);
+    PrivateGroup privateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, groupId);
+    if(privateGroup==null){
+      return "redirect:/seller/viewgroup";
+    }
+    List<Person> groupMembers = connectionService.getGroupMembersByPrivateGroup(privateGroup);
+    m.addAttribute("groupMembers", groupMembers);
     m.addAttribute("privateGroup", privateGroup);
     return "jsp/seller/viewsinglegroup";
   }
   
-  @RequestMapping(value="/seller/editgroup/{oldGroupName}", method = RequestMethod.POST)
-  public String editAGroup(@PathVariable final  String oldGroupName, @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup, Model m){
-    Person person = getSeller();
-    List<String> errors = sellerValidator.validateAddPrivateGroup(updatedPrivateGroup, person);
-    if(errors.size()>0){
-      m.addAttribute("privateGroup", updatedPrivateGroup);
-      m.addAttribute("errors", errors);
-      return "jsp/seller/viewsinglegroup";
-    }
-    PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupFromPerson(person, oldGroupName);
-    partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
-    return "redirect:/seller/viewgroup";
-  }
-  
-  @RequestMapping(value="/seller/deletegroup/{groupName}", method = RequestMethod.GET)
-  public String deleteAGroup(@PathVariable final String groupName){
-    Person person = getSeller();
-    PrivateGroup privateGroup = connectionService.getPrivateGroupFromPerson(person, groupName);
-    connectionService.deletePersonOwnerPrivateGroupConnection(person, privateGroup);
-    partyManagementService.deletePrivateGroup(privateGroup);
-    return "redirect:/seller/viewgroup";
-  }
-  
   @RequestMapping(value="/seller/addgroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public PrivateGroupFormDTO addPrivateGroup(@RequestBody PrivateGroupFormDTO privateGroupDTO){
+  public SellerAddPrivateGroupResponseAjaxDTO addPrivateGroup(@RequestBody SellerAddPrivateGroupResponseAjaxDTO privateGroupDTO){
 
     //SellerValidator sellerValidator = new SellerValidator();
     PrivateGroup privateGroup = new PrivateGroup();
     privateGroup.setPrivateGroupName(privateGroupDTO.getPrivateGroupName());
     Person person = getSeller();
-    List<String> errors = sellerValidator.validateAddPrivateGroup(privateGroup, person);
+    Map<String,String> errors = sellerValidator.validateAddPrivateGroup(privateGroup, person);
     if(errors.size()>0){
       privateGroupDTO.setErrors(errors);
       return privateGroupDTO;
     }
     partyManagementService.savePrivateGroup(privateGroup);
-    
-    connectionService.createPersonOwnerPrivateGroupConnection(person, privateGroup);
+    connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
     return privateGroupDTO;
+  }
+
+  @RequestMapping(value="/seller/editgroup/{oldGroupId}", method = RequestMethod.POST)
+  public String editAGroup(@PathVariable final  Long oldGroupId, @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup, Model m){
+    Person person = getSeller();
+    Map<String, String> errors = sellerValidator.validateAddPrivateGroup(updatedPrivateGroup, person);
+    if(errors.size()>0){
+      m.addAttribute("privateGroup", updatedPrivateGroup);
+      m.addAttribute("errors", errors);
+      return "jsp/seller/viewsinglegroup";
+    }
+    PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
+    partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
+    return "redirect:/seller/viewgroup";
+  }
+  
+  @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
+  public String deleteAGroup(@PathVariable final Long groupId){
+    Person person = getSeller();
+    PrivateGroup privateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, groupId);
+    if(privateGroup==null){
+      return "redirect:/seller/viewgroup";
+    }
+    connectionService.deleteConnection(person, privateGroup);
+    connectionService.deletePrivateGroupGroupMembersConnection(privateGroup);
+    partyManagementService.deletePrivateGroup(privateGroup);
+    return "redirect:/seller/viewgroup";
   }
   
   @RequestMapping(value="/seller/viewconnection", method = RequestMethod.GET)
@@ -111,9 +120,24 @@ public class SellerController {
     Person seller = getSeller();
     List<Person> allConnections = connectionService.getAllSellerConnections(seller);
     m.addAttribute("connectionList", allConnections);
-    List<PrivateGroup> privateGroups = connectionService.getListOfPrivateGroupsFromPerson(seller);
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupByGroupOnwer(seller);
     m.addAttribute("privateGroupList", privateGroups);
     return "jsp/seller/viewconnection";
+  }
+  
+  @RequestMapping(value="/seller/viewconnection/{buyerId}", method = RequestMethod.GET)
+  public String getSingleConnection(@PathVariable Long buyerId, Model m){
+    Person seller = getSeller();
+    Person buyer = connectionService.getBuyerBySellerAndBuyerId(seller, buyerId);
+    if(buyer==null){
+      return "redirect:/seller/viewconnection";
+    }
+    PrivateGroup privateGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(seller, buyer);
+    m.addAttribute("buyer", buyer);
+    m.addAttribute("privateGroup", privateGroup);
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupByGroupOnwer(seller);
+    m.addAttribute("privateGroupList", privateGroups);
+    return "jsp/seller/viewsingleconnection";
   }
   
   @RequestMapping(value="/seller/addconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -165,6 +189,40 @@ public class SellerController {
       connectionService.deleteConnection(privateGroup, toPerson);
     }
     return "redirect:/seller/viewconnection";
+  }
+  
+  @RequestMapping(value="/seller/editconnection/changegroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public SellerAddConnectionResponseAjaxDTO editConnectionChangeGroup(@RequestBody SellerEditConnectionChangeGroupRequestAjaxDTO request){
+    Map<String, String> errors;
+    SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
+    Person seller = getSeller();
+    Person toPerson = partyManagementService.getPerson(request.getPersonId());
+    if(toPerson == null){
+      /**
+       * Person hasnot registered. Add code to ask him register him. Till then handle it in the validation.
+       */
+    }
+    
+    errors = sellerValidator.validateEditConnectionChangeGroup(seller, toPerson);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      return ajaxReply;
+    }
+    
+    /**
+     * change other functions also to use generic createconnection
+     */
+    PrivateGroup oldGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(seller, toPerson);
+    if(oldGroup!=null){
+      connectionService.deleteConnection(oldGroup, toPerson);
+    }
+    if(request.getGroupId()!=-1){
+      PrivateGroup newPrivateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
+      connectionService.createConnection(newPrivateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
+    }
+    ajaxReply.addDetails(toPerson);
+    return ajaxReply;
   }
   
   public Person getSeller(){

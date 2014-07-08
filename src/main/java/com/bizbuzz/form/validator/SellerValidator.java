@@ -29,15 +29,15 @@ public class SellerValidator {
 //  @Value("${sellervalidator.validateprivategroupsave.duplicatename}")
 //  private String validateprivategroupsaveDuplicatename;
   
-  public List<String> validateAddPrivateGroup(PrivateGroup privateGroup, Person person){
-    List<String> errors = new ArrayList<String>();
+  public Map<String, String> validateAddPrivateGroup(PrivateGroup privateGroup, Person person){
+    Map<String, String> errors = new HashMap<String, String>();
     //Checking duplication of groupname
     String groupName = privateGroup.getPrivateGroupName().toLowerCase();
-    List<PrivateGroup> privateGroupList = connectionService.getListOfPrivateGroupsFromPerson(person);
+    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupByGroupOnwer(person);
     for(int i=0;i<privateGroupList.size();i++){
       if(groupName.equals(privateGroupList.get(i).getPrivateGroupName().toLowerCase())){
         //errors.add(validateprivategroupsaveDuplicatename);
-        errors.add(messageSource.getMessage("sellervalidator.validateaddprivategroup.duplicatename", null, "", null));
+        errors.put("duplicate_name", messageSource.getMessage("sellervalidator.validateaddprivategroup.duplicatename", null, "", null));
         break;
       }
     }
@@ -59,4 +59,18 @@ public class SellerValidator {
     return errors;
   }
   
+  public Map<String, String> validateEditConnectionChangeGroup(Party fromParty, Party toParty){
+    Map<String, String> errors = new HashMap<String, String>();
+    //Checking presence of toParty
+    if(toParty==null){
+      errors.put("to_party_absent", messageSource.getMessage("sellervalidator.validateaddConnection.topartyabsent", null, "", null));
+      return errors;
+    }
+    //Checking if connection already exist
+    Connection connection = connectionService.getConnection(fromParty, toParty);
+    if(connection==null){
+      errors.put("duplicate_connection", messageSource.getMessage("sellervalidator.validateeditconnectionchangegroup.connectionnotexist", null, "", null));
+    }
+    return errors;
+  }
 }

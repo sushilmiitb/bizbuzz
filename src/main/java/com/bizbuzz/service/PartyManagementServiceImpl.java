@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
-import com.bizbuzz.dto.PersonRegistrationDTO;
+import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
@@ -49,13 +49,12 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     phoneNumberRepository.save(phoneNumber);
   }
   
-  public void saveUserLoginWithSecurityGroup(UserLogin userLogin, String securityGroupName){
+  public void saveUserLogin(UserLogin userLogin, String securityGroupName){
     userLogin.addSecurityGroup(securityGroupRepository.findByName(securityGroupName));
     userLoginRepository.save(userLogin);
   }
   
-  public void savePersonWithUserName(Person person, UserLogin userLogin){
-    person.setUserId(userLogin);
+  public void savePerson(Person person){
     personRepository.save(person);
   }
   

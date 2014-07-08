@@ -62,12 +62,16 @@
 				</div>
 			</div>
 		</form>
-		<c:url var="base_url" value="/seller/deleteconnection/"/>
+		<c:url var="base_delete_url" value="/seller/deleteconnection/"/>
+		<c:url var="base_url" value="/seller/viewconnection/" />
 		<table id="seller_viewconnection_displaytable">
 			<c:forEach items="${connectionList}" var="item" >
 				<tr class="displayrow">
 					<td>
-						<a href="${base_url}${item.id}">Delete</a>
+						<a href="${base_url}${item.id}">Link</a>
+					</td>
+					<td>
+						<a href="${base_delete_url}${item.id}">Delete</a>
 					</td>
 					<td>
 						${item.firstName} ${item.middleName} ${item.lastName}

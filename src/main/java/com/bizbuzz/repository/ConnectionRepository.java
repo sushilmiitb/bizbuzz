@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
 
@@ -31,8 +32,8 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "Connection c inner join c.toParty p "
       + "where c.fromPartyId=?1 and "
       + "c.connectionType=?2 and "
-      + "p.privateGroupName=?3")
-  PrivateGroup findByFromPartyIdAndConnectionTypeAndPrivateGroupName(Long fromPartyId, ConnectionType connectionType, String privateGroupName);
+      + "p.id=?3")
+  PrivateGroup findPrivateGroupByFromPartyIdAndConnectionTypeAndId(Long fromPartyId, ConnectionType connectionType, Long id);
   
   @Modifying
   @Query("delete from Connection c "
@@ -48,8 +49,31 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
   
   @Query("select p from "
+      + "Connection c inner join c.toParty p "
+      + "where c.fromPartyId=?1 and "
+      + "p.id=?2")
+  Person findPersonByFromPartyIdAndId(Long fromPartyId, Long id);
+  
+  
+  /**
+   * This function returns Private Group which connects group owner with group member
+   * @param fromPartyId: group owner id
+   * @param toPartyId: group member id
+   * @return
+   */
+  @Query("select p from "
       + "PrivateGroup p inner join p.fromParties f inner join p.toParties t "
       + "where f.fromPartyId=?1 and "
       + "t.toPartyId=?2")
-  PrivateGroup findPrivateGroupByGroupOwnerIdAndGroupMemberId(Long groupOwnerId, Long groupMemberId);
+  PrivateGroup findPrivateGroupByFromPartyIdAndToPartyId(Long fromPartyId, Long toPartyId);
+  
+  /**
+   * This function will delete all toParty connections (only connections and not parties)
+   * @param id: id of the party whose connections needs to be deleted
+   */
+  @Modifying
+  @Query("delete from Connection c "
+      + "where c.fromPartyId=?1")
+  void deleteAllToPartyConnectionById(Long id);
+  
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.bizbuzz.dto.PersonRegistrationDTO;
+import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.form.validator.Phone;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
@@ -57,7 +57,7 @@ public class RegistrationController {
   
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
-    PersonRegistrationDTO personRegistration = new PersonRegistrationDTO();
+    RegistrationPersonRegistrationFormDTO personRegistration = new RegistrationPersonRegistrationFormDTO();
     UserLogin userLogin = new UserLogin();
     personRegistration.setUserLogin(userLogin);
     Person person = new Person();
@@ -72,7 +72,7 @@ public class RegistrationController {
   }
   
   @RequestMapping(value="/register/personregistration", method = RequestMethod.POST)
-  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated PersonRegistrationDTO personRegistration, BindingResult bindingResult, Model model){
+  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated RegistrationPersonRegistrationFormDTO personRegistration, BindingResult bindingResult, Model model){
     if (bindingResult.hasErrors()) {
       logger.info("Form validation Error.");
       //model.addAttribute("personRoleList", partyManagementService.getListOfPersonRole());
@@ -80,10 +80,11 @@ public class RegistrationController {
       return "jsp/register/personregistration";
     }
     partyManagementService.savePhoneNumber(personRegistration.getPhoneNumber());
-    partyManagementService.saveUserLoginWithSecurityGroup(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
-    partyManagementService.savePersonWithUserName(personRegistration.getPerson(), personRegistration.getUserLogin());
+    partyManagementService.saveUserLogin(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
+    personRegistration.getPerson().setUserId(personRegistration.getUserLogin());
+    partyManagementService.savePerson(personRegistration.getPerson());
     partyManagementService.saveCompany(personRegistration.getCompany());
-    connectionService.createCompanyPersonConnection(personRegistration.getCompany(), personRegistration.getPerson());
+    connectionService.createConnection(personRegistration.getCompany(), personRegistration.getPerson(), ConnectionType.COMPANY_PERSON);
     
     return "jsp/register/registrationsuccess";
   }

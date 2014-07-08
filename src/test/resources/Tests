@@ -1,0 +1,73 @@
+change /resource/config/db.properties hibernate.hbm2ddl.auto=create
+Run /test/resources/sql/prerequisite.sql
+
+************************Testing Registration***********************
+/register/personregistration
+Username:9099043910
+Password:9099043910
+Role: Seller
+****
+login with 9099043910
+/buyer/
+Expected:Access denied
+****
+/seller/viewgroup
+Expected:Page Opens
+Logout button
+Expected:Logout and  view login form
+****
+/register/personregistration
+Username:9099043930
+Password:9099043930
+Role: Buyer
+****
+login with 9099043930
+/seller/viewgroup
+Expected:access denied
+/buyer/**
+*****
+
+************************Testing Group********************************
+login with 9099043910
+/seller/viewgroup
+create group wholesaler
+test wrong groupname view: /seller/viewgroup/asddfsfd
+test change name: wholesalerchange
+test change name: wholesaler
+test delete group: wholesaler
+recreate group: wholesaler
+create group: retailer
+
+**register a few buyers
+/register/personregistration
+Username:9099043930
+Password:9099043930
+Role: Buyer
+****
+/seller/viewconnection
+connect retailer 9099043931
+delete connection srishti
+connect retailer 9099043931
+connect retailer 9099043932
+connect retailer 9099043933
+
+***
+/seller/viewgroup
+click retailer
+delete group --- check if all the group-groupmember connections are deleted
+
+***
+/seller/viewgroup
+make group retailer
+/seller/viewconnection
+connect retailer 9099043931
+connect retailer 9099043932
+connect retailer 9099043933
+/seller/viewconnection/{click on one link}
+Change group from retailer to wholesaler
+visit wholesaler link
+visit back the person link
+***
+
+
+																																																																																																																																																																																																																																																																																																																																																													

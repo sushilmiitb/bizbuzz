@@ -45,8 +45,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     connectionRepository.save(connection);
     fromParty.addToParty(connection);
     toParty.addFromParty(connection);
-    partyRepository.save(fromParty);
-    partyRepository.save(toParty);
+    //partyRepository.save(fromParty);
+    //partyRepository.save(toParty);
   }
   
   public void deleteConnection(Party fromParty, Party toParty){
@@ -59,35 +59,14 @@ public class ConnectionServiceImpl implements ConnectionService {
     }
     fromParty.deleteToParty(toParty.getId());
     toParty.deleteFromParty(fromParty.getId());
-    connectionRepository.delete(connection);
+    connectionRepository.deleteById(fromParty.getId(), toParty.getId());;
   }
   
-  public void createCompanyPersonConnection(Company company, Person person){
-    Connection connection = new Connection(company, person, ConnectionType.COMPANY_PERSON);
-    connectionRepository.save(connection);
-    company.addToParty(connection);
-    person.addFromParty(connection);
-    personRepository.save(person);
-    companyRepository.save(company);
+  public void deletePrivateGroupGroupMembersConnection(PrivateGroup privateGroup){
+    connectionRepository.deleteAllToPartyConnectionById(privateGroup.getId());
   }
   
-  public void createPersonOwnerPrivateGroupConnection(Person person, PrivateGroup privateGroup){
-    Connection connection = new Connection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
-    connectionRepository.save(connection);
-    person.addToParty(connection);
-    privateGroup.addFromParty(connection);
-    personRepository.save(person);
-    privateGroupRepository.save(privateGroup);
-  }
-  
-  public void deletePersonOwnerPrivateGroupConnection(Person person, PrivateGroup privateGroup){
-    Connection connection = privateGroup.getFromParties().get(0);
-    privateGroup.deleteFromParty(person.getId());
-    person.deleteToParty(privateGroup.getId());
-    connectionRepository.delete(connection);
-  }
-  
-  public List<PrivateGroup> getListOfPrivateGroupsFromPerson(Person person){
+  public List<PrivateGroup> getPrivateGroupByGroupOnwer(Person person){
     List <Connection> connections = connectionRepository.findByFromPartyIdAndConnectionType(person.getId(), ConnectionType.GROUPOWNER_GROUP);
     List<PrivateGroup> privateGroups = new ArrayList<PrivateGroup>(connections.size());
     for(int i=0; i<connections.size();i++){
@@ -96,8 +75,8 @@ public class ConnectionServiceImpl implements ConnectionService {
     return privateGroups;
   }
   
-  public PrivateGroup getPrivateGroupFromPerson(Person person, String privateGroupName){
-    return connectionRepository.findByFromPartyIdAndConnectionTypeAndPrivateGroupName(person.getId(), ConnectionType.GROUPOWNER_GROUP, privateGroupName);
+  public PrivateGroup getPrivateGroupByPersonAndPrivateGroupId(Person person, Long privateGroupId){
+    return connectionRepository.findPrivateGroupByFromPartyIdAndConnectionTypeAndId(person.getId(), ConnectionType.GROUPOWNER_GROUP, privateGroupId);
   }
 
   public List<Person> getAllSellerConnections(Person seller){
@@ -105,6 +84,18 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
   
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMember(Party groupOwner, Party groupMember){
-    return connectionRepository.findPrivateGroupByGroupOwnerIdAndGroupMemberId(groupOwner.getId(), groupMember.getId());
+    return connectionRepository.findPrivateGroupByFromPartyIdAndToPartyId(groupOwner.getId(), groupMember.getId());
+  }
+  
+  public List<Person> getGroupMembersByPrivateGroup(PrivateGroup privateGroup){
+    return connectionRepository.findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(privateGroup.getId(), ConnectionType.GROUP_MEMBERS);
+  }
+  
+  public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId){
+    return connectionRepository.findPersonByFromPartyIdAndId(seller.getId(), buyerId);
+  }
+  
+  public void flush(){
+    connectionRepository.flush();
   }
 }

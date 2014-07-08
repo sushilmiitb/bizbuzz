@@ -11,7 +11,7 @@
 			$(document).ready(function() {
 			  $('#seller_viewgroup_form').submit(function(event) {
 			  	var json = { "privateGroupName" : $('#seller_viewgroup_groupname').val(),
-			  				 "errors" : []	
+			  				 "errors" : {}	
 			  				};
 			    console.log("test", JSON.stringify(json));
 			    $.ajax({
@@ -25,13 +25,13 @@
 			        },
 			        success: function(data) {
 			        	var respContent = "";
-			            if(data.errors.length){
+			            /*if(data.errors.length){
 			            	for(var i=0; i<data.errors.length;i++){
 			            		respContent += "<span class='error'>" + data.errors[i] +"</span>";
 			            		$(respContent).insertBefore($(".group").first());
 			            	}
 			            	return;
-			            }
+			            }*/
 			            respContent += "<span class='group'>" + data.privateGroupName +"</span>";
 			            $(respContent).insertBefore($(".group").first());  
 			        }
@@ -57,7 +57,7 @@
 		<div class="ui-corner-all custom-corners">
 			<div class="ui-body ui-body-a">
 				<c:forEach items="${privateGroups}" var="item" >
-					<span class="group"><a href="${base_group_url}${item.privateGroupName}">${item.privateGroupName}</a></span>
+					<span class="group"><a href="${base_group_url}${item.id}">${item.privateGroupName}</a></span>
 				</c:forEach>
 			</div>
 		</div>

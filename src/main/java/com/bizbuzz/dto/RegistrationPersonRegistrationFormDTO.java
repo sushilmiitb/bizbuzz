@@ -5,7 +5,7 @@ import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.UserLogin;
 
-public class PersonRegistrationDTO {
+public class RegistrationPersonRegistrationFormDTO {
   private Company company;
   private Person person;
   private UserLogin userLogin;
