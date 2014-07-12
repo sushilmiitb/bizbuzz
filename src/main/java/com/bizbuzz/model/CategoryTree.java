@@ -1,18 +1,19 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name="category_tree")
@@ -25,11 +26,14 @@ public class CategoryTree implements Serializable{
   
   private String categoryName;
   
+  private Boolean isLeaf;
+  
   @ManyToOne
   @JoinColumn(name="parent_category")
   private CategoryTree parentCategory;
   
-  @OneToMany(mappedBy="parentCategory")
+  @OneToMany(mappedBy="parentCategory", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<CategoryTree> childrenCategory;
 
   @OneToMany(mappedBy="categoryRoot")
@@ -38,16 +42,21 @@ public class CategoryTree implements Serializable{
   @OneToMany(mappedBy="itemCategory")
   private List<Item> itemList;
   
-  @ManyToMany
-  @JoinTable(
-      name="category_property_metadata",
-      joinColumns={@JoinColumn(name="category_id", referencedColumnName="id")},
-      inverseJoinColumns={@JoinColumn(name="metadata_id", referencedColumnName="id")})
+  @OneToMany(mappedBy="category")
   private List<PropertyMetadata> properties;
   
   /**
    * Getters and Setters
    */
+
+  public Boolean getIsLeaf() {
+    return isLeaf;
+  }
+
+  public void setIsLeaf(Boolean isLeaf) {
+    this.isLeaf = isLeaf;
+  }
+  
   public String getCategoryName() {
     return categoryName;
   }
@@ -95,5 +104,9 @@ public class CategoryTree implements Serializable{
   public void setProperties(List<PropertyMetadata> properties) {
     this.properties = properties;
   }
-  
+
+  public Long getId() {
+    return id;
+  }
+
 }

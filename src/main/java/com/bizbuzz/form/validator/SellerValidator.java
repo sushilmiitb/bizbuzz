@@ -33,7 +33,7 @@ public class SellerValidator {
     Map<String, String> errors = new HashMap<String, String>();
     //Checking duplication of groupname
     String groupName = privateGroup.getPrivateGroupName().toLowerCase();
-    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupByGroupOnwer(person);
+    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupsByGroupOnwer(person);
     for(int i=0;i<privateGroupList.size();i++){
       if(groupName.equals(privateGroupList.get(i).getPrivateGroupName().toLowerCase())){
         //errors.add(validateprivategroupsaveDuplicatename);

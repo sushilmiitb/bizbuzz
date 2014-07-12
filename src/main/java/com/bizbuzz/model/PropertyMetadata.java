@@ -7,7 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -22,16 +21,17 @@ public class PropertyMetadata implements Serializable{
   private String propertyName;
   private String possibleUnits;//in form of comma separated words
   private String possibleValues;//in form of comma separated words
+  private String groupingName1;//1 is the lowest order grouping
+  private String groupingName2;
+  private String groupingName3;
   
   @ManyToOne
-  @JoinColumn(name="parent_id")
-  private PropertyMetaDataGrouping parentGrouping;
+  @JoinColumn(name="property_metadata_category_id")
+  private CategoryTree category;
 
   @OneToMany(mappedBy="propertyMetadata")
   private List<ItemPropertyValue> items;
   
-  @ManyToMany(mappedBy="properties")
-  private List<CategoryTree> categories;
 
   /**
    * Setters and Getters
@@ -64,14 +64,6 @@ public class PropertyMetadata implements Serializable{
     this.possibleValues = possibleValues;
   }
 
-  public PropertyMetaDataGrouping getParentGrouping() {
-    return parentGrouping;
-  }
-
-  public void setParentGrouping(PropertyMetaDataGrouping parentGrouping) {
-    this.parentGrouping = parentGrouping;
-  }
-
   public List<ItemPropertyValue> getItems() {
     return items;
   }
@@ -80,12 +72,36 @@ public class PropertyMetadata implements Serializable{
     this.items = items;
   }
 
-  public List<CategoryTree> getCategories() {
-    return categories;
+  public String getGroupingName1() {
+    return groupingName1;
   }
 
-  public void setCategories(List<CategoryTree> categories) {
-    this.categories = categories;
+  public void setGroupingName1(String groupingName1) {
+    this.groupingName1 = groupingName1;
+  }
+
+  public String getGroupingName2() {
+    return groupingName2;
+  }
+
+  public void setGroupingName2(String groupingName2) {
+    this.groupingName2 = groupingName2;
+  }
+
+  public String getGroupingName3() {
+    return groupingName3;
+  }
+
+  public void setGroupingName3(String groupingName3) {
+    this.groupingName3 = groupingName3;
+  }
+
+  public CategoryTree getCategory() {
+    return category;
+  }
+
+  public void setCategory(CategoryTree category) {
+    this.category = category;
   }
   
 }

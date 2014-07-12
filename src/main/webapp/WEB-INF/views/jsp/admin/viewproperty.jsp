@@ -1,16 +1,12 @@
+<%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
+<%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
 
+<tiles:insertDefinition name="admin">
+	<tiles:putAttribute name="title">
+		BizBuzz-Category
+	</tiles:putAttribute>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Bizbuzz-Register</title>
-	<link rel="stylesheet" href="../../../../static/css/mobile/jquery.mobile-1.4.2.min.css" />
-	<link rel="stylesheet" href="../../../../static/css/mobile/main.css" />
-	<script src="../../../../static/js/jquery/jquery-1.11.1.min.js"></script>
-	<script src="../../../../static/js/mobile/jquery.mobile-1.4.2.min.js"></script>
-	<script src="../../../../static/js/jquery/jquery.validate.min.js"></script>
+	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		$(document).ready(function() {
 			$('#admin_viewproperty_form').submit(function(event) {
@@ -41,7 +37,7 @@
 					propertyJsonObj.push(item);
 				}
 				var json = new Object();
-				json["categoryId"]="asdf";
+				json["categoryId"]="${categoryId}";
 				json["updatePropertyMetadata"] = propertyJsonObj;
 				json["newPropertyMetadata"] = newPropertyJsonObj;
 				
@@ -73,37 +69,39 @@
 		
 			$('#admin_viewproperty_addpropertybtn').click(function(event) {
 				var html='<tr class="newInputRow">'+
-					'<td><input'+ 
-					'type="text" class="propertyInputPropertyName"  />'+
-					'</td>'+
-					'<td><input'+
-					'type="text" class="propertyInputPossibleUnits" />'+
-					'</td>'+
-					'<td><input'+ 
-					'type="text" class="propertyInputPossibleValues" />'+
-					'</td>'+
-					'<td><input'+ 
-					'type="text" class="propertyInputGroupingname1" />'+
-					'</td>'+
-					'<td><input'+ 
-					'type="text" class="propertyInputGroupingname2" />'+
-					'</td>'+
-					'<td><input'+ 
-					'type="text" class="propertyInputGroupingname3" />'+
-					'</td>'+
-					'</tr>';
-					$('.addButtonRow').after(html);
+					'<td><input '+ 
+					'type="text" class="propertyInputPropertyName"  /> '+
+					'</td> '+
+					'<td><input '+
+					'type="text" class="propertyInputPossibleUnits" /> '+
+					'</td> '+
+					'<td><input '+ 
+					'type="text" class="propertyInputPossibleValues" /> '+
+					'</td> '+
+					'<td><input '+ 
+					'type="text" class="propertyInputGroupingname1" /> '+
+					'</td> '+
+					'<td><input '+ 
+					'type="text" class="propertyInputGroupingname2" /> '+
+					'</td> '+
+					'<td><input '+ 
+					'type="text" class="propertyInputGroupingname3" /> '+
+					'</td> '+
+					'</tr> ';
+					$('.headerRow').after(html);
 			});
 		
 		});
 		</script>
-</head>
+	</tiles:putAttribute>
 
-<body>
+	<tiles:putAttribute name="body">
+		<c:url var="base_url" value="/admin/property/save" />
+		<button id="admin_viewproperty_addpropertybtn">Add Property</button>
 		<form id="admin_viewproperty_form" action="${base_url}">
 			<table>
 
-				<tr>
+				<tr class="headerRow">
 					<th>Property Name</th>
 					<th>Unit</th>
 					<th>Possible Values</th>
@@ -111,13 +109,7 @@
 					<th>Property Group2</th>
 					<th>Property Group3</th>
 				</tr>
-				<tr class="addButtonRow">
-					<td>
-						<button id="admin_viewproperty_addpropertybtn">Add
-							Property</button>
-					</td>
-				</tr>
-
+				<c:forEach items="${propertyMetadatas}" var="item" >
 					<tr id="admin_viewproperty_row_${item.id}" class="propertyInputRow">
 						<td><input id="admin_viewproperty_propertyname_${item.id}"
 							type="text" class="propertyInputPropertyName"
@@ -138,7 +130,11 @@
 							type="text" class="propertyInputGroupingname3"
 							value="${item.groupingName3 }" /></td>
 					</tr>
+				</c:forEach>
+				<tr>
+					<td><input type="submit" id="admin_viewproperty_submit_${item.id}" value="Save"/></td>
+				</tr>
 			</table>
-		</form>				
-</body>
-</html>
+		</form>
+	</tiles:putAttribute>
+</tiles:insertDefinition>

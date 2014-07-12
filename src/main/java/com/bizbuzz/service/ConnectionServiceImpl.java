@@ -66,7 +66,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     connectionRepository.deleteAllToPartyConnectionById(privateGroup.getId());
   }
   
-  public List<PrivateGroup> getPrivateGroupByGroupOnwer(Person person){
+  public List<PrivateGroup> getPrivateGroupsByGroupOnwer(Person person){
     List <Connection> connections = connectionRepository.findByFromPartyIdAndConnectionType(person.getId(), ConnectionType.GROUPOWNER_GROUP);
     List<PrivateGroup> privateGroups = new ArrayList<PrivateGroup>(connections.size());
     for(int i=0; i<connections.size();i++){
@@ -79,7 +79,7 @@ public class ConnectionServiceImpl implements ConnectionService {
     return connectionRepository.findPrivateGroupByFromPartyIdAndConnectionTypeAndId(person.getId(), ConnectionType.GROUPOWNER_GROUP, privateGroupId);
   }
 
-  public List<Person> getAllSellerConnections(Person seller){
+  public List<Person> getAllSellersConnections(Person seller){
     return connectionRepository.findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(seller.getId(), ConnectionType.SELLER_BUYER);
   }
   

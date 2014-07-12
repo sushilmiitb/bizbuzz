@@ -50,7 +50,7 @@ public class SellerController {
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
     Person person = getSeller();
-    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupByGroupOnwer(person);
+    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupsByGroupOnwer(person);
     m.addAttribute("privateGroups", privateGroupList);
     PrivateGroup privateGroup = new PrivateGroup();
     m.addAttribute("privateGroupForm", privateGroup);
@@ -118,9 +118,9 @@ public class SellerController {
   @RequestMapping(value="/seller/viewconnection", method = RequestMethod.GET)
   public String getConnections(Model m){
     Person seller = getSeller();
-    List<Person> allConnections = connectionService.getAllSellerConnections(seller);
+    List<Person> allConnections = connectionService.getAllSellersConnections(seller);
     m.addAttribute("connectionList", allConnections);
-    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupByGroupOnwer(seller);
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     m.addAttribute("privateGroupList", privateGroups);
     return "jsp/seller/viewconnection";
   }
@@ -135,7 +135,7 @@ public class SellerController {
     PrivateGroup privateGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(seller, buyer);
     m.addAttribute("buyer", buyer);
     m.addAttribute("privateGroup", privateGroup);
-    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupByGroupOnwer(seller);
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     m.addAttribute("privateGroupList", privateGroups);
     return "jsp/seller/viewsingleconnection";
   }
