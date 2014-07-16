@@ -1,12 +1,15 @@
 package com.bizbuzz.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.repository.CategoryTreeRepository;
 import com.bizbuzz.repository.PropertyMetadataRepository;
@@ -59,26 +62,165 @@ public class CategoryServiceImpl implements CategoryService{
     categoryTreeRepository.delete(categoryId);
   }
   
-  public List<PropertyMetadata> getPropertyMetadatas(Long categoryId){
-    List<PropertyMetadata> propertyMetadatas = new ArrayList<PropertyMetadata>();
-    if(categoryId == null){
+//  public List<PropertyMetadata> getPropertyMetadatas(Long categoryId){
+//    List<PropertyMetadata> propertyMetadatas = new ArrayList<PropertyMetadata>();
+//    if(categoryId == null){
+//      return null;
+//    }
+//    propertyMetadatas = propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
+//    return propertyMetadatas;
+//  }
+//  
+//  public void savePropertyMetadatas(List<PropertyMetadata> propertyMetadatas, CategoryTree category){
+//    for(int i=0; i<propertyMetadatas.size(); i++){
+//      propertyMetadatas.get(i).setCategory(category);
+//      propertyMetadataRepository.save(propertyMetadatas.get(i));
+//    }
+//  }
+//  
+//  public void updatePropertyMetadatas(List<PropertyMetadata> propertyMetadatas){
+//    for(int i=0; i<propertyMetadatas.size(); i++){
+//      propertyMetadataRepository.save(propertyMetadatas.get(i));
+//    }
+//  }
+//  
+  public List<CategoryTree> getCategories(Person seller, Integer depth, Long categoryId){
+    CategoryTree rootCategory = seller.getCategoryRoot();
+    if (rootCategory==null){
       return null;
     }
-    propertyMetadatas = propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
-    return propertyMetadatas;
-  }
-  
-  public void savePropertyMetadatas(List<PropertyMetadata> propertyMetadatas, CategoryTree category){
-    for(int i=0; i<propertyMetadatas.size(); i++){
-      propertyMetadatas.get(i).setCategory(category);
-      propertyMetadataRepository.save(propertyMetadatas.get(i));
+    switch (depth){
+    case 1:
+      return categoryTreeRepository.findCategoryDepthOne(rootCategory.getId(), categoryId);
+    case 2:
+      return categoryTreeRepository.findCategoryDepthTwo(rootCategory.getId(), categoryId);
+    case 3:
+      return categoryTreeRepository.findCategoryDepthThree(rootCategory.getId(), categoryId);
+    default:
+      return null;
     }
   }
+//  
+//  public List<PropertyMetadata> getPropertyMetadatas(Person seller, Integer depth, Long categoryId){
+//    CategoryTree rootCategory = seller.getCategoryRoot();
+//    if(rootCategory==null){
+//      return null;
+//    }
+//    switch(depth){
+//    case 1:
+//      return propertyMetadataRepository.findCategoryDepthOne(rootCategory.getId(), categoryId);
+//    case 2:
+//      return propertyMetadataRepository.findCategoryDepthTwo(rootCategory.getId(), categoryId);
+//    case 3:
+//      return propertyMetadataRepository.findCategoryDepthThree(rootCategory.getId(), categoryId);
+//    default:
+//      return null;
+//    }
+//  }
+
+//  /**
+//   * This functin returns properties in form of map. Here we are assuming two level grouping of PropertyMetadata
+//   * @param properties
+//   * @return
+//   */
+//  public Map<String, Map<String, PropertyMetadata> > getPropertyMap(List<PropertyMetadata> properties){
+//    String lastCategoryGrouping = "";
+//    Map<String, Map<String,PropertyMetadata> > map = new HashMap<String, Map<String, PropertyMetadata>>();
+//    Map<String, PropertyMetadata> tempMap = null;
+//    for(int i=0;i<properties.size();i++){
+//      if(i>0 && properties.get(i).getGroupingName2().equals(lastCategoryGrouping)){
+//      }
+//      else{
+//        if(i>0){
+//          map.put(properties.get(i).getGroupingName2(), tempMap);
+//        }
+//        lastCategoryGrouping = properties.get(i).getGroupingName2();
+//        tempMap = new HashMap<String, PropertyMetadata>();
+//      }
+//      tempMap.put(properties.get(i).getGroupingName1(), properties.get(i));
+//      if(i==properties.size()-1){
+//        map.put(properties.get(i).getGroupingName2(), tempMap);
+//      }
+//    }
+//    return map;
+//  }
   
-  public void updatePropertyMetadatas(List<PropertyMetadata> propertyMetadatas){
-    for(int i=0; i<propertyMetadatas.size(); i++){
-      propertyMetadataRepository.save(propertyMetadatas.get(i));
-    }
+//  
+//  public List<List<PropertyMetadata>> organizeMetadataList(List<PropertyMetadata> properties){
+//    String lastCategoryGrouping = "";
+//    List<List<PropertyMetadata>> masterList = new ArrayList<List<PropertyMetadata>>();
+//    List<PropertyMetadata> tempList = null;
+//    //Map<String, Map<String,PropertyMetadata> > map = new HashMap<String, Map<String, PropertyMetadata>>();
+//    //Map<String, PropertyMetadata> tempMap = null;
+//    for(int i=0;i<properties.size();i++){
+//      if(i>0 && properties.get(i).getGroupingName2().equals(lastCategoryGrouping)){
+//      }
+//      else{
+//        if(i>0){
+//          masterList.add(tempList);
+//          //map.put(properties.get(i).getGroupingName2(), tempMap);
+//        }
+//        lastCategoryGrouping = properties.get(i).getGroupingName2();
+//        tempList = new ArrayList<PropertyMetadata>();
+//        //tempMap = new HashMap<String, PropertyMetadata>();
+//      }
+//      tempList.add(properties.get(i));
+//      //tempMap.put(properties.get(i).getGroupingName1(), properties.get(i));
+//      if(i==properties.size()-1){
+//        masterList.add(tempList);
+//        //map.put(properties.get(i).getGroupingName2(), tempMap);
+//      }
+//    }
+//    return masterList;
+//  }
+  
+//  public Map<String, Map<String, Map<String, PropertyMetadata>>> organizeMetadata(List<PropertyMetadata> properties){
+//    Map<String, Map<String, Map<String, PropertyMetadata>>> masterMap = new HashMap<String, Map<String, Map<String, PropertyMetadata>>>();
+//    String lastGroupingCode2="";
+//    String lastGroupingCode1="";
+//    Map<String, Map<String,PropertyMetadata>> highlevelMap = new HashMap<String, Map<String, PropertyMetadata>>();
+//    Map<String, PropertyMetadata> lowlevelMap = new HashMap<String, PropertyMetadata>();
+//    for(int i=0;i<properties.size();i++){
+//      String currentGroupingCode2 = properties.get(i).getGroupingCode2();
+//      String currentGroupingCode1 = properties.get(i).getGroupingCode1();
+//      if(currentGroupingCode1!=lastGroupingCode1 && i>0){
+//        highlevelMap.put(currentGroupingCode1, lowlevelMap);
+//        lastGroupingCode1 = currentGroupingCode1;
+//        lowlevelMap = new HashMap<String, PropertyMetadata>();
+//      }
+//      
+//      if(currentGroupingCode2!=lastGroupingCode2 && i>0){
+//        masterMap.put(lastGroupingCode2, highlevelMap);
+//        lastGroupingCode2 = currentGroupingCode2;
+//        highlevelMap = new HashMap<String, Map<String, PropertyMetadata>>();
+//      }
+//      lowlevelMap.put(properties.get(i).getPropertyCode(), properties.get(i));
+//      
+//      if(i==properties.size()-1){
+//        highlevelMap.put(currentGroupingCode1, lowlevelMap);
+//        masterMap.put(currentGroupingCode2, highlevelMap);
+//      }
+//    }
+//    return masterMap;
+//  }
+  
+  public PropertyMetadata getPropertyMetadata(Long categoryId){
+    return propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
   }
   
+  public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId){
+    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
+    propertyMetadata = propertyMetadataRepository.save(propertyMetadata);
+    categoryTree.setPropertyMetadata(propertyMetadata);
+    categoryTreeRepository.save(categoryTree);
+    return propertyMetadata;
+  }
+  
+  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId){
+    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
+    PropertyMetadata propertyMetadata = propertyMetadataRepository.findOne(propertyMetadataId);
+    categoryTree.setPropertyMetadata(propertyMetadata);
+    categoryTreeRepository.save(categoryTree);
+    return propertyMetadata;
+  }
 }

@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Item implements Serializable{
@@ -26,14 +27,20 @@ public class Item implements Serializable{
   @JoinColumn(name="category_id")
   private CategoryTree itemCategory;
 
-  @OneToMany(mappedBy="item")
-  private List<ItemPropertyValue> properties;
-  
+//  @OneToMany(mappedBy="item")
+//  private List<ItemPropertyValue> properties;
+//  @ManyToOne
+//  private PropertyMetadata propertyMetadata;
+//  
   @ManyToMany(mappedBy="items")
   private List<Party> parties;
   
   @OneToMany(mappedBy="item")
   private List<Chat> chats;
+  
+  @OneToOne
+  @JoinColumn(name="property_value_id", referencedColumnName="id")
+  private PropertyValue propertyValue;
   
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
@@ -41,18 +48,18 @@ public class Item implements Serializable{
    * @param unit
    * @param value
    */
-  public void addProperty(PropertyMetadata propertyMetadata, String unit, String value){
-    ItemPropertyValue itemPropertyValue = new ItemPropertyValue();
-    itemPropertyValue.setPropertyMetadata(propertyMetadata);
-    itemPropertyValue.setPropertyMetadataId(propertyMetadata.getId());
-    itemPropertyValue.setItem(this);
-    itemPropertyValue.setItemId(this.getId());
-    itemPropertyValue.setUnit(unit);
-    itemPropertyValue.setValue(value);
-    
-    this.properties.add(itemPropertyValue);
-    propertyMetadata.getItems().add(itemPropertyValue);
-  }
+//  public void addProperty(PropertyMetadata propertyMetadata, String unit, String value){
+//    ItemPropertyValue itemPropertyValue = new ItemPropertyValue();
+//    itemPropertyValue.setPropertyMetadata(propertyMetadata);
+//    itemPropertyValue.setPropertyMetadataId(propertyMetadata.getId());
+//    itemPropertyValue.setItem(this);
+//    itemPropertyValue.setItemId(this.getId());
+//    itemPropertyValue.setUnit(unit);
+//    itemPropertyValue.setValue(value);
+//    
+//    this.properties.add(itemPropertyValue);
+//    propertyMetadata.getItems().add(itemPropertyValue);
+//  }
   
   /**
    * getters and setters
@@ -86,14 +93,6 @@ public class Item implements Serializable{
     this.itemCategory = itemCategory;
   }
 
-  public List<ItemPropertyValue> getProperties() {
-    return properties;
-  }
-
-  public void setProperties(List<ItemPropertyValue> properties) {
-    this.properties = properties;
-  }
-
   public List<Party> getParties() {
     return parties;
   }
@@ -109,5 +108,15 @@ public class Item implements Serializable{
   public void setChats(List<Chat> chats) {
     this.chats = chats;
   }
+
+  public PropertyValue getPropertyValue() {
+    return propertyValue;
+  }
+
+  public void setPropertyValue(PropertyValue propertyValue) {
+    this.propertyValue = propertyValue;
+  }
+  
+  
   
 }

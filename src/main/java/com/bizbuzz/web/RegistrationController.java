@@ -22,14 +22,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.form.validator.Phone;
+import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PartyManagementServiceImpl;
+import com.bizbuzz.utils.HelperFunctions;
 
 @Controller
 public class RegistrationController {
@@ -40,6 +43,9 @@ public class RegistrationController {
   
   @Autowired
   ConnectionService connectionService;
+  
+  @Autowired
+  CategoryService categoryService;
   
   @Autowired
   @Qualifier("personRegistrationFormValidator")
@@ -82,7 +88,13 @@ public class RegistrationController {
     partyManagementService.savePhoneNumber(personRegistration.getPhoneNumber());
     partyManagementService.saveUserLogin(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
     personRegistration.getPerson().setUserId(personRegistration.getUserLogin());
+    Person person = personRegistration.getPerson();
+    
+    Long categoryId = Long.parseLong(HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), "sarees").get(0));
+    CategoryTree categoryRoot = categoryService.getCategory(categoryId);
+    person.setCategoryRoot(categoryRoot);
     partyManagementService.savePerson(personRegistration.getPerson());
+    
     partyManagementService.saveCompany(personRegistration.getCompany());
     connectionService.createConnection(personRegistration.getCompany(), personRegistration.getPerson(), ConnectionType.COMPANY_PERSON);
     

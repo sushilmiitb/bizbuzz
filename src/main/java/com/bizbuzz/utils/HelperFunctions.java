@@ -3,16 +3,20 @@ package com.bizbuzz.utils;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.springframework.ui.Model;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import com.bizbuzz.model.PropertyMetadata;
 
 public class HelperFunctions {
   /**
@@ -48,4 +52,17 @@ public class HelperFunctions {
     }
     return list;
   }
+
+//  public void fillModelWithParameterMetadata(Model m, Map<String, Map<String, Map<String, PropertyMetadata>>> propertyMap){
+//    m.addAttribute("primaryImagePrimary", propertyMap.get("primary").get("image").get("primary"));
+//    //adding Normal image attributes
+//    List<PropertyMetadata> normalImages = (List<PropertyMetadata>)propertyMap.get("primary").get("image").values();
+//    for(int i=0;i<normalImages.size();i++){
+//      if(normalImages.get(i).getPropertyCode().equals("primary")){
+//        normalImages.remove(i);
+//        break;
+//      }
+//    }
+//    
+//  }
 }

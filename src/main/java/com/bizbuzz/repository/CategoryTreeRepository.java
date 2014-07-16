@@ -18,4 +18,23 @@ public interface CategoryTreeRepository extends JpaRepository<CategoryTree, Long
       + "where p.id=?1 "
       + "order by c.categoryName asc")
   List<CategoryTree> findByParentCategory(Long id);
+  
+  @Query("select ch "
+      + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch "
+      + "where p.id=?1 "
+      + "and c.id=?2 ")
+  List<CategoryTree> findCategoryDepthOne(Long rootId, Long categoryId);
+  
+  @Query("select ch2 "
+      + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch1 inner join ch1.childrenCategory ch2 "
+      + "where p.id=?1 "
+      + "and c.id=?2 ")
+  List<CategoryTree> findCategoryDepthTwo(Long rootId, Long categoryId);
+  
+  @Query("select ch3 "
+      + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch1 inner join ch1.childrenCategory ch2 inner join ch2.childrenCategory ch3 "
+      + "where p.id=?1 "
+      + "and c.id=?2 ")
+  List<CategoryTree> findCategoryDepthThree(Long rootId, Long categoryId);
+  
 }

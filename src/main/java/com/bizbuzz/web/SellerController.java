@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
@@ -25,9 +26,12 @@ import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
 import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
 import com.bizbuzz.form.validator.SellerValidator;
+import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.PropertyMetadata;
+import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 
@@ -46,6 +50,9 @@ public class SellerController {
   
   @Autowired
   MessageSource messageSource;
+  
+  @Autowired
+  CategoryService categoryService;
 
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
@@ -225,10 +232,30 @@ public class SellerController {
     return ajaxReply;
   }
   
+//  @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.GET)
+//  public String viewCategoryForUpload(Model m, @PathVariable Long categoryId, @RequestParam("depth") Integer depth, @RequestParam("leaf") Boolean isLeaf, @RequestParam("parentCategoryName") String parentCategoryName){
+//    Person seller = getSeller();
+//    if(isLeaf){
+//      List<PropertyMetadata> properties = categoryService.getPropertyMetadatas(seller, depth, categoryId);
+//      Map<String, Map<String, Map<String, PropertyMetadata>>> propertyMap = categoryService.organizeMetadata(properties);
+//      m.addAttribute("propertyMap", propertyMap);
+//      m.addAttribute("parentCategoryName", parentCategoryName);
+//      return "jsp/seller/viewuploadproduct";
+//    }
+//    else{
+//      List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
+//      m.addAttribute("categoryList", categories);
+//      m.addAttribute("parentCategoryName", parentCategoryName);
+//      m.addAttribute("depth", depth+1);
+//      return "jsp/seller/viewuploadcategory";
+//    }
+//  }
+  
   public Person getSeller(){
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     String username = user.getUsername();
     return partyManagementService.getPersonFromUsername(username);
   }
+  
 }
   

@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -42,8 +43,15 @@ public class CategoryTree implements Serializable{
   @OneToMany(mappedBy="itemCategory")
   private List<Item> itemList;
   
-  @OneToMany(mappedBy="category")
-  private List<PropertyMetadata> properties;
+//  @ManyToMany
+//  @JoinTable(name="category_property_metadata",
+//      joinColumns={@JoinColumn(name="category_id")},
+//      inverseJoinColumns={@JoinColumn(name="property_metadata_id")})
+//  private List<PropertyMetadata> propertyMetadatas;
+  
+  @OneToOne
+  @JoinColumn(name="property_metadata_id", referencedColumnName="id")
+  PropertyMetadata propertyMetadata;
   
   /**
    * Getters and Setters
@@ -97,16 +105,18 @@ public class CategoryTree implements Serializable{
     this.itemList = itemList;
   }
 
-  public List<PropertyMetadata> getProperties() {
-    return properties;
+  public PropertyMetadata getPropertyMetadata() {
+    return propertyMetadata;
   }
 
-  public void setProperties(List<PropertyMetadata> properties) {
-    this.properties = properties;
+  public void setPropertyMetadata(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
   }
 
   public Long getId() {
     return id;
   }
+  
+  
 
 }

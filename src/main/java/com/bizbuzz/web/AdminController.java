@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.bizbuzz.dto.AdminAddCategoryRequestAjaxDTO;
@@ -82,24 +84,32 @@ public class AdminController {
     return response;
   }
   
-  @RequestMapping(value="/admin/viewproperty/{categoryId}", method = RequestMethod.GET)
+  @RequestMapping(value="/admin/viewproperty/category/{categoryId}", method = RequestMethod.GET)
   public String viewPropertyMetadata(@PathVariable Long categoryId, Model m){
-    List<PropertyMetadata> propertyMetadatas = categoryService.getPropertyMetadatas(categoryId);
+    //List<PropertyMetadata> propertyMetadatas = categoryService.getPropertyMetadatas(categoryId);
+    PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(categoryId);
+    if(propertyMetadata==null){
+      propertyMetadata = new PropertyMetadata();
+    }
     m.addAttribute("categoryId", categoryId);
-    m.addAttribute("propertyMetadatas", propertyMetadatas);
-    m.addAttribute("newPropertyMetadata", new PropertyMetadata());
+    m.addAttribute("propertyMetadata", propertyMetadata);
     return "jsp/admin/viewproperty";
   }
   
-  @RequestMapping(value="/admin/property/save", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-  @ResponseBody
-  public GeneralAjaxResponseDTO savePropertyMetadata(@RequestBody AdminSavePropertyMetaDataRequestAjaxDTO request){
-    CategoryTree category = categoryService.getCategory(request.getCategoryId());
-    categoryService.savePropertyMetadatas(request.getNewPropertyMetadata(), category);
-    categoryService.updatePropertyMetadatas(request.getUpdatePropertyMetadata());
-    GeneralAjaxResponseDTO response = new GeneralAjaxResponseDTO();
-    response.setMessage("success");
-    return response;
+  @RequestMapping(value="/admin/property/save/category/{categoryId}", method = RequestMethod.POST)
+  public String savePropertyMetadata(Model m, @PathVariable("categoryId")Long categoryId, @ModelAttribute("propertyMetadata") PropertyMetadata propertyMetadata, @RequestParam("propertyMetadataId") Long propertyMetadataId){
+    propertyMetadata.setId(propertyMetadataId);
+    categoryService.savePropertyMetadata(propertyMetadata, categoryId);
+    m.addAttribute("propertyMetadata", propertyMetadata);
+    m.addAttribute("categoryId", categoryId);
+    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
   }
-  
+//  
+//  @RequestMapping(value="/admin/property/link/category/${categoryId}", method = RequestMethod.POST)
+//  public String linkExistingPropertyMetadata(Model m, @PathVariable("categoryId")Long categoryId, @RequestParam("propertyMetadataId")Long propertyId){
+//    PropertyMetadata propertyMetadata =categoryService.saveExistingPropertyMetadata(propertyId, categoryId);
+//    m.addAttribute("propertyMetadata", propertyMetadata);
+//    m.addAttribute("categoryId", categoryId);
+//    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
+//  }
 }

@@ -7,6 +7,7 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
+	<!-- 
 		<script type="text/javascript">
 		$(document).ready(function() {
 			$('#admin_viewproperty_form').submit(function(event) {
@@ -93,48 +94,112 @@
 		
 		});
 		</script>
+		-->
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-		<c:url var="base_url" value="/admin/property/save" />
-		<button id="admin_viewproperty_addpropertybtn">Add Property</button>
-		<form id="admin_viewproperty_form" action="${base_url}">
-			<table>
+<%-- 		<c:url var="base_url" value="/admin/property/save" /> --%>
+<!-- 		<button id="admin_viewproperty_addpropertybtn">Add Property</button> -->
+<%-- 		<form id="admin_viewproperty_form" action="${base_url}"> --%>
+<!-- 			<table> -->
 
-				<tr class="headerRow">
-					<th>Property Name</th>
-					<th>Unit</th>
-					<th>Possible Values</th>
-					<th>Property Group1</th>
-					<th>Property Group2</th>
-					<th>Property Group3</th>
+<!-- 				<tr class="headerRow"> -->
+<!-- 					<th>Property Name</th> -->
+<!-- 					<th>Unit</th> -->
+<!-- 					<th>Possible Values</th> -->
+<!-- 					<th>Property Group1</th> -->
+<!-- 					<th>Property Group2</th> -->
+<!-- 					<th>Property Group3</th> -->
+<!-- 				</tr> -->
+<%-- 				<c:forEach items="${propertyMetadatas}" var="item" > --%>
+<%-- 					<tr id="admin_viewproperty_row_${item.id}" class="propertyInputRow"> --%>
+<%-- 						<td><input id="admin_viewproperty_propertyname_${item.id}" --%>
+<!-- 							type="text" class="propertyInputPropertyName" -->
+<%-- 							value="${item.propertyName }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_propertycode_${item.id}" --%>
+<!-- 							type="text" class="propertyInputPropertyCode" -->
+<%-- 							value="${item.propertyCode }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_possibleunits_${item.id}" --%>
+<!-- 							type="text" class="propertyInputPossibleUnits" -->
+<%-- 							value="${item.possibleUnits }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_possiblevalues_${item.id}" --%>
+<!-- 							type="text" class="propertyInputPossibleValues" -->
+<%-- 							value="${item.possibleValues }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_groupingname1_${item.id}" --%>
+<!-- 							type="text" class="propertyInputGroupingname1" -->
+<%-- 							value="${item.groupingName1 }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_groupingcode1_${item.id}" --%>
+<!-- 							type="text" class="propertyInputGroupingcode1" -->
+<%-- 							value="${item.groupingCode1 }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_groupingname2_${item.id}" --%>
+<!-- 							type="text" class="propertyInputGroupingname2" -->
+<%-- 							value="${item.groupingName2 }" /></td> --%>
+<%-- 						<td><input id="admin_viewproperty_groupingcode2_${item.id}" --%>
+<!-- 							type="text" class="propertyInputGroupingcode2" -->
+<%-- 							value="${item.groupingCode2 }" /></td> --%>
+<!-- 					</tr> -->
+<%-- 				</c:forEach> --%>
+<!-- 				<tr> -->
+<%-- 					<td><input type="submit" id="admin_viewproperty_submit_${item.id}" value="Save"/></td> --%>
+<!-- 				</tr> -->
+<!-- 			</table> -->
+<!-- 		</form> -->
+			
+			
+<%-- 			<c:url var="save_existing_property_url" value="/admin/property/link/category/${categoryId }" /> --%>
+<%-- 			<form action="${save_existing_property_url }" method="POST"> --%>
+<!-- 				<h4>Link Existing Property Metadata</h4> -->
+<!-- 				<h6>PropertyMetadata Id</h6> -->
+<!-- 				<input type="text" value="propertyMetadataId"/> -->
+<!-- 				<input type="submit" value="submit"/> -->
+<!-- 			</form> -->
+			
+			<c:url var="save_url" value="/admin/property/save/category/${categoryId }?propertyMetadataId=${propertyMetadata.id}" />
+			<form:form modelAttribute="propertyMetadata" action="${save_url }" method="POST">
+			<table>
+				
+				<tr style="visibility: hidden;">
+					<td><form:label path="id">id</form:label></td>
+					<td><form:input path="id" type="text" value="${propertyMetadata.id}"/></td>
 				</tr>
-				<c:forEach items="${propertyMetadatas}" var="item" >
-					<tr id="admin_viewproperty_row_${item.id}" class="propertyInputRow">
-						<td><input id="admin_viewproperty_propertyname_${item.id}"
-							type="text" class="propertyInputPropertyName"
-							value="${item.propertyName }" /></td>
-						<td><input id="admin_viewproperty_possibleunits_${item.id}"
-							type="text" class="propertyInputPossibleUnits"
-							value="${item.possibleUnits }" /></td>
-						<td><input id="admin_viewproperty_possiblevalues_${item.id}"
-							type="text" class="propertyInputPossibleValues"
-							value="${item.possibleValues }" /></td>
-						<td><input id="admin_viewproperty_groupingname1_${item.id}"
-							type="text" class="propertyInputGroupingname1"
-							value="${item.groupingName1 }" /></td>
-						<td><input id="admin_viewproperty_groupingname2_${item.id}"
-							type="text" class="propertyInputGroupingname2"
-							value="${item.groupingName2 }" /></td>
-						<td><input id="admin_viewproperty_groupingname3_${item.id}"
-							type="text" class="propertyInputGroupingname3"
-							value="${item.groupingName3 }" /></td>
-					</tr>
-				</c:forEach>
 				<tr>
-					<td><input type="submit" id="admin_viewproperty_submit_${item.id}" value="Save"/></td>
+					<td><form:label path="isImagePresent">isImagePresent</form:label></td>
+					<td><form:input path="isImagePresent" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="primaryImage">primaryImage</form:label></td>
+					<td><form:input path="primaryImage" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="image1">image1</form:label></td>
+					<td><form:input path="image1" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="image2">image2</form:label></td>
+					<td><form:input path="image2" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="image3">image3</form:label></td>
+					<td><form:input path="image3" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="group1">group1</form:label></td>
+					<td><form:input path="group1" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="group1Subgroup1">group1Subgroup1</form:label></td>
+					<td><form:input path="group1Subgroup1" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="group1Subgroup1Property1">group1Subgroup1Property1</form:label></td>
+					<td><form:input path="group1Subgroup1Property1" type="text"/></td>
+				</tr>
+				<tr>
+					<td><form:label path="group1Subgroup1Property2">group1Subgroup1Property2</form:label></td>
+					<td><form:input path="group1Subgroup1Property2" type="text"/></td>
 				</tr>
 			</table>
-		</form>
+			<input type="submit" value="submit" />
+			</form:form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

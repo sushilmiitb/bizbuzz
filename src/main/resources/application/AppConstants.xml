@@ -12,4 +12,61 @@
 	    <personrole>Promoter</personrole>
 	    <personrole>Employee</personrole>
 	</person>
+	<industry>
+	    <sarees>2</sarees>
+	</industry>
+	<sarees>
+	    <groupingCode2 name="primary">
+	        <groupingCode1 name="image">
+	            <propertyCode>
+	                primary
+	            </propertyCode>
+	            <propertyCode>
+	                1
+	            </propertyCode>
+	            <propertyCode>
+	                2
+	            </propertyCode>
+	        </groupingCode1>
+	        <groupingCode1 name="basic">
+	            <propertyCode>
+	                title
+	            </propertyCode>
+	            <propertyCode>
+	                1
+	            </propertyCode>
+	            <propertyCode>
+	                2
+	            </propertyCode>
+	        </groupingCode1>
+	    </groupingCode2>
+	    <groupingCode2 name="1">
+	        <groupingCode1 name="1">
+	            <propertyCode>
+	                1
+	            </propertyCode>
+	            <propertyCode>
+	                2
+	            </propertyCode>
+	        </groupingCode1>
+	        <groupingCode1 name="2">
+	            <propertyCode>
+	                1
+	            </propertyCode>
+	            <propertyCode>
+	                2
+	            </propertyCode>
+	        </groupingCode1>
+	    </groupingCode2>
+	    <groupingCode2 name="2">
+	        <groupingCode1 name="2">
+	            <propertyCode>
+	                1
+	            </propertyCode>
+	            <propertyCode>
+	                2
+	            </propertyCode>
+	        </groupingCode1>
+	    </groupingCode2>
+	</sarees>
 </root>

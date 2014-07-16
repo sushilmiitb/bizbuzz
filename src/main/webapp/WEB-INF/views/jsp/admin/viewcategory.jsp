@@ -121,7 +121,7 @@
 		<c:url var="base_category_url" value="/admin/viewcategory/" />
 		<c:url var="base_modifycategory_url" value="/admin/category/edit/" />
 		<c:url var="base_delete_url" value="/admin/category/delete/" />
-		<c:url var="base_property_url" value="/admin/viewproperty/" />
+		<c:url var="base_property_url" value="/admin/viewproperty/category/" />
 
 		<table>
 			<c:forEach items="${categoryList}" var="item">
