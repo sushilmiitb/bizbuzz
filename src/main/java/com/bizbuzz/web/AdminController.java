@@ -29,6 +29,7 @@ import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.service.CategoryService;
+import com.bizbuzz.service.PropertyService;
 
 @Controller
 public class AdminController {
@@ -36,6 +37,8 @@ public class AdminController {
   
   @Autowired
   CategoryService categoryService;
+  @Autowired
+  PropertyService propertyService;
  
   
   @RequestMapping(value="/admin/viewcategory/{categoryId}", method = RequestMethod.GET)
@@ -87,7 +90,7 @@ public class AdminController {
   @RequestMapping(value="/admin/viewproperty/category/{categoryId}", method = RequestMethod.GET)
   public String viewPropertyMetadata(@PathVariable Long categoryId, Model m){
     //List<PropertyMetadata> propertyMetadatas = categoryService.getPropertyMetadatas(categoryId);
-    PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(categoryId);
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     if(propertyMetadata==null){
       propertyMetadata = new PropertyMetadata();
     }
@@ -99,7 +102,7 @@ public class AdminController {
   @RequestMapping(value="/admin/property/save/category/{categoryId}", method = RequestMethod.POST)
   public String savePropertyMetadata(Model m, @PathVariable("categoryId")Long categoryId, @ModelAttribute("propertyMetadata") PropertyMetadata propertyMetadata, @RequestParam("propertyMetadataId") Long propertyMetadataId){
     propertyMetadata.setId(propertyMetadataId);
-    categoryService.savePropertyMetadata(propertyMetadata, categoryId);
+    propertyService.savePropertyMetadata(propertyMetadata, categoryId);
     m.addAttribute("propertyMetadata", propertyMetadata);
     m.addAttribute("categoryId", categoryId);
     return "redirect:/admin/viewproperty/category/"+categoryId.toString();

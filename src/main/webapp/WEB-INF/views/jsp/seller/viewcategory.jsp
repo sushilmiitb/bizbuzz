@@ -14,7 +14,7 @@
 
 	<tiles:putAttribute name="body">
 		<h1>${parentCategoryName}</h1>
-		<c:url var="base_category_url" value="/seller/uploadproduct/category/" />
+		<c:url var="base_category_url" value="/seller/viewcategory/category/" />
 
 		<table>
 			<c:forEach items="${categoryList}" var="item">

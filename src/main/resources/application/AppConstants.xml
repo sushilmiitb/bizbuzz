@@ -12,6 +12,9 @@
 	    <personrole>Promoter</personrole>
 	    <personrole>Employee</personrole>
 	</person>
+	<image>
+	    <basefileuploadurl>static/upload/images</basefileuploadurl>
+	</image>
 	<industry>
 	    <sarees>2</sarees>
 	</industry>

@@ -16,10 +16,9 @@ public interface CategoryService {
   //public List<PropertyMetadata> getPropertyMetadatas(Long categoryId);
   //public void savePropertyMetadatas(List<PropertyMetadata> propertyMetadatas, CategoryTree category);
   //public void updatePropertyMetadatas(List<PropertyMetadata> propertyMetadatas);
-  //public List<PropertyMetadata> getPropertyMetadatas(Person seller, Integer depth, Long categoryId);
+  
   public List<CategoryTree> getCategories(Person seller, Integer depth, Long categoryId);
   //public Map<String, Map<String, Map<String, PropertyMetadata>>> organizeMetadata(List<PropertyMetadata> properties);
-  public PropertyMetadata getPropertyMetadata(Long categoryId);
-  public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId);
-  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId);
+  
+  public CategoryTree createCategoryMap(CategoryTree categoryTree);
 }

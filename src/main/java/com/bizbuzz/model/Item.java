@@ -32,16 +32,20 @@ public class Item implements Serializable{
 //  @ManyToOne
 //  private PropertyMetadata propertyMetadata;
 //  
-  @ManyToMany(mappedBy="items")
-  private List<Party> parties;
+  @ManyToMany(mappedBy="sharedItems")
+  private List<Party> sharedToParties;
   
   @OneToMany(mappedBy="item")
   private List<Chat> chats;
   
+  @ManyToOne
+  @JoinColumn(name="owner_id", referencedColumnName="id")
+  private Party owner;
+  
   @OneToOne
   @JoinColumn(name="property_value_id", referencedColumnName="id")
   private PropertyValue propertyValue;
-  
+    
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
    * @param propertyMetadata
@@ -93,12 +97,12 @@ public class Item implements Serializable{
     this.itemCategory = itemCategory;
   }
 
-  public List<Party> getParties() {
-    return parties;
+  public List<Party> getSharedToParties() {
+    return sharedToParties;
   }
 
-  public void setParties(List<Party> parties) {
-    this.parties = parties;
+  public void setSharedToParties(List<Party> sharedToParties) {
+    this.sharedToParties = sharedToParties;
   }
 
   public List<Chat> getChats() {
@@ -116,7 +120,13 @@ public class Item implements Serializable{
   public void setPropertyValue(PropertyValue propertyValue) {
     this.propertyValue = propertyValue;
   }
-  
-  
+
+  public Party getOwner() {
+    return owner;
+  }
+
+  public void setOwner(Party owner) {
+    this.owner = owner;
+  }
   
 }

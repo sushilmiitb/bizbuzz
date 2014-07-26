@@ -100,23 +100,19 @@ public class CategoryServiceImpl implements CategoryService{
       return null;
     }
   }
-//  
-//  public List<PropertyMetadata> getPropertyMetadatas(Person seller, Integer depth, Long categoryId){
-//    CategoryTree rootCategory = seller.getCategoryRoot();
-//    if(rootCategory==null){
-//      return null;
-//    }
-//    switch(depth){
-//    case 1:
-//      return propertyMetadataRepository.findCategoryDepthOne(rootCategory.getId(), categoryId);
-//    case 2:
-//      return propertyMetadataRepository.findCategoryDepthTwo(rootCategory.getId(), categoryId);
-//    case 3:
-//      return propertyMetadataRepository.findCategoryDepthThree(rootCategory.getId(), categoryId);
-//    default:
-//      return null;
-//    }
-//  }
+  
+  public CategoryTree createCategoryMap(CategoryTree categoryTree){
+    if(categoryTree==null){
+      return null;
+    }
+    List<CategoryTree> children = categoryTreeRepository.findByParentCategory(categoryTree.getId());
+    for(int i=0;i<children.size();i++){
+      children.set(i, createCategoryMap(children.get(i)));
+    }
+    return categoryTree;
+  }
+  
+  
 
 //  /**
 //   * This functin returns properties in form of map. Here we are assuming two level grouping of PropertyMetadata
@@ -204,23 +200,5 @@ public class CategoryServiceImpl implements CategoryService{
 //    return masterMap;
 //  }
   
-  public PropertyMetadata getPropertyMetadata(Long categoryId){
-    return propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
-  }
   
-  public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId){
-    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
-    propertyMetadata = propertyMetadataRepository.save(propertyMetadata);
-    categoryTree.setPropertyMetadata(propertyMetadata);
-    categoryTreeRepository.save(categoryTree);
-    return propertyMetadata;
-  }
-  
-  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId){
-    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
-    PropertyMetadata propertyMetadata = propertyMetadataRepository.findOne(propertyMetadataId);
-    categoryTree.setPropertyMetadata(propertyMetadata);
-    categoryTreeRepository.save(categoryTree);
-    return propertyMetadata;
-  }
 }

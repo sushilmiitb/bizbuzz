@@ -5,10 +5,10 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<link rel="stylesheet" href="<c:url value='/static/css/mobile/jquery.mobile-1.4.2.min.css'/>" />
+<%-- <link rel="stylesheet" href="<c:url value='/static/css/mobile/jquery.mobile-1.4.2.min.css'/>" /> --%>
 <link rel="stylesheet" href="<c:url value='/static/css/mobile/main.css'/>" />
 <script src="<c:url value='/static/js/jquery/jquery-1.11.1.min.js'/>"></script>
-<script src="<c:url value='/static/js/mobile/jquery.mobile-1.4.2.min.js'/>"></script>
+<%-- <script src="<c:url value='/static/js/mobile/jquery.mobile-1.4.2.min.js'/>"></script> --%>
 <tiles:insertAttribute name="include" ignore="true"/>
 <tiles:insertAttribute name="customJsCode" ignore="true" />
 <title><tiles:insertAttribute name="title" /></title>

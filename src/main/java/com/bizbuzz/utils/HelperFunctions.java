@@ -1,5 +1,10 @@
 package com.bizbuzz.utils;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +57,44 @@ public class HelperFunctions {
     }
     return list;
   }
-
+  
+  public static String getImageDir(InputStream inputStream){
+    String baseDir = retrieveResourcesAppConatants(inputStream, "basefileuploadurl").get(0);
+    //String rootDir = System.getProperty("catalina.home");
+    //String rootDir = "../../../../../..";
+    return baseDir;
+  }
+  
+  public static void writeImage(String imageId, byte[] bytes, InputStream inputStream, String middleDir){
+    String baseDir = retrieveResourcesAppConatants(inputStream, "basefileuploadurl").get(0);
+    String rootDir = System.getProperty("catalina.home");
+    File file = new File(rootDir+File.separator+"webapps/bizbuzz"+File.separator+baseDir+File.separator+middleDir+File.separator+imageId+".jpg");
+    BufferedOutputStream stream = null;
+    try {
+      stream = new BufferedOutputStream(new FileOutputStream(file));
+    } catch (FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    try {
+      stream.write(bytes);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    try {
+      stream.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
+  public static void saveAllSizeImages(String imageId, byte[] bytes){
+    SaveAllSizedImagesThread thread = new SaveAllSizedImagesThread(imageId, bytes);
+    thread.start();
+  }
+  
 //  public void fillModelWithParameterMetadata(Model m, Map<String, Map<String, Map<String, PropertyMetadata>>> propertyMap){
 //    m.addAttribute("primaryImagePrimary", propertyMap.get("primary").get("image").get("primary"));
 //    //adding Normal image attributes

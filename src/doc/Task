@@ -1,0 +1,22 @@
+1. Install Project. Follow steps given in setup.txt. Make sure that you are able to run homepage. If you are stuck at some step, bug me.
+
+2. You will be working on a chat application. We will be using websockets (read it up). Atmosphere is a framework that makes websockets usage very easy (Browse through its website and a few example. You don't have to master it. At least in this task you won't be using atmosphere at all.) I have integrated atmosphere with Spring. Sample integrated application is working. Test it using localhost:8080/bizbuzz/home. What this application does is n users can connect to the server. One user can write a message (tweet) and it will be broadcasted to all the users connected to the server. Test its behavior by opening up the link at multiple tabs/browsers.
+
+3. Your task is to write business logic on the top of this. You will not have to use atmosphere websockets. Following points explains a bit of the project.
+
+4. Please refer to ERD.eps in /src/docs folder. It contains the schema that we are using. You will be using following entities: Chat, Chatroom, Item, Party, Connections. Let me explain to you what each entity means. 
+
+	**Party is an entity. It can be of following types (inheritence); person, company or private_group (see the model part of the project and understand inheritence in entities). Each party is connected to another party through a relationship. For example person is connected to company through PERSON_COMPANY relationship. private_group is connected to person through GROUPOWNER_GROUP relationship. person is connected to private_group through GROUP_MEMBER relationship. Here private_group is something like whatsapp group that a person makes. It contains message, sender and item it can be associated to (more about items later).
+
+	**ChatRoom is an entity which represent a session of chat. For example, when you send a mail to multiple people you start a mail (or chat) session. All the mails in that thread form the part of that mailroom (or chatroom). Similarly, here also, a chat room is a collection of chats among a group. It has members as its field.
+
+	**Chat is individual chat item which represents messge sent by each <Enter> button.
+
+	**Item: ignore it for now.
+
+5. Deliverable:
+	You have to write services, repositories and webcontroller in such a way that following is achieved:
+	* a request for a send chat to /chat/sendchat url is entertained and database gets populated accordingly
+	* a request for get chat to /chat/getchat url is entertained and all the chats are returned to the requesting person. While returning the chat please take care that all chats belonging to the same chatroom is returned as a bunch. Please refer to whatsapp chats for understanding end behavior.
+
+Make assumptions wherever necessary or call me up. Update me regularly of what you are doing. I think 10 days should be sufficient to build the whole chat task. Keep communicating to me regularly.

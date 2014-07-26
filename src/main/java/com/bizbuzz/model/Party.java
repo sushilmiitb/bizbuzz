@@ -9,6 +9,7 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
@@ -31,7 +32,7 @@ public abstract class Party implements Serializable{
   private static final long serialVersionUID = 4009473233597932062L;
   
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy=GenerationType.TABLE)
   private Long id;
   
   /**
@@ -65,7 +66,7 @@ public abstract class Party implements Serializable{
       name="share",
       joinColumns={@JoinColumn(name="party_id", referencedColumnName="id")},
           inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
-  private List<Item> items = new ArrayList<Item>();
+  private List<Item> sharedItems = new ArrayList<Item>();
   
   @ManyToMany(mappedBy="members", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
@@ -74,6 +75,10 @@ public abstract class Party implements Serializable{
   @OneToMany(mappedBy="sender", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Chat> sentChat = new ArrayList<Chat>();
+  
+  @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List <Item> ownedItems = new ArrayList<Item>();
   
   /**
    * This function models the addToParty function for many-to-many
@@ -189,14 +194,6 @@ public abstract class Party implements Serializable{
     this.categoryRoot = categoryRoot;
   }
 
-  public List<Item> getItems() {
-    return items;
-  }
-
-  public void setItems(List<Item> items) {
-    this.items = items;
-  }
-
   public List<Chat> getSentChat() {
     return sentChat;
   }
@@ -220,6 +217,21 @@ public abstract class Party implements Serializable{
   public void setEmail(String email) {
     this.email = email;
   }
-  
-  
+
+  public List<Item> getSharedItems() {
+    return sharedItems;
+  }
+
+  public void setSharedItems(List<Item> sharedItems) {
+    this.sharedItems = sharedItems;
+  }
+
+  public List<Item> getOwnedItems() {
+    return ownedItems;
+  }
+
+  public void setOwnedItems(List<Item> ownedItems) {
+    this.ownedItems = ownedItems;
+  }
+    
 }

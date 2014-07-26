@@ -11,14 +11,14 @@
 <title><tiles:insertAttribute name="title" /></title>
 </head>
 <body>
-	<div data-role="page">
-		<div data-role="header">
+	<div id="page">
+		<div id="header">
 			<tiles:insertAttribute name="header" ignore="true"/>
 		</div>
-		<div data-role="main">
+		<div id="main">
 			<tiles:insertAttribute name="body" />
 		</div>
-		<div data-role="footer">
+		<div id="footer">
 			<tiles:insertAttribute name="footer" ignore="true"/>
 		</div>
 	</div>

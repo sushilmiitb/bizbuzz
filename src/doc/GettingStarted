@@ -1,0 +1,26 @@
+These set of tutorials are intended to be used for those who have done extensive programming in any of the languages, have developed web applications in any of the languages. Some steps of this tutorial might be irrelevant to some people. Skip them/ skim through them if you already know the concepts.
+
+0. Installations
+	install maven 2+
+	install java sdk 6+
+	install git
+	install mysql 5.5+
+	install eclipse jee
+	install tomcat 7
+1. Getting started with java
+	a) (1 Hour) Understading basic and running hello world java program: http://docs.oracle.com/javase/tutorial/getStarted/
+	b) (1 Day) Getting warmed up with a little bit of syntax and language constructs: http://www.javabeginner.com/toc.htm 
+	c) (1 Day) Practicing Java by running a few examples: http://www.tutorialspoint.com/javaexamples/index.htm
+2. Understanding Maven (1 Hour){Just concept reading. No hands on}
+	a) Philosophy of maven: http://maven.apache.org/background/philosophy-of-maven.html
+	b) Get acquantance with maven:http://en.wikipedia.org/wiki/Apache_Maven
+	c) Download and set up maven
+3. Git (1 Hour) {Just read concepts right now. Will do hands on as a part of future tutorials}
+	a) What is version Control: http://git-scm.com/book/en/Getting-Started
+	b) Reference or frequently used git commands: http://rogerdudler.github.io/git-guide/
+4. Getting started with spring MVC framework
+	a) What is mvc (30 min): http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller
+	b) Deep study and hands on (1-2 day): http://www.tutorialspoint.com/spring/index.htm (especially web MCV tutorial).
+	c) Explore this project deeply (2-3 day): https://github.com/spring-projects/spring-petclinic/ (Try to build project using 			maven){http://www.jpassion.com/tmp/spring3_maven/ might be useful. Don't know though.}
+	d) Play around with other blogs and examples.
+5. Follow the setup.txt file for bizbuzz project setup.

@@ -195,6 +195,33 @@
         <artifactId>hibernate-validator</artifactId>
         <version>5.1.1.Final</version>
     </dependency>
+    <dependency>
+	    <groupId>commons-fileupload</groupId>
+	    <artifactId>commons-fileupload</artifactId>
+	    <version>1.3.1</version>
+	</dependency>
+	 
+	<!-- Apache Commons IO -->
+	<dependency>
+	    <groupId>commons-io</groupId>
+	    <artifactId>commons-io</artifactId>
+	    <version>2.4</version>
+	</dependency>
+	
+	<dependency>
+		<groupId>commons-codec</groupId>
+		<artifactId>commons-codec</artifactId>
+		<version>1.9</version>
+	</dependency>
+	
+	<dependency> 
+  	<groupId>org.imgscalr</groupId>
+	  <artifactId>imgscalr-lib</artifactId>
+	  <version>4.2</version>
+	  <type>jar</type>
+	  <scope>compile</scope>
+	</dependency>
+	
   </dependencies>
   <build>
     <finalName>bizbuzz</finalName>

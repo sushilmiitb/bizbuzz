@@ -1,88 +1,214 @@
 <script src="../../../../static/js/jquery/jquery-1.11.1.min.js"></script>
-<script src="../../../../static/js/mobile/jquery.mobile-1.4.2.min.js"></script>
 <script type="text/javascript">
-$(document).ready(function() {
-	$('#admin_viewcategory_form').submit(function(event) {
-		var newProperties = $('.newInputRow');
-		var newPropertyJsonObj= new Object();
-		for(i=0;i<newProperties.length;i++){
-			var item = new Object();
-			item["id"] = null;
-			item["propertyName"] = newProperty[i].find(".propertyInputPropertyName");
-			item["possibleUnits"] = newProperty[i].find(".propertyInputPossibleUnits");
-			item["possibleValues"] = newProperty[i].find(".propertyInputPossibleValues");
-			item["groupingName1"] = newProperty[i].find(".propertyInputGroupingname1");
-			item["groupingName2"] = newProperty[i].find(".propertyInputGroupingname2");
-			item["groupingName3"] = newProperty[i].find(".propertyInputGroupingname3");
-			newPropertyJsonObj.push(item);
+$(document).ready(function(){
+	$('.imageuploadinput').change(function onchange(){
+		var imageInput = this;
+		var max_height = (this).attr('data-maxheight');
+		var max_width = (this).attr('data-maxwidth');
+		if(max_height !== undefined){
+			max_height = 180;
 		}
-		var properties = $('.propertyInputRow');
-		var propertyJsonObj= new Object();
-		for(i=0;i<properties.length;i++){
-			var item = new Object();
-			item["id"] = null;
-			item["propertyName"] = property[i].find(".propertyInputPropertyName");
-			item["possibleUnits"] = property[i].find(".propertyInputPossibleUnits");
-			item["possibleValues"] = property[i].find(".propertyInputPossibleValues");
-			item["groupingName1"] = property[i].find(".propertyInputGroupingname1");
-			item["groupingName2"] = property[i].find(".propertyInputGroupingname2");
-			item["groupingName3"] = property[i].find(".propertyInputGroupingname3");
-			propertyJsonObj.push(item);
+		if(max_width !== undefined){
+			max_width = 180;
 		}
-		var json = new Object();
-		json["categoryId"]=asdf;
-		json["updatePropertyMetadata"] = propertyJsonObj;
-		json["newPropertyMetadata"] = newPropertyJsonObj;
-		
-		console.log("test", JSON.stringify(json));
-		$.ajax({
-			url: $("#admin_viewcategory_form").attr( "action"),
-			data: JSON.stringify(json),
-			type: "POST",
+		var form = $('.productuploadform');
 
-			beforeSend: function(xhr) {
-			xhr.setRequestHeader("Accept", "application/json");
-			xhr.setRequestHeader("Content-Type", "application/json");
-		},
-		success: function(data) {
-			var respContent = "";
-			/*if(data.errors.length){
-		          	for(var i=0; i<data.errors.length;i++){
-		          		respContent += "<span class='error'>" + data.errors[i] +"</span>";
-		          		$(respContent).insertBefore($(".group").first());
-		          	}
-		          	return;
-		          }*/
-			respContent += "<span class='group'>" + data.groupName +"</span>";
-			$(respContent).insertBefore($(".group").first());  
+		function processfile(file) {
+
+			if( !( /image/i ).test( file.type ) )
+			{
+				alert( "File "+ file.name +" is not an image." );
+				return false;
+			}
+
+			// read the files
+			var reader = new FileReader();
+			reader.readAsArrayBuffer(file);
+
+			reader.onload = function (event) {
+				// blob stuff
+				var blob = new Blob([event.target.result]); // create blob...
+				window.URL = window.URL || window.webkitURL;
+				var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+
+				// helper Image object
+				//var image = new Image();
+				//image.src = blobURL;
+				//preview.appendChild(image); // preview commented out, I am using the canvas instead
+				image.onload = function() {
+					// have to wait till it's loaded
+					var resized = resizeMe(image); // send it to canvas
+					var newinput = document.createElement("input");
+					newinput.type = 'hidden';
+					newinput.name = (this).attr("name")+"_hidden";
+					newinput.value = resized; // put result from canvas into new hidden input
+					form.appendChild(newinput);
+				}
+			};
 		}
-		}); 
-		event.preventDefault();
+
+		function readfiles(files) {
+
+			// remove the existing canvases and hidden inputs if user re-selects new pics
+			//var existinginputs = document.getElementsByName('images[]');
+			var existinginput = $((this).attr("name") + "_hidden");
+			//var existingcanvases = document.getElementsByTagName('canvas');
+			while (existinginput.length > 0) { // it's a live list so removing the first element each time
+				// DOMNode.prototype.remove = function() {this.parentNode.removeChild(this);}
+				form.removeChild(existinginput);
+				//preview.removeChild(existingcanvases[0]);
+			}
+
+			processfile((this).files[0]);
+
+			fileinput.value = ""; //remove the original files from fileinput
+			// TODO remove the previous hidden inputs if user selects other files
+		}
+
+
+		function resizeMe(img) {
+
+			var canvas = document.createElement('canvas');
+
+			var width = img.width;
+			var height = img.height;
+
+			// calculate the width and height, constraining the proportions
+			if (width > height) {
+				if (width > max_width) {
+					//height *= max_width / width;
+					height = Math.round(height *= max_width / width);
+					width = max_width;
+				}
+			} else {
+				if (height > max_height) {
+					//width *= max_height / height;
+					width = Math.round(width *= max_height / height);
+					height = max_height;
+				}
+			}
+
+			// resize the canvas and draw the image data into it
+			canvas.width = width;
+			canvas.height = height;
+			var ctx = canvas.getContext("2d");
+			ctx.drawImage(img, 0, 0, width, height);
+
+			preview.appendChild(canvas); // do the actual resized preview
+
+			return canvas.toDataURL("image/jpeg",0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+
+		}
+
 	});
+});
+</script>
 
-	$('#admin_viewproperty_addpropertybtn').click(function(event) {
-		var html='<tr class="newInputRow">
-			<td><input 
-			type="text" class="propertyInputPropertyName"  />
-			</td>
-			<td><input
-			type="text" class="propertyInputPossibleUnits" />
-			</td>
-			<td><input 
-			type="text" class="propertyInputPossibleValues" />
-			</td>
-			<td><input 
-			type="text" class="propertyInputGroupingname1" />
-			</td>
-			<td><input 
-			type="text" class="propertyInputGroupingname2" />
-			</td>
-			<td><input 
-			type="text" class="propertyInputGroupingname3" />
-			</td>
-			</tr>';
-			('.addButtonRow').after(html);
-	});
+<script>
+var fileinput = document.getElementById('fileinput');
 
+var max_width = fileinput.getAttribute('data-maxwidth');
+var max_height = fileinput.getAttribute('data-maxheight');
+
+var preview = document.getElementById('preview');
+
+var form = document.getElementById('form');
+
+function processfile(file) {
+
+	if( !( /image/i ).test( file.type ) )
+	{
+		alert( "File "+ file.name +" is not an image." );
+		return false;
+	}
+
+	// read the files
+	var reader = new FileReader();
+	reader.readAsArrayBuffer(file);
+
+	reader.onload = function (event) {
+		// blob stuff
+		var blob = new Blob([event.target.result]); // create blob...
+		window.URL = window.URL || window.webkitURL;
+		var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+
+		// helper Image object
+		var image = new Image();
+		image.src = blobURL;
+		//preview.appendChild(image); // preview commented out, I am using the canvas instead
+		image.onload = function() {
+			// have to wait till it's loaded
+			var resized = resizeMe(image); // send it to canvas
+			var newinput = document.createElement("input");
+			newinput.type = 'hidden';
+			newinput.name = 'images[]';
+			newinput.value = resized; // put result from canvas into new hidden input
+			form.appendChild(newinput);
+		}
+	};
+}
+
+function readfiles(files) {
+
+	// remove the existing canvases and hidden inputs if user re-selects new pics
+	var existinginputs = document.getElementsByName('images[]');
+	var existingcanvases = document.getElementsByTagName('canvas');
+	while (existinginputs.length > 0) { // it's a live list so removing the first element each time
+		// DOMNode.prototype.remove = function() {this.parentNode.removeChild(this);}
+		form.removeChild(existinginputs[0]);
+		preview.removeChild(existingcanvases[0]);
+	} 
+
+	for (var i = 0; i < files.length; i++) {
+		processfile(files[i]); // process each file at once
+	}
+	fileinput.value = ""; //remove the original files from fileinput
+	// TODO remove the previous hidden inputs if user selects other files
+}
+
+// this is where it starts. event triggered when user selects files
+fileinput.onchange = function(){
+	if ( !( window.File && window.FileReader && window.FileList && window.Blob ) ) {
+		alert('The File APIs are not fully supported in this browser.');
+		return false;
+	}
+	readfiles(fileinput.files);
+}
+
+// === RESIZE ====
+
+function resizeMe(img) {
+
+	var canvas = document.createElement('canvas');
+
+	var width = img.width;
+	var height = img.height;
+
+	// calculate the width and height, constraining the proportions
+	if (width > height) {
+		if (width > max_width) {
+			//height *= max_width / width;
+			height = Math.round(height *= max_width / width);
+			width = max_width;
+		}
+	} else {
+		if (height > max_height) {
+			//width *= max_height / height;
+			width = Math.round(width *= max_height / height);
+			height = max_height;
+		}
+	}
+
+	// resize the canvas and draw the image data into it
+	canvas.width = width;
+	canvas.height = height;
+	var ctx = canvas.getContext("2d");
+	ctx.drawImage(img, 0, 0, width, height);
+
+	preview.appendChild(canvas); // do the actual resized preview
+
+	return canvas.toDataURL("image/jpeg",0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+
+}
 });
 </script>
