@@ -353,8 +353,6 @@ public class SellerController {
   
   @RequestMapping(value="/seller/viewproduct/category/{categoryId}", method=RequestMethod.GET)
   public String viewProduct(Model m, @PathVariable Long categoryId){
-    CategoryTree categoryTree = categoryService.getCategory(categoryId);
-    String parentCategoryName = categoryTree.getCategoryName();
     Person seller = getSeller();
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     m.addAttribute("propertyMetadata", propertyMetadata);
@@ -364,28 +362,23 @@ public class SellerController {
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
     m.addAttribute("items", items);
-    m.addAttribute("categoryId", categoryId);
-    m.addAttribute("parentCategoryName", parentCategoryName);
     return "jsp/seller/viewproduct";
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)
-  public String viewProduct(@PathVariable Long categoryId, @PathVariable Long itemId, Model m){
-    CategoryTree categoryTree = categoryService.getCategory(categoryId);
-    String parentCategoryName = categoryTree.getCategoryName();
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
-    m.addAttribute("propertyMetadata", propertyMetadata);
-    
-    ProductDetailDTO productDetailDTO = new ProductDetailDTO();
-    Person seller = getSeller();
+  public String viewProduct(@PathVariable Long itemId, Model m){
+    Person seller =  getSeller();
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
-    PropertyValue propertyValue = item.getPropertyValue();
-    productDetailDTO.setPropertyValue(propertyValue);
     
-    m.addAttribute("uploadForm", productDetailDTO);
-    m.addAttribute("categoryId", categoryId);
-    m.addAttribute("parentCategoryName", parentCategoryName);
-    return "jsp/seller/viewproduct";
+    //PropertyValue propertyValue = item.getPropertyValue();
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
+    m.addAttribute("propertyMetadata", propertyMetadata);
+    m.addAttribute("item", item);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
+    
+    return "jsp/seller/viewitem";
   }
   
   public Person getSeller(){
@@ -395,4 +388,3 @@ public class SellerController {
   }
   
 }
-  
