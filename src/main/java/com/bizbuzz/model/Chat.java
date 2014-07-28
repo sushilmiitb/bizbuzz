@@ -1,6 +1,7 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.PrePersist;
 
 @Entity
 public class Chat implements Serializable{
@@ -22,6 +24,8 @@ public class Chat implements Serializable{
   private Long id;
   
   private String message;
+
+  private Date createdAt;
   
   @ManyToOne
   @JoinColumn(name="sender_id", referencedColumnName="id")
@@ -74,6 +78,16 @@ public class Chat implements Serializable{
 
   public void setSender(Party sender) {
     this.sender = sender;
+  }
+  
+  
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+  
+  @PrePersist
+  protected void onCreate() {
+    createdAt = new Date();
   }
   
 }

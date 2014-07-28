@@ -31,14 +31,17 @@ import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
 import com.bizbuzz.dto.ProductDetailDTO;
 import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.service.CategoryService;
+import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
@@ -68,6 +71,10 @@ public class SellerController {
 
   @Autowired
   PropertyService propertyService;
+  
+  @Autowired
+  ChatRoomService chatRoomService;
+  
   
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
@@ -169,6 +176,20 @@ public class SellerController {
     SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
     Person seller = getSeller();
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getPhoneNumber());
+    
+    
+    
+ // below code for add members into chatroom   
+    Party sellerParty = partyManagementService.getParty(seller.getId());
+    Party buyerParty = partyManagementService.getParty(toPerson.getId());
+    List<Party> members = new ArrayList<Party>();
+    members.add(sellerParty);
+    members.add(buyerParty);
+    ChatRoom chatRoom = new ChatRoom();
+    chatRoom.setMembers(members);
+    chatRoomService.saveChatroomMembers(chatRoom);
+ // Above  code for add members into chatroom
+    
     if(toPerson == null){
       /**
        * Person hasnot registered. Add code to ask him register him. Till then handle it in the validation.

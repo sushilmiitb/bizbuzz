@@ -38,4 +38,10 @@
 <!--     <definition name="register" extends="base.definition"> -->
 <!--         <put-attribute name="footer" value="/WEB-INF/views/jsp/register/footer.jsp" /> -->
 <!--     </definition> -->
+    
+     <definition name="chat" extends="base.definition">
+    </definition>
+    
+     <definition name="error" extends="base.definition">
+    </definition>
 </tiles-definitions>

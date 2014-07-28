@@ -1,6 +1,7 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -11,9 +12,15 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 @Entity
 public class ChatRoom implements Serializable{
+
+  public Long getId() {
+    return id;
+  }
 
   /**
    * 
@@ -34,6 +41,11 @@ public class ChatRoom implements Serializable{
   @OneToMany(mappedBy="chatRoom")
   private List<Chat> chats;
   
+  
+  private Date createdAt;
+  
+  private Date updatedAt;
+  
   /**
    * setters and getters
    */
@@ -53,5 +65,17 @@ public class ChatRoom implements Serializable{
   public void setChats(List<Chat> chats) {
     this.chats = chats;
   }
+  public void setUpdatedAt(Date updatedAt) {
+    this.updatedAt = updatedAt;
+  }
 
+  @PrePersist
+  protected void onCreate() {
+    createdAt = new Date();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = new Date();
+  }
 }
