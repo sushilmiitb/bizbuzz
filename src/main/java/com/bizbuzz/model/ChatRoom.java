@@ -18,6 +18,10 @@ import javax.persistence.PreUpdate;
 @Entity
 public class ChatRoom implements Serializable{
 
+  public Long getId() {
+    return id;
+  }
+
   /**
    * 
    */
