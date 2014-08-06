@@ -3,6 +3,7 @@ package com.bizbuzz.dto;
 import java.util.Map;
 
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PrivateGroup;
 
 public class SellerAddConnectionResponseAjaxDTO {
   private String firstName;
@@ -11,11 +12,13 @@ public class SellerAddConnectionResponseAjaxDTO {
   private Long id;
   private String phoneNumber;
   private Map<String, String> errors;
-  
+  private String groupName;
+  private Long groupId;
+
   public SellerAddConnectionResponseAjaxDTO(){
-    
+
   }
-  
+
   public SellerAddConnectionResponseAjaxDTO(Person person){
     firstName = person.getFirstName();
     middleName = person.getLastName();
@@ -23,14 +26,24 @@ public class SellerAddConnectionResponseAjaxDTO {
     id= person.getId();
     phoneNumber = person.getUserId().getId();
   }
-  public void addDetails(Person person){
-    firstName = person.getFirstName();
-    middleName = person.getLastName();
-    lastName = person.getLastName();
+  public void addDetails(Person person, PrivateGroup pg){
+    firstName = "";
+    middleName = "";
+    lastName = "";
+    if(person.getFirstName() != null)
+      firstName = person.getFirstName();
+    if(person.getMiddleName() != null)
+      middleName = person.getLastName();
+    if(person.getLastName() != null)
+      lastName = person.getLastName();
     id= person.getId();
     phoneNumber = person.getUserId().getId();
+    if(pg!=null){
+      setGroupName(pg.getPrivateGroupName());
+      setGroupId(pg.getId());
+    }
   }
-  
+
   public String getFirstName() {
     return firstName;
   }
@@ -67,5 +80,21 @@ public class SellerAddConnectionResponseAjaxDTO {
   public void setErrors(Map<String, String> errors) {
     this.errors = errors;
   }
-  
+
+  public String getGroupName() {
+    return groupName;
+  }
+
+  public void setGroupName(String groupName) {
+    this.groupName = groupName;
+  }
+
+  public Long getGroupId() {
+    return groupId;
+  }
+
+  public void setGroupId(Long groupId) {
+    this.groupId = groupId;
+  }
+
 }

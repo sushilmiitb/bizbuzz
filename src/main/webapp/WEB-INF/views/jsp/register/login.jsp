@@ -3,15 +3,52 @@
 <tiles:insertDefinition name="register">
 	<tiles:putAttribute name="include">
 	</tiles:putAttribute>
-	<tiles:putAttribute name="header">
-		<h1>Bizbuzz- Register</h1>
-	</tiles:putAttribute>
 	<tiles:putAttribute name="title">
-		BizBuzz-Registration
+		BizBuzz-Login
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 			$(document).ready(function(){
+				var debug = true;
+				var androiddebug = false;
+				initialize();
+				function initialize(){
+					$("#user_remember_me").attr("checked", true);
+				}
+				function customizeForDevice(){
+				    var ua = navigator.userAgent;
+				    var checker = {
+						iphone: ua.match(/(iPhone|iPod|iPad)/),
+						blackberry: ua.match(/BlackBerry/),
+						android: ua.match(/Android/)
+				    };
+				    if (checker.android){
+				    	if(androiddebug){
+				       		$("#debuglist").append("<li>Device is android</li>");
+				       	}
+				       	/*var cordovajsurl = "<c:url value='/static/js/cordova/cordova.js' />";
+				       	$.getScript(cordovajsurl, function(){
+				       		if(androiddebug){
+				       			$("#debuglist").append("<li>Loaded cordova.js</li>");
+				       		}
+				       		
+				       	});*/
+				    }
+				    else if (checker.iphone){
+				       	// $('.idevice-only').show();
+				    }
+				    else if (checker.blackberry){
+				       	// $('.berry-only').show();
+				    }
+				    else {
+				       	// $('.unknown-device').show();
+				       	/*console.log("Device is unknown.");
+				       	if(androiddebug){
+				       		$("#debuglist").append("<li>Device is unknown</li>");
+				       	}*/
+				    }
+				}
+			
 				$("#register_login_submit").click(function(event){
 					event.preventDefault();
 					$("span.error").remove();
@@ -24,17 +61,33 @@
 		</script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
-		<form action="<c:url value='/j_spring_security_check' />" method="post" accept-charset="UTF-8">
-			<input id="j_username" type="text" name="j_username" placeholder="Username" />
-			<input id="j_password" type="password" name="j_password" placeholder="Password" />
-			<c:if test="${not empty error}">
-				<span class="error">Username or password doesn't match the records</span>
-			</c:if>
-			<input id="user_remember_me" type="checkbox" name="j_spring_security_check" value="1" />
-			<label class="string optional" for="user_remember_me">Remember me</label> 
-			<br/>
-			<a href="#" > Forgot Password? </a><br />
-			<input class="btn btn-default" type="submit" name="commit" value="Sign In" />
-		</form>
+		<div class="container" role="main">
+			<div class="row" id="maincontent">
+				<div class="col-xs-12 col-md-12 col">
+					<div class="panel panel-primary">
+						<div class="panel-heading">Sign In</div>
+						<div class="panel-body">
+							<form class="form-signin" role="form" action="<c:url value='/j_spring_security_check' />" method="post" accept-charset="UTF-8">
+								<input class="form-control" id="j_username" type="text" name="j_username" placeholder="Phone number" required autofocus /> 
+								<input class="form-control" id="j_password" type="password" name="j_password" placeholder="Password" required />
+								<c:if test="${not empty error}">
+									<span class="error">Username or password doesn't match the records</span>
+								</c:if>
+								<!--- <label class="checkbox"> -->
+								<input id="user_remember_me" type="checkbox" name="_spring_security_remember_me" value="1" /> Remember Me <br/>
+								<button class="btn btn-md btn-primary btn-block" type="submit">Sign	in</button>
+							</form>
+							<form action="<c:url value='/register/personregistration' /> ">
+								<br/>
+								<span>New User?</span>
+								<br/>
+								<button class="btn btn-md btn-success btn-block" id="newuser" >Register</button>
+							</form>			
+							<a href="#" id="forgotpass">Forgot Password?</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

@@ -8,7 +8,7 @@
 <meta name="author" content="">
 <link rel="shortcut icon" href="assets/ico/favicon.ico">
 
-<title>Registration</title>
+<title>Login</title>
 
 <!-- Bootstrap core CSS -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -71,29 +71,21 @@
 
 
 				<div class="panel panel-primary">
-					<div class="panel-heading">Register</div>
+					<div class="panel-heading">Sign In</div>
 					<div class="panel-body">
 						<form class="form-signin" role="form">
 
-							<input type="text" class="form-control" placeholder="User name"
-								required autofocus> <input type="password"
-								class="form-control" placeholder="Password" required> <input
-								type="password" class="form-control"
-								placeholder="Retype Password" required> <label>
-								Details</label> <input type="text" class="form-control"
-								placeholder="Name" required autofocus> <input
-								type="email" class="form-control" placeholder="Email" required
-								autofocus> <input type="text" class="form-control"
-								placeholder="Phone number" required autofocus> <select
-								class="form-control">
-								<option>Seller</option>
-								<option>Buyer</option>
-								<option>Agent</option>
-							</select> <br>
-
-							<button class="btn btn-md btn-primary btn-block" type="submit">Register</button>
-
-
+							<input type="email" class="form-control"
+								placeholder="Email address" required autofocus> <input
+								type="password" class="form-control" placeholder="Password"
+								required>
+							<!--- <label class="checkbox"> -->
+							<input type="checkbox" value="remember-me"> Remember me <br>
+							<button class="btn btn-md btn-primary btn-block" type="submit">Sign
+								in</button>
+							<button class="btn btn-md btn-success btn-block" id="newuser">New
+								User? Register</button>
+							<a href="#" id="forgotpass">Forgot Password?</a>
 
 						</form>
 					</div>

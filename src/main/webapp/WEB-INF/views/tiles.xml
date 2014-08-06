@@ -6,11 +6,22 @@
     <definition name="register" template="/WEB-INF/views/layout/register_layout.jsp">
         <put-attribute name="title" value="" />
         <put-attribute name="customJsCode" value="" />
-        <put-attribute name="include" value="" />
+        <put-attribute name="includecss" value="" />
+        <put-attribute name="includejs" value="" />
         <put-attribute name="header" value="/WEB-INF/views/jsp/register/header.jsp" />
         <put-attribute name="body" value="" />
         <put-attribute name="footer" value="/WEB-INF/views/jsp/register/footer.jsp" />
     </definition>
+    <definition name="seller" template="/WEB-INF/views/layout/seller_layout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="customJsCode" value="" />
+        <put-attribute name="includecss" value="" />
+        <put-attribute name="includejs" value="" />
+        <put-attribute name="header" value="/WEB-INF/views/jsp/seller/header.jsp" />
+        <put-attribute name="body" value="" />
+        <put-attribute name="footer" value="/WEB-INF/views/jsp/seller/footer.jsp" />
+    </definition>
+    
     <definition name="base.definition" template="/WEB-INF/views/layout/base_layout.jsp">
         <put-attribute name="title" value="" />
         <put-attribute name="customJsCode" value="" />
@@ -27,9 +38,6 @@
         <put-attribute name="header" value="/WEB-INF/views/jsp/header.jsp" />
         <put-attribute name="body" value="" />
         <put-attribute name="footer" value="/WEB-INF/views/jsp/footer.jsp" />
-    </definition>
-    
-    <definition name="seller" extends="base.definition">
     </definition>
     
     <definition name="admin" extends="webbase.definition">

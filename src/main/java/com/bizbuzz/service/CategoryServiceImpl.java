@@ -111,8 +111,6 @@ public class CategoryServiceImpl implements CategoryService{
     }
     return categoryTree;
   }
-  
-  
 
 //  /**
 //   * This functin returns properties in form of map. Here we are assuming two level grouping of PropertyMetadata

@@ -5,7 +5,7 @@
 	<tiles:putAttribute name="title">
 		BizBuzz-Groups
 	</tiles:putAttribute>
-	
+
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -24,6 +24,12 @@
 			            xhr.setRequestHeader("Content-Type", "application/json");
 			        },
 			        success: function(data) {
+			        	$(".loader").remove();
+			        	$("#editModal").modal('hide');
+			        },
+			        failure: function(){
+			        	$(".loader").remove();
+			        	$("#editModal").modal('hide');
 			        }
 			    }); 
 			    event.preventDefault();
@@ -31,35 +37,97 @@
 			});
 		</script>
 	</tiles:putAttribute>
-	
+
 	<tiles:putAttribute name="body">
-		
-		<h1>Person Details</h1>
-		
-		<table id="seller_viewsingleconnection_displaytable">
-			<tr class="displayrow">
-				<td>${buyer.firstName}</td>
-				<td>${buyer.middleName}</td>
-				<td>${buyer.lastName}</td>
-			</tr>
-		</table>
-		
-		<c:url var="base_delete_url" value="/seller/deleteconnection/"/>
-		<a href="${base_delete_url}${buyer.id}">Delete Connection</a>
-		
+		<c:url var="base_delete_url" value="/seller/deleteconnection/" />
 		<c:url var="base_group_url" value="/seller/viewgroup/" />
-		<h1>Group</h1>
-		<a href="${base_group_url}${privateGroup.id}">${privateGroup.privateGroupName}</a>
-		
-		<c:url var="edit_group_url" value="/seller/editconnection/changegroup" />
-		<form action="${edit_group_url}" id="seller_viewsingleconnection_editgroupform" class="form" >
-			<select id="seller_viewsingleconnection_changegroupoption">
-				<option value="-1">None</option>
-				<c:forEach var="item" items="${privateGroupList}">
-					<option value="${item.id}">${item.privateGroupName}</option>
-				</c:forEach>
-			</select>
-			<input type="submit" id="seller_viewsingleconnection_submiteditgroup" value="Change Group" />
-		</form>
+		<c:url var="edit_group_url"
+				value="/seller/editconnection/changegroup" />
+		<div class="container" role="main">
+			<div class="row" id="maincontent">
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+					<div class="panel panel-primary">
+						<div class="panel-heading center-align-text">${buyer.firstName}
+							${buyer.middleName} ${buyer.lastName}</div>
+						<div class="panel-body">
+							<div class="table-responsive">
+								<table class="table table-striped">
+									<caption><strong>Connection Details</strong></caption>
+									<tr>
+										<td>Name</td>
+										<td>${buyer.firstName} ${buyer.middleName} ${buyer.lastName}</td>
+									</tr>
+									<tr>
+										<td>Group</td>
+										<td><a href="${base_group_url}${privateGroup.id}">${privateGroup.privateGroupName}</a></td>
+									</tr>
+								</table>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-xm-12 col-md-12 col-lg-12">
+									<button class="btn btn-primary btn-block" data-toggle="modal"
+										data-target="#editModal">Edit Connection</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+			</div>
+		</div>
+
+		<!-- Modal -->
+		<div class="modal fade" id="editModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Edit Connection</h4>
+					</div>
+					<div class="modal-body">
+						<div class="row">
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							</div>
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								
+								<a href="${base_delete_url}${buyer.id}">
+									<button class="btn btn-primary btn-block" id="deleteConnection">
+										Delete Connection
+									</button>
+								</a>
+							</div>
+						</div>
+						<br/>
+						<div class="row">
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+								<legend>Edit Group</legend>
+								<form role="form" method="POST" class="form-signin" action="${edit_group_url}"
+									id="seller_viewsingleconnection_editgroupform" class="form">
+									<select class="form-control" id="seller_viewsingleconnection_changegroupoption">
+										<c:forEach var="item" items="${privateGroupList}">
+											<option value="${item.id}"
+												<c:if test="${item.privateGroupName == 'General' }">
+												selected="true" 
+											</c:if>>${item.privateGroupName}</option>
+										</c:forEach>
+									</select> <input class="btn btn-primary btn-block" type="submit"
+										id="seller_viewsingleconnection_submiteditgroup"
+										value="Change Group" />
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal -->
+
 	</tiles:putAttribute>
 </tiles:insertDefinition>

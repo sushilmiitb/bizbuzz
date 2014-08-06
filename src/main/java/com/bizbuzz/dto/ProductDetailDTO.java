@@ -38,13 +38,13 @@ public class ProductDetailDTO {
     }
     
     if(primaryImageHidden!=null)
-      imageFiles.set(0, Base64.decodeBase64(primaryImageHidden.substring(23)));
+      imageFiles.set(0, Base64.decodeBase64(primaryImageHidden.substring(22)));
     if(image1Hidden!=null)
-      imageFiles.set(1, Base64.decodeBase64(image1Hidden.substring(23)));
+      imageFiles.set(1, Base64.decodeBase64(image1Hidden.substring(22)));
     if(image2Hidden!=null)
-      imageFiles.set(2, Base64.decodeBase64(image2Hidden.substring(23)));
+      imageFiles.set(2, Base64.decodeBase64(image2Hidden.substring(22)));
     if(image3Hidden!=null)
-      imageFiles.set(3, Base64.decodeBase64(image3Hidden.substring(23)));
+      imageFiles.set(3, Base64.decodeBase64(image3Hidden.substring(22)));
     
     /*
     if(primaryImageHidden!=null)

@@ -1,15 +1,15 @@
 package com.bizbuzz.dto;
 
 public class SellerAddConnectionRequestAjaxDTO {
-  private String phoneNumber;
+  private String userId;
   private Long groupId;
   
-  public String getPhoneNumber() {
-    return phoneNumber;
+  public String getUserId() {
+    return userId;
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
+  public void setUserId(String phoneNumber) {
+    this.userId = phoneNumber;
   }
 
   public Long getGroupId() {

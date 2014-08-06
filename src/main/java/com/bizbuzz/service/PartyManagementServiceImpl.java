@@ -46,7 +46,9 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   PartyRepository partyRepository;
   
   public void savePhoneNumber(PhoneNumber phoneNumber){
-    phoneNumberRepository.save(phoneNumber);
+    if(phoneNumber!= null){
+      phoneNumberRepository.save(phoneNumber);
+    }
   }
   
   public void saveUserLogin(UserLogin userLogin, String securityGroupName){
@@ -59,7 +61,9 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   }
   
   public void saveCompany(Company company){
-    companyRepository.save(company);
+    if(company!=null){
+      companyRepository.save(company);
+    }
   }
   
   public List<String> getListOfPersonRole(){
