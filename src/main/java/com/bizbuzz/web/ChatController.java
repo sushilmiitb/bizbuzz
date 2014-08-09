@@ -16,19 +16,37 @@
 package com.bizbuzz.web;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import net.sf.json.JSONObject;
 
 import org.atmosphere.cpr.AtmosphereResource;
+import org.atmosphere.cpr.AtmosphereResourceSession;
+import org.atmosphere.cpr.AtmosphereResourceSessionFactory;
+import org.atmosphere.cpr.Broadcaster;
+import org.atmosphere.cpr.BroadcasterFactory;
+import org.atmosphere.cpr.FrameworkConfig;
+import org.atmosphere.cpr.MetaBroadcaster;
+import org.atmosphere.websocket.WebSocket;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
@@ -36,16 +54,21 @@ import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.UserLogin;
+import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ChatService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.Message;
+import com.bizbuzz.dto.WebSocketRequestAjaxDTO;
 
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -82,20 +105,63 @@ public class ChatController {
 
   @Autowired
   ChatRoomService chatRoomService;
+  
 
+  
   @RequestMapping(value = "/test", method = RequestMethod.GET)
   public String test() {
     return "test";
   }
-
+  
+  @RequestMapping(value = "/samplechat", method = RequestMethod.GET)
+  public String chatByAtmosphere(HttpSession session,HttpServletRequest request) {
+  
+   Person person = getPerson();
+    UserLogin user = person.getUserId();
+    session.setAttribute("userId",user.getId());
+    session.setAttribute("chatroomId",(long)1);
+   
+    return "home";
+  }
+  
+  
   @RequestMapping(value = "/websockets", method = RequestMethod.POST)
   @ResponseBody
-  public void post(final AtmosphereResource event, @RequestBody String msg)
-      throws JsonGenerationException, JsonMappingException, IOException {
-
-    logger.info("Received message to broadcast: {}", msg);
-    event.getBroadcaster().getAtmosphereResources().size();
-    event.getBroadcaster().broadcast(msg);
+  public String post(final AtmosphereResource event, @RequestBody  String request )
+      throws JsonGenerationException, JsonMappingException, IOException {   
+   
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String message = jsonObject.get("message").toString();
+    String userId = jsonObject.get("userId").toString();
+    Long chatRoomId = (long)jsonObject.get("chatroomId").hashCode();   
+   
+    if(message.equals("0Open0")){
+      Broadcaster b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+userId ,true);
+      b.addAtmosphereResource(event);  
+      return null;
+    }
+    else{
+      
+      Person person = partyManagementService.getPersonFromUsername(userId);
+      ChatRoom chatRoom = chatRoomService.getChatRoom(chatRoomId);
+      Chat chat = new Chat();
+      chat.setSender((Party)person);
+      chat.setMessage(message);
+      chat.setChatRoom(chatRoom);
+      chatService.saveChat(chat);
+      Date lastChatDate = chat.getCreatedAt();
+      chatRoom.setUpdatedAt(lastChatDate);
+      chatRoomService.saveChatRoom(chatRoom);
+     // String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
+  /*    for(Person member : members){
+        BroadcasterFactory.getDefault().lookup(member.getUserId().getId()).broadcast(userId + " : " +message +"        " +dateOfBroadcast);
+      }    
+*/
+      MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +lastChatDate +"</td></tr>");
+      logger.info("Received message to broadcast: {}", userId +" : " +message +"           " +lastChatDate);         
+    }
+    
+    return  "<tr><td colspan='2'> message successfully send </td></tr>";
   }
 
   /**
@@ -111,7 +177,7 @@ public class ChatController {
 public void websockets(final AtmosphereResource event)
       throws JsonGenerationException, JsonMappingException, IOException {
 
-    AtmosphereUtils.suspend(event);
+   // AtmosphereUtils.suspend(event);
 
     // final Broadcaster bc = event.getBroadcaster();
 
@@ -130,42 +196,60 @@ public void websockets(final AtmosphereResource event)
 @RequestMapping(value = "/chat/showchatrooms", method = RequestMethod.GET)
 public String showChatRooms(Model m) {
     Person person = getPerson();
-    List<ChatRoom> chatRoomsOfLoggedInPerson = chatRoomService.getSortedChatRoomsOfPerson(person.getId());
-    m.addAttribute("chatrooms", chatRoomsOfLoggedInPerson);
+    
+    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
+    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+    m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
+    m.addAttribute("sortedChatrooms",sortedNewchatRooms);
+    m.addAttribute("userid", person.getId());
     return "jsp/chat/showlistofchatrooms";
   }
 
 @RequestMapping(value="/chat/showchatroom/chatroomid/{chatroomid}", method = RequestMethod.GET)
-public String showChatRoom(Model m,@PathVariable long chatroomid) {
-  Person loggedInPerson = getPerson();
-  Person anotherPerson = chatRoomService.getPersonByChatRoomId(chatroomid,loggedInPerson.getId()); 
-  if(anotherPerson==null) return "jsp/error/usernotfound";
+public String showChatRoom(HttpSession session,Model m,@PathVariable long chatroomid) {
+  Person person = getPerson();
+  UserLogin user = person.getUserId();
   
-   List<Chat> chatFromDb = chatService.getAllChats(chatroomid);
+ List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
+ if(members==null) return "jsp/error/usernotfound";
+
+     boolean flag=false;
+     for(Person member : members){
+        if(person.getId().longValue() == member.getId().longValue()) flag=true;
+     }
+  
+     if(flag){
+       for(Person member : members){
+         if(person.getId().longValue() != member.getId().longValue()) 
+           m.addAttribute("secondperson", member);
+       }  
+     }
+     else
+        return "jsp/error/usernotfound";
+  
+   List<Chat> chatFromDb = chatService.getAllChatsByChatRoomId(chatroomid);
    m.addAttribute("chats", chatFromDb);
-   m.addAttribute("chat", new Chat());
-   m.addAttribute("person", anotherPerson);
-   m.addAttribute("chatroomid", chatroomid);
-   return "jsp/chat/onetoonechat";
+   session.setAttribute("userId",user.getId());
+   session.setAttribute("chatroomId", chatroomid);
+   return "jsp/chat/chatroom";
   }
 
 
-@RequestMapping(value = "chat/showonetoonechatmessages/{chatroomid}", method = RequestMethod.POST)
+@RequestMapping(value = "/chat/showonetoonechatmessages/{chatroomid}", method = RequestMethod.POST)
 public String showOneToOneChatMessages(@ModelAttribute("chat") Chat chat,@PathVariable Long chatroomid, Model model) {
   Person person = getPerson();
   ChatRoom chatRoom = chatRoomService.getChatRoom(chatroomid);
-  chat.setSender(partyManagementService.getParty(person.getId()));
+  chat.setSender((Party)person);
   chat.setChatRoom(chatRoom);
-  chatService.saveMessage(chat);
+  chatService.saveChat(chat);
   Date lastChatDate = chat.getCreatedAt();
   model.addAttribute("lastchatDate", lastChatDate);
   chatRoom.setUpdatedAt(lastChatDate);
-  chatRoomService.saveChatroomMembers(chatRoom);
-    return "redirect:/chat/showchatroom/chatroomid/{chatroomid}";
+  chatRoomService.saveChatRoom(chatRoom);
+  return "redirect:/chat/showchatroom/chatroomid/{chatroomid}";
   }
-/*
 
-*/
+
 public Person getPerson() {
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     String username = user.getUsername();

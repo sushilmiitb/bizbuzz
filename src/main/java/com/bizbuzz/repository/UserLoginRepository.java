@@ -11,4 +11,5 @@ import com.bizbuzz.model.UserLogin;
 @Transactional
 public interface UserLoginRepository extends JpaRepository<UserLogin, Long>{
   public UserLogin findById(String id);
+  
 }

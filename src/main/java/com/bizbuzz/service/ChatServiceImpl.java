@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.ls.LSInput;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
@@ -19,7 +20,7 @@ public class ChatServiceImpl implements ChatService{
   
  
   @Override
-  public void saveMessage(Chat chat) {
+  public void saveChat(Chat chat) {
     chatRepository.save(chat);
   }
 
@@ -29,9 +30,8 @@ public class ChatServiceImpl implements ChatService{
     return chatRepository.getChatBySenderId(senderId);  
   }
 
-
   @Override
-  public List<Chat> getAllChats(Long chatRoomId) {
+  public List<Chat> getAllChatsByChatRoomId(Long chatRoomId) {
     List<Chat> chats = chatRepository.findChatsByChatRoomId(chatRoomId);
     if(chats==null)
         return null;
@@ -40,9 +40,11 @@ public class ChatServiceImpl implements ChatService{
   }
 
 
+/*
   @Override
-  public List<ChatRoom> getAllSortedChatRooms() {
-    return chatRepository.findAllSortedChatRooms();
+  public void deleteAllChatByChatRoomId(Long chatRoomId) {
+    chatRepository.deleteAllChatsByChatRoomId(chatRoomId);
   }
+*/
 
 }

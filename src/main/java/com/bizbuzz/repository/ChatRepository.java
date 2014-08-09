@@ -5,6 +5,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -28,7 +29,11 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
       + "where cr.id=?1" )
   List<Chat> findChatsByChatRoomId(Long chatRoomId);
   
-  @Query("select cr FROM Chat c inner join c.chatRoom cr inner join cr.members p where p.id=?1 GROUP BY cr.id ORDER BY max(c.createdAt) DESC ")
-  List<ChatRoom> findAllSortedChatRooms();
+  /*
+  @Query("delete from Chat c inner join c.chatRoom cr "
+      + "where cr.id=?1")
+  void deleteAllChatsByChatRoomId(Long chatRoomid);
+  */
+   
   
-}
+}  

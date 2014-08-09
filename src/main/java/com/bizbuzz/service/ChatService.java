@@ -6,9 +6,8 @@ import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 
 public interface ChatService {
-  public void saveMessage(Chat chat);
+  public void saveChat(Chat chat);
   public List<Chat> getChat(Long senderId);
-  public List<Chat> getAllChats(Long chatRoomId);
- public List<ChatRoom> getAllSortedChatRooms(); 
-  
+  public List<Chat> getAllChatsByChatRoomId(Long chatRoomId);
+ // public void deleteAllChatByChatRoomId(Long chatRoomId);
 }

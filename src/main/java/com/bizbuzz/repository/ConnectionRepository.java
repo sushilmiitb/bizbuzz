@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Party;
@@ -47,7 +48,7 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "c.connectionType=?2 "
       + "order by p.firstName asc")
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
-  
+ 
   @Query("select p from "
       + "Connection c inner join c.toParty p "
       + "where c.fromPartyId=?1 and "
@@ -71,7 +72,7 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
    * This function will delete all toParty connections (only connections and not parties)
    * @param id: id of the party whose connections needs to be deleted
    */
-  @Modifying
+  
   @Query("delete from Connection c "
       + "where c.fromPartyId=?1")
   void deleteAllToPartyConnectionById(Long id);

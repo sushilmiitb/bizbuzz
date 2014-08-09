@@ -2,6 +2,7 @@ package com.bizbuzz.web;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,6 +34,7 @@ import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
@@ -42,6 +44,7 @@ import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ChatRoomService;
+import com.bizbuzz.service.ChatService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
@@ -74,6 +77,9 @@ public class SellerController {
   
   @Autowired
   ChatRoomService chatRoomService;
+  
+  @Autowired
+  ChatService chatService;
   
   
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
@@ -151,6 +157,7 @@ public class SellerController {
     m.addAttribute("connectionList", allConnections);
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     m.addAttribute("privateGroupList", privateGroups);
+    
     return "jsp/seller/viewconnection";
   }
   
@@ -187,7 +194,7 @@ public class SellerController {
     members.add(buyerParty);
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setMembers(members);
-    chatRoomService.saveChatroomMembers(chatRoom);
+    chatRoomService.saveChatRoom(chatRoom);
  // Above  code for add members into chatroom
     
     if(toPerson == null){
@@ -213,7 +220,7 @@ public class SellerController {
     ajaxReply.addDetails(toPerson);
     return ajaxReply;
   }
-  
+ 
   @RequestMapping(value="/seller/deleteconnection/{personId}")
   public String deleteConnection(@PathVariable Long personId){
     List<String> errors = new ArrayList<String>();
@@ -231,6 +238,12 @@ public class SellerController {
     if(privateGroup != null){
       connectionService.deleteConnection(privateGroup, toPerson);
     }
+    
+    ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
+   // chatService.deleteAllChatByChatRoomId(chatroom.getId());
+    //chatRoomService.deleteChatRoom(chatroom.getId());
+    
+    
     return "redirect:/seller/viewconnection";
   }
   

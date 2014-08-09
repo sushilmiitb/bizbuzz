@@ -114,4 +114,5 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   public Person getPerson(Long id){
     return personRepository.findOne(id);
   }
+
 }

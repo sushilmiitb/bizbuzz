@@ -2,6 +2,7 @@ package com.bizbuzz.service;
 
 import java.util.List;
 
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Party;
@@ -22,4 +23,5 @@ public interface ConnectionService {
   public List<Person> getGroupMembersByPrivateGroup(PrivateGroup privateGroup);
   public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId);
   public void flush();
+ 
 }
