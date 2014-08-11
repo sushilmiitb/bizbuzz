@@ -7,13 +7,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.bizbuzz.model.ImageModel;
+import com.bizbuzz.model.PropertyField;
 
-@Transactional
 @Repository
-public interface ImageModelRepository extends JpaRepository<ImageModel, Long>{
+@Transactional
+public interface PropertyFieldRepository extends JpaRepository<PropertyField, Long> {
   @Modifying
-  @Query("delete from ImageModel i "
-      + "where i.id=?1")
-  void deleteImageModelById(Long id);
+  @Query("delete from PropertyField p "
+      + "where p.id=?1")
+  void deletePropertyFieldById(Long id);
 }

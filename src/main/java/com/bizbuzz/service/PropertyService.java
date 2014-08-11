@@ -15,7 +15,8 @@ public interface PropertyService {
   public PropertyMetadata getPropertyMetadata(Person seller, Integer depth, Long categoryId);
   public PropertyMetadata getPropertyMetadata(Long categoryId);
   public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId);
-  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId);
+  public PropertyMetadata updatePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId);
+  //public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId);
   public PropertyValue savePropertyValue(PropertyValue propertyValue);
   public void getPropertyValue(Long propertyValueId);
   public ImageModel saveImage(MultipartFile image, PropertyValue propertyValue, String tag);
@@ -26,4 +27,8 @@ public interface PropertyService {
   public ImageModel updateByteImage(byte[] image, ImageModel imageModel, String tag);
   public PropertyValue updatePropertyValue(PropertyValue newPropertyValue, PropertyValue oldPropertyValue);
   public String getImageDir();
+  public void deletePropertyField(long fieldId);
+  public void deletePropertySubGroup(long subgroupId);
+  public void deletePropertyGroup(long groupId);
+  public void deleteImageModel(long imageId);
 }

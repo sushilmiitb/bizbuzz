@@ -7,199 +7,133 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
-	<!-- 
-		<script type="text/javascript">
-		$(document).ready(function() {
-			$('#admin_viewproperty_form').submit(function(event) {
-				var newProperty = $('.newInputRow');
-				var newPropertyJsonObj= [];
-				for(i=0;i<newProperty.length;i++){
-					var item = new Object();
-					item["id"] = null;
-					item["propertyName"] = $(newProperty[i]).find(".propertyInputPropertyName").val();
-					item["possibleUnits"] = $(newProperty[i]).find(".propertyInputPossibleUnits").val();
-					item["possibleValues"] = $(newProperty[i]).find(".propertyInputPossibleValues").val();
-					item["groupingName1"] = $(newProperty[i]).find(".propertyInputGroupingname1").val();
-					item["groupingName2"] = $(newProperty[i]).find(".propertyInputGroupingname2").val();
-					item["groupingName3"] = $(newProperty[i]).find(".propertyInputGroupingname3").val();
-					newPropertyJsonObj.push(item);
-				}
-				var property = $('.propertyInputRow');
-				var propertyJsonObj= [];
-				for(i=0;i<property.length;i++){
-					var item = new Object();
-					item["id"] = null;
-					item["propertyName"] = $(property[i]).find(".propertyInputPropertyName").val();
-					item["possibleUnits"] = $(property[i]).find(".propertyInputPossibleUnits").val();
-					item["possibleValues"] = $(property[i]).find(".propertyInputPossibleValues").val();
-					item["groupingName1"] = $(property[i]).find(".propertyInputGroupingname1").val();
-					item["groupingName2"] = $(property[i]).find(".propertyInputGroupingname2").val();
-					item["groupingName3"] = $(property[i]).find(".propertyInputGroupingname3").val();
-					propertyJsonObj.push(item);
-				}
-				var json = new Object();
-				json["categoryId"]="${categoryId}";
-				json["updatePropertyMetadata"] = propertyJsonObj;
-				json["newPropertyMetadata"] = newPropertyJsonObj;
-				
-				console.log("test", JSON.stringify(json));
-				$.ajax({
-					url: $("#admin_viewproperty_form").attr( "action"),
-					data: JSON.stringify(json),
-					type: "POST",
-		
-					beforeSend: function(xhr) {
-					xhr.setRequestHeader("Accept", "application/json");
-					xhr.setRequestHeader("Content-Type", "application/json");
-				},
-				success: function(data) {
-					var respContent = "";
-					/*if(data.errors.length){
-				          	for(var i=0; i<data.errors.length;i++){
-				          		respContent += "<span class='error'>" + data.errors[i] +"</span>";
-				          		$(respContent).insertBefore($(".group").first());
-				          	}
-				          	return;
-				          }*/
-					respContent += "<span class='group'>" + data.groupName +"</span>";
-					$(respContent).insertBefore($(".group").first());  
-				}
-				}); 
+		<style type="text/css">
+			span{
+				background-color: gray;
+				border: medium;
+				margin: 5px;
+			}
+			.groupdiv{
+				border: thick solid; 
+				padding: 10px;
+				margin: 20px;
+			}
+			.subgroupdiv{
+				border: thin solid;
+				padding: 20px;
+				margin: 10px;
+			}
+		</style>
+		<script>
+			function imageClick(event){
 				event.preventDefault();
+				var n = $('.imagerow').length;
+				var html = "<td><input class='imagetag' name='imageModels["+ n +"].tag' type='text' value="+n+" readonly='true'/></td>";
+				html = html+"<td><input class='imagename' name='imageModels["+ n +"].name' type='text'/></td>";
+				html = "<tr class='imagerow'>"+html+"</tr>";
+				$("#imagetable").append(html);
+			}
+			function groupClick(event){
+				event.preventDefault();
+				var i = $('.groupdiv').length;
+				var html = "<h2>Group <input class='grouptag' name='propertyGroups["+i+"].tag' type='text' value='"+i+"' readonly='true' /></h2>"
+				html = html+"<h2><input name='propertyGroups["+i+"].name' type='text' /></h2>";
+				html = html + "<span class='addSubgroup' onclick='subgroupClick(this)' id='addSubgroup-"+i+"'>Add Subgroup</span>";
+				html = "<div class='groupdiv' id='groupdiv-"+i+"'>"+html+"</div>";
+				$(html).insertBefore("#addGroup");
+			}
+			function subgroupClick(event){
+				//event.preventDefault();
+				var clickId = $(event).attr("id");
+				var clickIdArray = clickId.split('-');
+				var i = parseInt(clickIdArray[1]);
+				var subgroups = $("#groupdiv-"+i).find(".subgroupdiv");
+				var j = subgroups.length;
+				var html = "<h5>Subgroup <input name='propertyGroups["+i+"].propertySubGroups["+j+"].tag' type='text' value='"+j+"' readonly='true' /></h5>";
+				html = html + "<h5><input name='propertyGroups["+i+"].propertySubGroups["+j+"].name' type='text' /></h5>";
+				html = html + "<table id='table-"+i+"-"+j+"'></table>";
+				html = html + "<span class='addField' onclick='fieldClick(this)' id='addField-"+i+"-"+j+"'>Add Field</span>";
+				html = "<div class='subgroupdiv' id='subgroupdiv-"+i+"-"+j+"'>"+html+"</div>";
+				$(html).insertBefore("#addSubgroup-"+i);
+			}
+			function fieldClick(event){
+				//event.preventDefault();
+				var clickId = $(event).attr("id");
+				var clickIdArray = clickId.split('-');
+				var i = parseInt(clickIdArray[1]);
+				var j = parseInt(clickIdArray[2]);
+				var rows = $(".fieldrow-"+i+"-"+j);
+				var k = rows.length;
+				var html = "<td>Field <input class='fieldtag' name='propertyGroups["+i+"].propertySubGroups["+j+"].propertyFields["+k+"].tag' type='text' value='"+k+"' readonly='true' /></td>";
+				html = html+"<td><input class='fieldname' name='propertyGroups["+i+"].propertySubGroups["+j+"].propertyFields["+k+"].value' type='text' /></td>";
+				html = "<tr class='fieldrow-"+i+"-"+j+"'>"+html+"</tr>";
+				//html = html + "<button class='addField' id='addField-"+i+"-"+j+"'>Add Field</button>";
+				$("#table-"+i+"-"+j).append(html);
+			}
+			
+			$(document).ready(function(){
+				$("#addImage").click(imageClick);
+				
+				$("#addGroup").click(groupClick);
+				
+				//$(".addSubgroup").click(subgroupClick);
+				
+				//$(".addField").click(fieldClick);
 			});
-		
-			$('#admin_viewproperty_addpropertybtn').click(function(event) {
-				var html='<tr class="newInputRow">'+
-					'<td><input '+ 
-					'type="text" class="propertyInputPropertyName"  /> '+
-					'</td> '+
-					'<td><input '+
-					'type="text" class="propertyInputPossibleUnits" /> '+
-					'</td> '+
-					'<td><input '+ 
-					'type="text" class="propertyInputPossibleValues" /> '+
-					'</td> '+
-					'<td><input '+ 
-					'type="text" class="propertyInputGroupingname1" /> '+
-					'</td> '+
-					'<td><input '+ 
-					'type="text" class="propertyInputGroupingname2" /> '+
-					'</td> '+
-					'<td><input '+ 
-					'type="text" class="propertyInputGroupingname3" /> '+
-					'</td> '+
-					'</tr> ';
-					$('.headerRow').after(html);
-			});
-		
-		});
 		</script>
-		-->
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-<%-- 		<c:url var="base_url" value="/admin/property/save" /> --%>
-<!-- 		<button id="admin_viewproperty_addpropertybtn">Add Property</button> -->
-<%-- 		<form id="admin_viewproperty_form" action="${base_url}"> --%>
-<!-- 			<table> -->
-
-<!-- 				<tr class="headerRow"> -->
-<!-- 					<th>Property Name</th> -->
-<!-- 					<th>Unit</th> -->
-<!-- 					<th>Possible Values</th> -->
-<!-- 					<th>Property Group1</th> -->
-<!-- 					<th>Property Group2</th> -->
-<!-- 					<th>Property Group3</th> -->
-<!-- 				</tr> -->
-<%-- 				<c:forEach items="${propertyMetadatas}" var="item" > --%>
-<%-- 					<tr id="admin_viewproperty_row_${item.id}" class="propertyInputRow"> --%>
-<%-- 						<td><input id="admin_viewproperty_propertyname_${item.id}" --%>
-<!-- 							type="text" class="propertyInputPropertyName" -->
-<%-- 							value="${item.propertyName }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_propertycode_${item.id}" --%>
-<!-- 							type="text" class="propertyInputPropertyCode" -->
-<%-- 							value="${item.propertyCode }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_possibleunits_${item.id}" --%>
-<!-- 							type="text" class="propertyInputPossibleUnits" -->
-<%-- 							value="${item.possibleUnits }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_possiblevalues_${item.id}" --%>
-<!-- 							type="text" class="propertyInputPossibleValues" -->
-<%-- 							value="${item.possibleValues }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_groupingname1_${item.id}" --%>
-<!-- 							type="text" class="propertyInputGroupingname1" -->
-<%-- 							value="${item.groupingName1 }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_groupingcode1_${item.id}" --%>
-<!-- 							type="text" class="propertyInputGroupingcode1" -->
-<%-- 							value="${item.groupingCode1 }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_groupingname2_${item.id}" --%>
-<!-- 							type="text" class="propertyInputGroupingname2" -->
-<%-- 							value="${item.groupingName2 }" /></td> --%>
-<%-- 						<td><input id="admin_viewproperty_groupingcode2_${item.id}" --%>
-<!-- 							type="text" class="propertyInputGroupingcode2" -->
-<%-- 							value="${item.groupingCode2 }" /></td> --%>
-<!-- 					</tr> -->
-<%-- 				</c:forEach> --%>
-<!-- 				<tr> -->
-<%-- 					<td><input type="submit" id="admin_viewproperty_submit_${item.id}" value="Save"/></td> --%>
-<!-- 				</tr> -->
-<!-- 			</table> -->
-<!-- 		</form> -->
-			
-			
-<%-- 			<c:url var="save_existing_property_url" value="/admin/property/link/category/${categoryId }" /> --%>
-<%-- 			<form action="${save_existing_property_url }" method="POST"> --%>
-<!-- 				<h4>Link Existing Property Metadata</h4> -->
-<!-- 				<h6>PropertyMetadata Id</h6> -->
-<!-- 				<input type="text" value="propertyMetadataId"/> -->
-<!-- 				<input type="submit" value="submit"/> -->
-<!-- 			</form> -->
-			
 			<c:url var="save_url" value="/admin/property/save/category/${categoryId }?propertyMetadataId=${propertyMetadata.id}" />
+			<c:url var="delete_url" value="/admin/property/delete/category/${categoryId}" />
 			<form:form modelAttribute="propertyMetadata" action="${save_url }" method="POST">
-			<table>
+				<input name="id" type="hidden" value="${propertyMetadata.id}"/>
+				<h1>Images</h1>
+				<table id="imagetable">
+				<c:forEach var="item" items="${propertyMetadata.imageModels}" varStatus="i" >
+					<tr class="imagerow">
+						<td style="display:none"><input class="imagetag" name="imageModels[${i.index}].id" value="${item.id}" type="hidden" /></td>
+						<td><input class="imagetag" name="imageModels[${i.index}].tag" value="${item.tag}" type="text" readonly="true" /></td>
+						<td><input class="imagename" name="imageModels[${i.index}].name" value="${item.name}" type="text" /></td>
+						<td><a href="${delete_url}/image/${item.id}">Delete Image</a></td>
+					</tr>
+				</c:forEach>
+				</table>
 				
-				<tr style="visibility: hidden;">
-					<td><form:label path="id">id</form:label></td>
-					<td><form:input path="id" type="text" value="${propertyMetadata.id}"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="isImagePresent">isImagePresent</form:label></td>
-					<td><form:input path="isImagePresent" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="primaryImage">primaryImage</form:label></td>
-					<td><form:input path="primaryImage" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="image1">image1</form:label></td>
-					<td><form:input path="image1" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="image2">image2</form:label></td>
-					<td><form:input path="image2" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="image3">image3</form:label></td>
-					<td><form:input path="image3" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="group1">group1</form:label></td>
-					<td><form:input path="group1" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="group1Subgroup1">group1Subgroup1</form:label></td>
-					<td><form:input path="group1Subgroup1" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="group1Subgroup1Property1">group1Subgroup1Property1</form:label></td>
-					<td><form:input path="group1Subgroup1Property1" type="text"/></td>
-				</tr>
-				<tr>
-					<td><form:label path="group1Subgroup1Property2">group1Subgroup1Property2</form:label></td>
-					<td><form:input path="group1Subgroup1Property2" type="text"/></td>
-				</tr>
-			</table>
-			<input type="submit" value="submit" />
+				<button id="addImage">Add Image</button>
+				
+				<h1>Properties</h1>
+				<c:forEach var="group" items="${propertyMetadata.propertyGroups}" varStatus="i" >
+					<div class="groupdiv" id="groupdiv-${i.index}">
+						<input class="grouptag" name="propertyGroups[${i.index}].id" value="${group.id}" type="hidden" />
+						<h2>Group <input class="grouptag" name="propertyGroups[${i.index}].tag" value="${group.tag}" type="text" readonly="true" /></h2>
+						<h2><input name="propertyGroups[${i.index}].name" value="${group.name}" type="text" /></h2>
+						<p><a href="${delete_url}/group/${group.id}">Delete Group</a></p>
+						<c:forEach var="subgroup" items="${group.propertySubGroups}" varStatus="j" >
+							<div class="subgroupdiv" id="subgroupdiv-${i.index}-${j.index}">
+								<input name="propertyGroups[${i.index}].propertySubGroups[${j.index}].id" value="${subgroup.id}" type="hidden" />
+								<h5>Subgroup <input name="propertyGroups[${i.index}].propertySubGroups[${j.index}].tag" value="${subgroup.tag}" type="text" readonly="true" /></h5>
+								<h5><input name="propertyGroups[${i.index}].propertySubGroups[${j.index}].name" value="${subgroup.name}" type="text" /></h5>
+								<p><a href="${delete_url}/subgroup/${subgroup.id}">Delete Subgroup</a></p>
+								<table id="table-${i.index}-${j.index}">
+								<c:forEach var="field" items="${subgroup.propertyFields}" varStatus="k" >
+									<tr class="fieldrow">
+										<td style="display:none;"><input class="grouptag" name="propertyGroups[${i.index}].propertySubGroups[${j.index}].propertyFields[${k.index}].id" value="${field.id}" type="hidden" /></td>
+										<td>Field <input class="grouptag" name="propertyGroups[${i.index}].propertySubGroups[${j.index}].propertyFields[${k.index}].tag" value="${field.tag}" type="text" readonly="true" /> </td>
+										<td><input name="propertyGroups[${i.index}].propertySubGroups[${j.index}].propertyFields[${k.index}].value" value="${field.value}" type="text" /></td>
+										<td><a href="${delete_url}/field/${field.id}">Delete Field</a></td>
+									</tr>
+								</c:forEach>
+								</table>
+								<span class="addField" onclick="fieldClick(this)" id="addField-${i.index}-${j.index}">Add Field</span>
+							</div>
+						</c:forEach>
+						<span class="addSubgroup" onclick='subgroupClick(this)' id="addSubgroup-${i.index}">Add Subgroup</span>
+					</div>
+				</c:forEach>
+				<button id="addGroup">Add group</button>
+				<br/><br/>
+				<input type="submit" value="submit" />
 			</form:form>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

@@ -3,6 +3,7 @@ package com.bizbuzz.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,24 +25,19 @@ public class ImageModel implements Serializable{
 
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE)
-  private Long id;
+  private Long id = null;
   
-  private String originalFilename;
-  private String tag;
+  private String originalFilename = "";
+  private String tag = "";
+  private String name = "";
   
-  @OneToOne(mappedBy="primaryImageModel")
-  private Property primaryImageProperty;
-  @OneToOne(mappedBy="image1Model")
-  private Property image1Property;
-  @OneToOne(mappedBy="image2Model")
-  private Property image2Property;
-  @OneToOne(mappedBy="image3Model")
-  private Property image3Property;
-  
+  @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name="property_id", referencedColumnName="id")
+  private Property property;
   
   private Date created;
   private Date updated;
-
+  
   public String getFilename(){
     return id.toString();
   }
@@ -52,6 +48,14 @@ public class ImageModel implements Serializable{
 
   public void setTag(String tag) {
     this.tag = tag;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getOriginalFilename() {
@@ -66,6 +70,14 @@ public class ImageModel implements Serializable{
     return id;
   }
   
+  public Property getProperty() {
+    return property;
+  }
+
+  public void setProperty(Property property) {
+    this.property = property;
+  }
+
   public Date getCreated() {
     return created;
   }
@@ -74,36 +86,8 @@ public class ImageModel implements Serializable{
     return updated;
   }
 
-  public Property getPrimaryImageProperty() {
-    return primaryImageProperty;
-  }
-
-  public void setPrimaryImageProperty(Property primaryImageProperty) {
-    this.primaryImageProperty = primaryImageProperty;
-  }
-
-  public Property getImage1Property() {
-    return image1Property;
-  }
-
-  public void setImage1Property(Property image1Property) {
-    this.image1Property = image1Property;
-  }
-
-  public Property getImage2Property() {
-    return image2Property;
-  }
-
-  public void setImage2Property(Property image2Property) {
-    this.image2Property = image2Property;
-  }
-
-  public Property getImage3Property() {
-    return image3Property;
-  }
-
-  public void setImage3Property(Property image3Property) {
-    this.image3Property = image3Property;
+  public void setId(Long id) {
+    this.id = id;
   }
 
   @PrePersist

@@ -34,7 +34,7 @@ public interface PropertyMetadataRepository extends JpaRepository<PropertyMetada
   PropertyMetadata findCategoryDepthThree(Long rootId, Long categoryId);
   
   @Query("select p "
-      + "from PropertyMetadata p inner join p.category c "
+      + "from PropertyMetadata p inner join p.category c left join p.imageModels im left join p.propertyGroups pg left join pg.propertySubGroups psg left join psg.propertyFields pf "
       + "where c.id=?1")
   PropertyMetadata findPropertyMetadataByCategoryId(Long categoryId);
 }

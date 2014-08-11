@@ -157,6 +157,7 @@ public class SellerController {
     //List<Person> allConnections = connectionService.getAllSellersConnections(seller);
     //m.addAttribute("connectionList", allConnections);
     List<Connection> allConnections = connectionService.getAllSellerConnectionsUsingPrivateGroup(seller);
+    
     m.addAttribute("connectionList", allConnections);
     
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
@@ -297,7 +298,9 @@ public class SellerController {
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
       PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryTree.getId());
       m.addAttribute("propertyMetadata", propertyMetadata);
-      m.addAttribute("uploadForm", new ProductDetailDTO());
+      ProductDetailDTO pdd = new ProductDetailDTO();
+      pdd.initialize(propertyMetadata);
+      m.addAttribute("uploadForm", pdd);
       m.addAttribute("categoryId", categoryTree.getId());
       m.addAttribute("parentCategoryName", parentCategoryName);
       return "jsp/seller/viewuploadproduct";
@@ -316,8 +319,8 @@ public class SellerController {
   public String saveProductUpload(@PathVariable Long categoryId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     PropertyValue propertyValue = propertyService.savePropertyValue(uploadForm.getPropertyValue());
     //List<MultipartFile> uploadedImages = uploadForm.getImagesInOrder();
-    List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
-    //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
+    //List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
+    /*List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
     List<ImageModel> imageModels = propertyService.saveByteImagesInOrder(uploadedImages, propertyValue);
     propertyValue.setImageModelsInOrder(imageModels);
     propertyValue = propertyService.savePropertyValue(propertyValue);
@@ -327,7 +330,8 @@ public class SellerController {
     item.setPropertyValue(propertyValue);
     item.setOwner(getSeller());
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
+    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();*/
+    return "";
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
@@ -362,13 +366,14 @@ public class SellerController {
     }
     PropertyValue propertyValue = propertyService.updatePropertyValue(uploadForm.getPropertyValue(), propertyValueOld);
     
-    List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
+    /*List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
     //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
     List<ImageModel> imageModels = propertyService.updateByteImagesInOrder(uploadedImages, propertyValue);
     propertyValue.setImageModelsInOrder(imageModels);
     propertyValue = propertyService.savePropertyValue(propertyValue);
     
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
+    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;*/
+    return "";
   }
   
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)

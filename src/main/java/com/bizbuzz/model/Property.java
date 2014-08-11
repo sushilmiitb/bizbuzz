@@ -2,11 +2,14 @@ package com.bizbuzz.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,6 +18,11 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 
 /**
@@ -34,139 +42,85 @@ public abstract class Property implements Serializable{
   @GeneratedValue(strategy = GenerationType.TABLE)
   private Long id;
   
-  static public final String tagsArray[] = {"primaryImageModel", "image1Model", "image2Model", "image3Model"};
+  @OneToMany(mappedBy="property", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<ImageModel> imageModels = new ArrayList<ImageModel>();
   
-  @OneToOne
-  @JoinColumn(name="primary_image_model_id", referencedColumnName="id")
-  private ImageModel primaryImageModel;
-  @OneToOne
-  @JoinColumn(name="image1_model_id", referencedColumnName="id")
-  private ImageModel image1Model;
-  @OneToOne
-  @JoinColumn(name="image2_model_id", referencedColumnName="id")
-  private ImageModel image2Model;
-  @OneToOne
-  @JoinColumn(name="image3_model_id", referencedColumnName="id")
-  private ImageModel image3Model;
+  @OneToMany(mappedBy="property", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<PropertyGroup> propertyGroups = new ArrayList<PropertyGroup>();
   
-  private Boolean isImagePresent;
-  private String primaryImage;
-  private String image1;
-  private String image2;
-  private String image3;
+  private Date createdAt;
   
-  private String group1;
-  private String group1Subgroup1;
-  private String group1Subgroup1Property1;
-  private String group1Subgroup1Property2;
+  private Date updatedAt;
+  
+  public void initialize(int imageModelsSize, int propertyGroupsSize){
+    imageModels = new ArrayList<ImageModel>(imageModelsSize);
+    for(int i=0; i<imageModelsSize; i++){
+      imageModels.add(new ImageModel());
+    }
+    propertyGroups = new ArrayList<PropertyGroup>(propertyGroupsSize);
+    for(int i=0; i<propertyGroupsSize; i++){
+      propertyGroups.add(new PropertyGroup());
+    }
+  }
   
   public List<String> getImageTags(){
     List<String> tags = new ArrayList<String>();
-    for(int i=0; i<tagsArray.length;i++){
-      tags.add(i, tagsArray[i]);
+    for(int i=0; i<imageModels.size();i++){
+      tags.add(i, imageModels.get(i).getTag());
     }
     return tags;
   }
   
   public void setImageModelsInOrder(List<ImageModel> imageModels){
-    setPrimaryImageModel(imageModels.get(0));
-    setImage1Model(imageModels.get(1));
-    setImage2Model(imageModels.get(2));
-    setImage3Model(imageModels.get(3));
+    
   }
   
   public List<ImageModel> getImageModelsInOrder(){
     List<ImageModel> imageModels = new ArrayList<ImageModel>();
-    imageModels.add(0, getPrimaryImageModel());
-    imageModels.add(1, getImage1Model());
-    imageModels.add(2, getImage2Model());
-    imageModels.add(3, getImage3Model());
+    
     return imageModels;
   }
   
-  public Boolean getIsImagePresent() {
-    return isImagePresent;
-  }
-  public void setIsImagePresent(Boolean isImagePresent) {
-    this.isImagePresent = isImagePresent;
-  }
-  public String getPrimaryImage() {
-    return primaryImage;
-  }
-  public void setPrimaryImage(String primaryImage) {
-    this.primaryImage = primaryImage;
-  }
-  public String getImage1() {
-    return image1;
-  }
-  public void setImage1(String image1) {
-    this.image1 = image1;
-  }
-  public String getImage2() {
-    return image2;
-  }
-  public void setImage2(String image2) {
-    this.image2 = image2;
-  }
-  public String getImage3() {
-    return image3;
-  }
-  public void setImage3(String image3) {
-    this.image3 = image3;
-  }
-  public String getGroup1() {
-    return group1;
-  }
-  public void setGroup1(String group1) {
-    this.group1 = group1;
-  }
-  public String getGroup1Subgroup1() {
-    return group1Subgroup1;
-  }
-  public void setGroup1Subgroup1(String group1Subgroup1) {
-    this.group1Subgroup1 = group1Subgroup1;
-  }
-  public String getGroup1Subgroup1Property1() {
-    return group1Subgroup1Property1;
-  }
-  public void setGroup1Subgroup1Property1(String group1Subgroup1Property1) {
-    this.group1Subgroup1Property1 = group1Subgroup1Property1;
-  }
-  public String getGroup1Subgroup1Property2() {
-    return group1Subgroup1Property2;
-  }
-  public void setGroup1Subgroup1Property2(String group1Subgroup1Property2) {
-    this.group1Subgroup1Property2 = group1Subgroup1Property2;
-  }
   public Long getId() {
     return id;
   }
   public void setId(Long id){
     this.id = id;
   }
-  public ImageModel getPrimaryImageModel() {
-    return primaryImageModel;
+  public Date getCreatedAt() {
+    return createdAt;
   }
-  public void setPrimaryImageModel(ImageModel primaryImageModel) {
-    this.primaryImageModel = primaryImageModel;
+  public Date getUpdatedAt() {
+    return updatedAt;
   }
-  public ImageModel getImage1Model() {
-    return image1Model;
+
+  public List<ImageModel> getImageModels() {
+    return imageModels;
   }
-  public void setImage1Model(ImageModel image1Model) {
-    this.image1Model = image1Model;
+
+  public void setImageModels(List<ImageModel> imageModels) {
+    this.imageModels.clear();
+    this.imageModels.addAll(imageModels);
   }
-  public ImageModel getImage2Model() {
-    return image2Model;
+
+  public List<PropertyGroup> getPropertyGroups() {
+    return propertyGroups;
   }
-  public void setImage2Model(ImageModel image2Model) {
-    this.image2Model = image2Model;
+
+  public void setPropertyGroups(List<PropertyGroup> propertyGroups) {
+    this.propertyGroups.clear();
+    this.propertyGroups.addAll(propertyGroups);
   }
-  public ImageModel getImage3Model() {
-    return image3Model;
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = new Date();
   }
-  public void setImage3Model(ImageModel image3Model) {
-    this.image3Model = image3Model;
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = new Date();
   }
     
 }
