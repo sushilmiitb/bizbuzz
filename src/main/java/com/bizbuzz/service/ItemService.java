@@ -10,4 +10,6 @@ public interface ItemService {
   public Item saveItem(Item item);
   public Item getItemByItemIdAndOwner(Long itemId, Person owner);
   public List<Item> getItemsByCategoryIdAndOwner(Long categoryId, Long ownerId);
+  
+  public Item getItemByItemId(Long itemId);
 }

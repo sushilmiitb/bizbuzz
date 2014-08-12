@@ -10,4 +10,5 @@ public interface ChatService {
   public List<Chat> getChat(Long senderId);
   public List<Chat> getAllChatsByChatRoomId(Long chatRoomId);
  // public void deleteAllChatByChatRoomId(Long chatRoomId);
+  public List<Chat> getAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId);
 }

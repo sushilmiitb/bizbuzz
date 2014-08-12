@@ -4,7 +4,7 @@
 <tiles:insertDefinition name="chat">
 	
 	<tiles:putAttribute name="title">
-		BizBuzz-Chatroom
+		BizBuzz-Item Chatroom
 	</tiles:putAttribute>
 	
 	<tiles:putAttribute name="customJsCode">
@@ -17,15 +17,15 @@
 	<script src="<c:url value='/static/js/jquery/jquery.js'/>"></script>
     <script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
     <script src="<c:url value='/static/js/jquery/jquery.tmpl.min.js'/>"></script>
-  
 </tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-		<%-- This is used when new chats are saved in database 
-		 <c:url var="post_url" value="/chat/showonetoonechatmessages/${chatroomid}" />
-		<form:form method="POST" action="${post_url}"
-			id="onetoone_messages_form" class="form" modelAttribute="chat"> --%>
 			<div class="ui-corner-all custom-corners">
+				<c:if test="${!empty itemid}">
+					<div class="ui-bar ui-bar-a">
+						<h3> <c:out value="Conversation about Item : ${itemid}"></c:out> </h3>
+					</div>
+				</c:if>
 	 			<c:if test="${!empty secondperson}">
 					<div class="ui-bar ui-bar-a">
 						<h3> <c:out value="${secondperson.firstName} ${secondperson.lastName}"></c:out> </h3>
@@ -82,7 +82,7 @@
         var socket = $.atmosphere;
         var request = new $.atmosphere.AtmosphereRequest();
         
-        request.url = document.location.toString() + '/../../../../websockets';
+        request.url = document.location.toString() + '/../../../../../../websockets';
         request.contentType = "application/json";
         request.transport = 'websocket';
         request.fallbackTransport = 'long-polling';
@@ -91,8 +91,7 @@
         request.onOpen = function(response){
           
           console.log('onOpen: connection opened using transport:' + response.transport);
-          subSocket.push(JSON.stringify({"message":"0Open0","userId": ${userId},"chatroomId":${chatroomId},"itemId":0}));
-         
+          subSocket.push(JSON.stringify({"message":"0Open0","userId": ${userId},"chatroomId":${chatroomId},"itemId":${itemId}}));
         }
         
         request.onReconnect = function(request, response){
@@ -121,7 +120,7 @@
         
         $('#message-button').click(function() {
           console.log('Clicked MessageButton'+$('#message-field').val());
-          subSocket.push(JSON.stringify({"message":$('#message-field').val(),"userId": ${userId},"chatroomId":${chatroomId},"itemId":0}));
+          subSocket.push(JSON.stringify({"message":$('#message-field').val(),"userId": ${userId},"chatroomId":${chatroomId},"itemId":${itemId}}));
         });
       });
   </script>

@@ -32,7 +32,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
 
   @Override
-  public ChatRoom getChatRoom(Long id) {
+  public ChatRoom getChatRoomByChatRoomId(Long id) {
     return chatRoomRepository.findOne(id);
   }
 

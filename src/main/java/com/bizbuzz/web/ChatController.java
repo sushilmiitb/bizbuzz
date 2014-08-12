@@ -51,6 +51,7 @@ import org.springframework.http.ResponseEntity;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.UserLogin;
@@ -58,10 +59,11 @@ import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ChatService;
 import com.bizbuzz.service.ConnectionService;
+import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.Message;
-import com.bizbuzz.dto.WebSocketRequestAjaxDTO;
+
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.Authentication;
@@ -106,6 +108,9 @@ public class ChatController {
   @Autowired
   ChatRoomService chatRoomService;
   
+  @Autowired
+  ItemService itemService;
+  
 
   
   @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -114,7 +119,7 @@ public class ChatController {
   }
   
   @RequestMapping(value = "/samplechat", method = RequestMethod.GET)
-  public String chatByAtmosphere(HttpSession session,HttpServletRequest request) {
+  public String chatByAtmosphere(HttpSession session) {
   
    Person person = getPerson();
     UserLogin user = person.getUserId();
@@ -124,6 +129,7 @@ public class ChatController {
     return "home";
   }
   
+ // ~~~~~~~~~~~~~~~~~~~~~            CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMWORK             ~~~~~~~~~~~~~~~~~~~~~~~
   
   @RequestMapping(value = "/websockets", method = RequestMethod.POST)
   @ResponseBody
@@ -134,31 +140,50 @@ public class ChatController {
     String message = jsonObject.get("message").toString();
     String userId = jsonObject.get("userId").toString();
     Long chatRoomId = (long)jsonObject.get("chatroomId").hashCode();   
+    Long itemId = (long)jsonObject.get("itemId").hashCode();
    
+    
     if(message.equals("0Open0")){
-      Broadcaster b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+userId ,true);
+      Broadcaster b;
+      if(itemId.intValue()!=0){
+        b  = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+itemId+"/"+userId ,true);
+      }
+      else{
+        b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+userId ,true);
+      }
       b.addAtmosphereResource(event);  
       return null;
     }
     else{
       
       Person person = partyManagementService.getPersonFromUsername(userId);
-      ChatRoom chatRoom = chatRoomService.getChatRoom(chatRoomId);
+      ChatRoom chatRoom = chatRoomService.getChatRoomByChatRoomId(chatRoomId);
+ 
       Chat chat = new Chat();
       chat.setSender((Party)person);
       chat.setMessage(message);
       chat.setChatRoom(chatRoom);
+      if(itemId.intValue()!=0){ 
+        Item item = itemService.getItemByItemId(itemId);
+        chat.setItem(item);
+      }
       chatService.saveChat(chat);
+      
       Date lastChatDate = chat.getCreatedAt();
       chatRoom.setUpdatedAt(lastChatDate);
       chatRoomService.saveChatRoom(chatRoom);
-     // String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
-  /*    for(Person member : members){
-        BroadcasterFactory.getDefault().lookup(member.getUserId().getId()).broadcast(userId + " : " +message +"        " +dateOfBroadcast);
-      }    
-*/
-      MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +lastChatDate +"</td></tr>");
-      logger.info("Received message to broadcast: {}", userId +" : " +message +"           " +lastChatDate);         
+      String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
+      /*    for(Person member : members){
+          BroadcasterFactory.getDefault().lookup(member.getUserId().getId()).broadcast(userId + " : " +message +"        " +dateOfBroadcast);
+        }    
+       */
+      if(itemId.intValue()!=0)
+        MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+      else
+        MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+       
+      
+      logger.info("Received message to broadcast: {}", userId +" : " +message +"           " +dateOfBroadcast);         
     }
     
     return  "<tr><td colspan='2'> message successfully send </td></tr>";
@@ -193,6 +218,7 @@ public void websockets(final AtmosphereResource event)
 
   }
 
+
 @RequestMapping(value = "/chat/showchatrooms", method = RequestMethod.GET)
 public String showChatRooms(Model m) {
     Person person = getPerson();
@@ -206,7 +232,7 @@ public String showChatRooms(Model m) {
   }
 
 @RequestMapping(value="/chat/showchatroom/chatroomid/{chatroomid}", method = RequestMethod.GET)
-public String showChatRoom(HttpSession session,Model m,@PathVariable long chatroomid) {
+public String showChatRoom(Model m,HttpSession session,@PathVariable Long chatroomid) {
   Person person = getPerson();
   UserLogin user = person.getUserId();
   
@@ -234,20 +260,58 @@ public String showChatRoom(HttpSession session,Model m,@PathVariable long chatro
    return "jsp/chat/chatroom";
   }
 
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~       CHAT FUNTIONALITY WITH NORMAL REQUEST-RESPONSE MODEL     ~~~~~~~~~~~~~~~~~~~~~~~
 
 @RequestMapping(value = "/chat/showonetoonechatmessages/{chatroomid}", method = RequestMethod.POST)
 public String showOneToOneChatMessages(@ModelAttribute("chat") Chat chat,@PathVariable Long chatroomid, Model model) {
   Person person = getPerson();
-  ChatRoom chatRoom = chatRoomService.getChatRoom(chatroomid);
+  ChatRoom chatRoom = chatRoomService.getChatRoomByChatRoomId(chatroomid);
   chat.setSender((Party)person);
   chat.setChatRoom(chatRoom);
   chatService.saveChat(chat);
+  
   Date lastChatDate = chat.getCreatedAt();
   model.addAttribute("lastchatDate", lastChatDate);
   chatRoom.setUpdatedAt(lastChatDate);
   chatRoomService.saveChatRoom(chatRoom);
   return "redirect:/chat/showchatroom/chatroomid/{chatroomid}";
   }
+
+
+//  ~~~~~~~~~~~~~~~~~~~~~~~~~~~    ITEM CENTRIC CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMWORK    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//                                 --------------------------------------------------------
+
+@RequestMapping(value = "/chat/showitemchatroom/chatroomid/{chatroomid}/itemid/{itemid}", method = RequestMethod.GET)
+public String chatByAtmosphere(Model m,HttpSession session,@PathVariable Long chatroomid,@PathVariable Long itemid) {
+
+  Person person = getPerson();
+  UserLogin user = person.getUserId(); 
+  
+ List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
+ if(members==null) return "jsp/error/usernotfound";
+
+     boolean flag=false;
+     for(Person member : members){
+        if(person.getId().longValue() == member.getId().longValue()) flag=true;
+     }
+  
+     if(flag){
+       for(Person member : members){
+         if(person.getId().longValue() != member.getId().longValue()) 
+           m.addAttribute("secondperson", member);
+       }  
+     }
+     else
+        return "jsp/error/usernotfound";
+     
+     List<Chat> chatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+  
+  m.addAttribute("chats", chatsFromDatabase);
+  session.setAttribute("userId",user.getId());
+  session.setAttribute("chatroomId",chatroomid);
+  session.setAttribute("itemId",itemid);
+  return "jsp/chat/itemchatroom";
+}
 
 
 public Person getPerson() {

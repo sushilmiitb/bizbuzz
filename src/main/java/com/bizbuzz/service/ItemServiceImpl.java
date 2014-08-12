@@ -31,5 +31,10 @@ public class ItemServiceImpl implements ItemService{
   public List<Item> getItemsByCategoryIdAndOwner(Long categoryId, Long ownerId){
     return itemRepository.findItemsByCategoryIdAndOwnerId(categoryId, ownerId);
   }
+
+  @Override
+  public Item getItemByItemId(Long itemId) {
+    return itemRepository.findOne(itemId);
+  }
   
 }

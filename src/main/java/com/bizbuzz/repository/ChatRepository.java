@@ -34,6 +34,8 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
       + "where cr.id=?1")
   void deleteAllChatsByChatRoomId(Long chatRoomid);
   */
-   
-  
+  @Query("select c from "
+      + "Chat c inner join c.chatRoom cr inner join c.item i "
+      + "where cr.id=?1 and i.id=?2") 
+  List<Chat> findAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId);
 }  

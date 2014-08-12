@@ -40,6 +40,16 @@ public class ChatServiceImpl implements ChatService{
   }
 
 
+  @Override
+  public List<Chat> getAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId) {
+    List<Chat> chats = chatRepository.findAllChatsByChatRoomIdAndItemId(chatRoomId,itemId);
+    if(chats==null)
+        return null;
+    else
+        return chats;
+  }
+
+
 /*
   @Override
   public void deleteAllChatByChatRoomId(Long chatRoomId) {
