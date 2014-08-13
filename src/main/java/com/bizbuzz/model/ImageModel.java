@@ -2,14 +2,17 @@ package com.bizbuzz.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -33,7 +36,18 @@ public class ImageModel implements Serializable{
   
   @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name="property_id", referencedColumnName="id")
-  private Property property;
+  private PropertyMetadata propertyMetadata;
+  
+  @ManyToOne
+  @JoinColumn(name="image_model_metadata_id", referencedColumnName="id")
+  private ImageModel imageModelMetadata;
+  
+  @OneToMany(mappedBy="imageModelMetadata", fetch=FetchType.LAZY)
+  private List<ImageModel> imageModelValues;
+  
+  @ManyToOne
+  @JoinColumn(name="item_id", referencedColumnName="id")
+  private Item item;
   
   private Date created;
   private Date updated;
@@ -70,12 +84,12 @@ public class ImageModel implements Serializable{
     return id;
   }
   
-  public Property getProperty() {
-    return property;
+  public PropertyMetadata getProperty() {
+    return propertyMetadata;
   }
 
-  public void setProperty(Property property) {
-    this.property = property;
+  public void setProperty(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
   }
 
   public Date getCreated() {
@@ -88,6 +102,38 @@ public class ImageModel implements Serializable{
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public PropertyMetadata getPropertyMetadata() {
+    return propertyMetadata;
+  }
+
+  public void setPropertyMetadata(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
+  }
+
+  public ImageModel getImageModelMetadata() {
+    return imageModelMetadata;
+  }
+
+  public void setImageModelMetadata(ImageModel imageModelMetadata) {
+    this.imageModelMetadata = imageModelMetadata;
+  }
+
+  public List<ImageModel> getImageModelValues() {
+    return imageModelValues;
+  }
+
+  public void setImageModelValues(List<ImageModel> imageModelValues) {
+    this.imageModelValues = imageModelValues;
+  }
+
+  public Item getItem() {
+    return item;
+  }
+
+  public void setItem(Item item) {
+    this.item = item;
   }
 
   @PrePersist

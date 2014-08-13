@@ -39,6 +39,7 @@ import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.PropertyField;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.service.CategoryService;
@@ -298,9 +299,10 @@ public class SellerController {
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
       PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryTree.getId());
       m.addAttribute("propertyMetadata", propertyMetadata);
-      ProductDetailDTO pdd = new ProductDetailDTO();
-      pdd.initialize(propertyMetadata);
-      m.addAttribute("uploadForm", pdd);
+//      ProductDetailDTO pdd = new ProductDetailDTO();
+//      pdd.initialize(propertyMetadata);
+      m.addAttribute("newItem", true);
+      m.addAttribute("uploadForm", new ProductDetailDTO());
       m.addAttribute("categoryId", categoryTree.getId());
       m.addAttribute("parentCategoryName", parentCategoryName);
       return "jsp/seller/viewuploadproduct";
@@ -317,33 +319,37 @@ public class SellerController {
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.POST)
   public String saveProductUpload(@PathVariable Long categoryId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    PropertyValue propertyValue = propertyService.savePropertyValue(uploadForm.getPropertyValue());
-    //List<MultipartFile> uploadedImages = uploadForm.getImagesInOrder();
-    //List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
-    /*List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
-    List<ImageModel> imageModels = propertyService.saveByteImagesInOrder(uploadedImages, propertyValue);
-    propertyValue.setImageModelsInOrder(imageModels);
-    propertyValue = propertyService.savePropertyValue(propertyValue);
-    
+    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
+    Person seller = getSeller();
     Item item = new Item();
     item.setItemCategory(categoryService.getCategory(categoryId));
-    item.setPropertyValue(propertyValue);
-    item.setOwner(getSeller());
+    item.setOwner(seller);
+    item = itemService.saveItem(item);
+    
+    List<PropertyValue> propertyValues = propertyService.populatePropertyValues(propertyFieldMap, uploadForm.getFieldIds(), uploadForm.getValues(), item);
+    item.setPropertyValues(propertyValues);
+    
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    List<ImageModel> valueImageModels = propertyService.populateImageModels(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), item);
+    item.setImageModels(valueImageModels);
+    
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();*/
-    return "";
+    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
   public String viewProductUpload(@PathVariable Long categoryId, @PathVariable Long itemId, Model m){
+    Person seller = getSeller();
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     m.addAttribute("propertyMetadata", propertyMetadata);
     
-    ProductDetailDTO productDetailDTO = new ProductDetailDTO();
-    Person seller = getSeller();
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
-    PropertyValue propertyValue = item.getPropertyValue();
-    productDetailDTO.setPropertyValue(propertyValue);
+    Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());
+    m.addAttribute("propertyValueMap", propertyValueMap);
+    ProductDetailDTO productDetailDTO = new ProductDetailDTO();
+    
+    Map<Long, ImageModel> valueImageModelMap = propertyService.getImageModelValuesMappedByImageModelMeta(item.getImageModels());
+    m.addAttribute("valueImageModelMap", valueImageModelMap);
     
     m.addAttribute("itemId", itemId);
     m.addAttribute("rootDir", propertyService.getImageDir());
@@ -357,23 +363,25 @@ public class SellerController {
   
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    Person seller = getSeller();
+    Person seller = getSeller();    
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
+    Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
+    List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
     
-    PropertyValue propertyValueOld = item.getPropertyValue();
-    if(propertyValueOld.getId()==null){
-      return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
-    }
-    PropertyValue propertyValue = propertyService.updatePropertyValue(uploadForm.getPropertyValue(), propertyValueOld);
+    item.setPropertyValues(propertyValuesNew);
+    
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
+
+    itemService.saveItem(item);
     
     /*List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
     //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
     List<ImageModel> imageModels = propertyService.updateByteImagesInOrder(uploadedImages, propertyValue);
     propertyValue.setImageModelsInOrder(imageModels);
     propertyValue = propertyService.savePropertyValue(propertyValue);
-    
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;*/
-    return "";
+    */
+    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
   }
   
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)

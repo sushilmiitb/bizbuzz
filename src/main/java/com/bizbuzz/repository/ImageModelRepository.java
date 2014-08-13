@@ -1,5 +1,7 @@
 package com.bizbuzz.repository;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,10 @@ public interface ImageModelRepository extends JpaRepository<ImageModel, Long>{
   @Query("delete from ImageModel i "
       + "where i.id=?1")
   void deleteImageModelById(Long id);
+  
+  @Query("select im "
+      + "from ImageModel im inner join im.propertyMetadata pm inner join pm.category c "
+      + "where c.id=?1 "
+      + "order by im.id")
+  List<ImageModel> findImageModelsByCategoryIdOrderByImageModelId(Long categoryId);
 }

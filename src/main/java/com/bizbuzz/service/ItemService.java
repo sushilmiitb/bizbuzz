@@ -6,6 +6,7 @@ import java.util.List;
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PropertyMetadata;
 
 public interface ItemService {
   public Item saveItem(Item item);

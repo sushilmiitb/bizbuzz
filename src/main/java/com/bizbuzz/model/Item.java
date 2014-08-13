@@ -3,6 +3,7 @@ package com.bizbuzz.model;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -48,10 +49,14 @@ public class Item implements Serializable{
   @JoinColumn(name="owner_id", referencedColumnName="id")
   private Party owner;
   
-  @OneToOne
-  @JoinColumn(name="property_value_id", referencedColumnName="id")
-  private PropertyValue propertyValue;
+  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<PropertyValue> propertyValues;
     
+  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<ImageModel> imageModels;
+  
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
    * @param propertyMetadata
@@ -119,12 +124,16 @@ public class Item implements Serializable{
     this.chats = chats;
   }
 
-  public PropertyValue getPropertyValue() {
-    return propertyValue;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public void setPropertyValue(PropertyValue propertyValue) {
-    this.propertyValue = propertyValue;
+  public List<PropertyValue> getPropertyValues() {
+    return propertyValues;
+  }
+
+  public void setPropertyValues(List<PropertyValue> propertyValue) {
+    this.propertyValues = propertyValue;
   }
 
   public Party getOwner() {
@@ -133,6 +142,14 @@ public class Item implements Serializable{
 
   public void setOwner(Party owner) {
     this.owner = owner;
+  }
+
+  public List<ImageModel> getImageModels() {
+    return imageModels;
+  }
+
+  public void setImageModels(List<ImageModel> imageModels) {
+    this.imageModels = imageModels;
   }
   
 }

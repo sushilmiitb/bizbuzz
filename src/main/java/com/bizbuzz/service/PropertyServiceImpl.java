@@ -1,8 +1,11 @@
 package com.bizbuzz.service;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.ImageModel;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PropertyField;
 import com.bizbuzz.model.PropertyGroup;
@@ -151,7 +155,7 @@ public class PropertyServiceImpl implements PropertyService{
     propertyValueRepository.findOne(propertyValueId);
   }
 
-  public ImageModel saveImage(MultipartFile image, PropertyValue propertyValue, String tag){
+  public ImageModel saveMultipartImage(MultipartFile image, PropertyValue propertyValue, String tag){
     ImageModel imageModel = null;
     if(image!=null && !image.isEmpty()){
       imageModel = new ImageModel();
@@ -171,12 +175,11 @@ public class PropertyServiceImpl implements PropertyService{
     return imageModel;
   }
 
-  public ImageModel saveByteImage(byte[] image, String tag){
+  public ImageModel saveByteImage(byte[] image){
     ImageModel imageModel = null;
     if(image!=null){
       imageModel = new ImageModel();
       //imageModel.setOriginalFilename(image.getOriginalFilename());
-      imageModel.setTag(tag);
       imageModel = imageModelRepository.save(imageModel);
       HelperFunctions.saveAllSizeImages(imageModel.getId().toString(), image);
     }
@@ -186,7 +189,7 @@ public class PropertyServiceImpl implements PropertyService{
   /***
    * As a convention this function saves the images in order in which it appears in the model.
    */
-  public List<ImageModel> saveImagesInOrder(List<MultipartFile> images, PropertyValue propertyValue){
+ /* public List<ImageModel> saveImagesInOrder(List<MultipartFile> images, PropertyValue propertyValue){
     List<String> tags = propertyValue.getImageTags();
     List<ImageModel> imageModels = new ArrayList<ImageModel>(images.size());
     for(int i=0; i<images.size(); i++){
@@ -233,7 +236,7 @@ public class PropertyServiceImpl implements PropertyService{
     newPropertyValue.setImageModelsInOrder(oldPropertyValue.getImageModelsInOrder());
     return newPropertyValue;
   }
-
+*/
   public String getImageDir(){
     return HelperFunctions.getImageDir(getClass().getResourceAsStream("/application/AppConstants.xml"));
   }
@@ -253,7 +256,108 @@ public class PropertyServiceImpl implements PropertyService{
   public void deleteImageModel(long imageId){
     imageModelRepository.deleteImageModelById(imageId);
   }
+  
+  public Map<Long, PropertyField> getPropertyFieldByCategoryIdMappedByPropertyFieldId(Long categoryId){
+    List<PropertyField> propertyFields = propertyFieldRepository.findPropertyFieldsByCategoryIdOrderByPropertyFieldId(categoryId);
+    Map<Long, PropertyField> propertyFieldMap = new HashMap<Long, PropertyField>();
+    for(int i=0; i<propertyFields.size(); i++){
+      propertyFieldMap.put(propertyFields.get(i).getId(), propertyFields.get(i));
+    }
+    return propertyFieldMap;
+  }
+  
+  public List<PropertyValue> populatePropertyValues(Map<Long, PropertyField> propertyFieldMap, List<Long> fieldIds, List<String> values, Item item){
+    List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
+    for(int i=0; i<fieldIds.size(); i++){
+      PropertyValue propertyValue = new PropertyValue();
+      propertyValue.setValue(values.get(i));
+      propertyValue.setPropertyField(propertyFieldMap.get(fieldIds.get(i)));
+      propertyValue.setItem(item);
+      propertyValues.add(propertyValue);
+    }
+    return propertyValues;
+  }
+  
+  public Map<Long, ImageModel> getImageModelMetaByCategoryIdMappedByImageModelId(Long categoryId){
+    List<ImageModel> imageModels = imageModelRepository.findImageModelsByCategoryIdOrderByImageModelId(categoryId);
+    Map<Long, ImageModel> imageModelMap = new HashMap<Long, ImageModel>();
+    for(int i=0; i<imageModels.size(); i++){
+      imageModelMap.put(imageModels.get(i).getId(), imageModels.get(i));
+    }
+    return imageModelMap;
+  }
+  
+  public List<ImageModel> populateImageModels(Map<Long, ImageModel> metaImageModelMap, List<byte[]> byteImages, List<Long> imageMetaIds, Item item){
+    List<ImageModel> valueImageModels = new ArrayList<ImageModel>();
+    for(int i=0; i<byteImages.size(); i++){
+      if(byteImages.get(i)==null){
+        continue;
+      }
+      ImageModel valueImageModel = saveByteImage(byteImages.get(i));
+      valueImageModel.setItem(item);
+      valueImageModel.setImageModelMetadata(metaImageModelMap.get(imageMetaIds.get(i)));
+      valueImageModels.add(valueImageModel);
+    }
+    return valueImageModels;
+  }
 
+  public Map<Long, PropertyValue> getPropertyValuesMappedByPropertyField(List<PropertyValue> propertyValues){
+    Map<Long, PropertyValue> valueMap = new HashMap<Long, PropertyValue>();
+    for(int i=0; i<propertyValues.size(); i++){
+      valueMap.put(propertyValues.get(i).getPropertyField().getId(), propertyValues.get(i));
+    }
+    return valueMap;
+  }
+  
+  public Map<Long, ImageModel> getImageModelValuesMappedByImageModelMeta(List<ImageModel> valueImageModels){
+    Map<Long, ImageModel> valueImageModelMap = new HashMap<Long, ImageModel>();
+    for(int i=0; i<valueImageModels.size(); i++){
+      valueImageModelMap.put(valueImageModels.get(i).getImageModelMetadata().getId(), valueImageModels.get(i));
+    }
+    return valueImageModelMap;
+  }
+  
+  public Map<Long, PropertyValue> getPropertyValuesMappedByPropertyValue(List<PropertyValue> propertyValues){
+    Map<Long, PropertyValue> valueMap = new HashMap<Long, PropertyValue>();
+    for(int i=0; i<propertyValues.size(); i++){
+      valueMap.put(propertyValues.get(i).getId(), propertyValues.get(i));
+    }
+    return valueMap;
+  }
+  
+  public Map<Long, ImageModel> getImageModelValuesMappedByImageModelValue(List<ImageModel> imageModelValues){
+    Map<Long, ImageModel> valueMap = new HashMap<Long, ImageModel>();
+    for(int i=0; i<imageModelValues.size(); i++){
+      valueMap.put(imageModelValues.get(i).getId(), imageModelValues.get(i));
+    }
+    return valueMap;
+  }
+  
+  public Item updateImageModelValues(Map<Long, ImageModel> metaImageModels, List<byte[]> byteImages, List<Long> metaImageIds, List<Long> valueIds, Item item){
+    for(int i=0; i<byteImages.size(); i++){
+      if(byteImages.get(i) == null){//no image upload
+        continue;
+      }
+      if(valueIds.get(i) != null){//image replacement
+        HelperFunctions.saveAllSizeImages(valueIds.get(i).toString(), byteImages.get(i));
+      }
+      else{//new image
+        ImageModel valueImageModel = saveByteImage(byteImages.get(i));
+        valueImageModel.setItem(item);
+        valueImageModel.setImageModelMetadata(metaImageModels.get(metaImageIds.get(i)));
+        item.getImageModels().add(valueImageModel);
+      }
+    }
+    return item;
+  }
+  
+  public List<PropertyValue> updatePropertyValues(Map<Long, PropertyValue> propertyValueMap, List<Long> valueIds, List<String> values){
+    for(int i=0; i<valueIds.size(); i++){
+      propertyValueMap.get(valueIds.get(i)).setValue(values.get(i));
+    }
+    return new ArrayList<PropertyValue>(propertyValueMap.values());
+  }
+  
   //  public List<PropertyValue> getPropertyValueListByOwnerIdAndCategoryId(Long ownerId, Long categoryId){
   //    
   //  }

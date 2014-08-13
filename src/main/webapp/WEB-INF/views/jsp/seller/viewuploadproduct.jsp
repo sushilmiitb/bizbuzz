@@ -60,20 +60,24 @@
 							var resized = resizeMe(image); // send it to canvas
 							var newinput = document.createElement("input");
 							newinput.type = 'hidden';
-							newinput.id = $(imageInput).attr("id")+"hidden";
 							var name = $(imageInput).attr("name");
 							var nameArray = name.split('[');
 							newinput.name = nameArray[0]+"Hidden["+nameArray[1];
+							var index = nameArray[1].split(']');
+							newinput.id = nameArray[0]+"Hidden_"+index[0];
 							newinput.value = resized; // put result from canvas into new hidden input
 							$(form).append(newinput);
 							//putting image into thumbnail
-							$("#thumbnail_"+$(imageInput).attr("name")).attr("src", resized);
+							$("#thumbnail_"+nameArray[0]+"_"+index[0]).attr("src", resized);
 						}
 					};
 				}
 		
 				function readfile() {
-					var prevInput = $("#"+$(imageInput).attr("id")+"hidden");
+					var name = $(imageInput).attr("name");
+					var nameArray = name.split('[');
+					var index = nameArray[1].split(']');
+					var prevInput = $("#"+nameArray[0]+"Hidden_"+index[0]);
 					if(prevInput !== undefined){
 						$(prevInput).remove();
 					}
@@ -132,31 +136,6 @@
 		
 			});
 		});
-		
-		/*$(window).load(function(){
-			$(window).resize(function(){
-				var width = $(".image-responsive").filter(".upload-preview").width();
-				var height = Math.floor(width*4/3);
-				$(".no-image-preview").css("width", width);
-				$(".no-image-preview").css("height", height);
-				$(".no-image-preview").css("margin-top", -height);
-				$(".no-image-preview").css("margin-left", 0);
-				$(".no-image-preview").css("line-height", height+"px");
-			})
-		
-			function initialize(){
-				var width = $(".image-responsive").filter(".upload-preview").width();
-				var height = Math.floor(width*4/3);
-				$(".image-responsive").filter(".upload-preview").height(height);
-				$(".no-image-preview").css("width", width);
-				$(".no-image-preview").css("height", height);
-				$(".no-image-preview").css("margin-top", -height);
-				$(".no-image-preview").css("margin-left", 0);
-				$(".no-image-preview").css("line-height", height+"px");
-			}
-			
-			initialize();
-		});*/
 		</script>
 
 	</tiles:putAttribute>
@@ -171,6 +150,7 @@
 		<c:url var="base_image_url" value="/${rootDir}" />
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
+		<c:set var="value_count" value="0" scope="page" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
@@ -180,9 +160,9 @@
 							<form role="form" action="${form_upload_url}"
 								class="productuploadform" method="POST"
 								enctype="multipart/form-data">
-								<div class="row" id="imagecontent">
+ 								<div class="row" id="imagecontent">
 									<c:forEach var="item" items="${propertyMetadata.imageModels}"
-										varStatus="i">
+ 										varStatus="i">
 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4">
 											<div class="panel panel-default">
 												<div class="panel-heading">
@@ -193,39 +173,41 @@
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 															<c:choose>
 																<c:when
-																	test="${not empty uploadForm.propertyValue.imageModels[i.index].id}">
+ 																	test="${not empty valueImageModelMap[item.id]}">
+ 																	<input type="hidden" name="imagesValueId[${i.index}]" value="${valueImageModelMap[item.id].id}" />
 																	<a class="thumbnail"
-																		href="${base_image_url}/${baseSizeDir}/${uploadForm.propertyValue.imageModels[i.index].id}.${imageExtn}">
-																		<img class="image-responsive upload-preview"
-																		id="thumbnail_images[${i.index}]" alt="..."
-																		src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.imageModels[i.index].id}.${imageExtn}" />
-																	</a>
-																</c:when>
-																<c:otherwise>
-																	<a href="#" class="thumbnail"> <img
-																		class="image-responsive no-image upload-preview"
-																		id="thumbnail_primaryImage" alt=""
-																		src="${emptyImageUrl}">
-																	</a>
-																</c:otherwise>
-															</c:choose>
-														</div>
-														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-															<div>
-																<button class="btn btn-default btn-block pull-right">
-																	Upload File</button>
-																<input name="images[${i.index}]"
-																	class="imageuploadinput btn btn-default btn-block pull-right"
-																	type="file" id="upload_input"
-																	style="opacity: 0; margin-top: -34px; height: 35px;" />
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</c:forEach>
-								</div>
+ 																		href="${base_image_url}/${baseSizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}">
+ 																		<img class="image-responsive upload-preview"
+ 																		id="thumbnail_images_${i.index}" alt="..."
+																		src="${base_image_url}/${sizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}" />
+ 																	</a>
+ 																</c:when>
+ 																<c:otherwise>
+ 																	<a href="#" class="thumbnail"> <img
+ 																		class="image-responsive no-image upload-preview"
+ 																		id="thumbnail_images_${i.index}" alt=""
+ 																		src="${emptyImageUrl}"> 
+ 																	</a>
+ 																</c:otherwise> 
+ 															</c:choose> 
+ 														</div>
+ 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+ 															<div>
+ 																<button class="btn btn-default btn-block pull-right">
+ 																	Upload File</button>
+ 																<input type="hidden" name="imagesMetaId[${i.index}]" value="${item.id}" />
+ 																<input name="images[${i.index}]"
+ 																	class="imageuploadinput btn btn-default btn-block pull-right"
+ 																	type="file" id="upload_input"
+ 																	style="opacity: 0; margin-top: -34px; height: 35px;" />
+ 															</div>
+ 														</div>
+ 													</div>
+ 												</div>
+ 											</div>
+ 										</div>
+ 									</c:forEach>
+ 								</div>
 								<div class="row" id="propertyContent">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 										<c:forEach var="group"
@@ -241,13 +223,30 @@
 																<table>
 																	<c:forEach var="field"
 																		items="${subgroup.propertyFields}" varStatus="k">
-																		<tr>
-																			<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
-																			<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
-																				name="propertyValue.propertyGroups[${i.index}].propertySubGroups[${j.index}].propertyFields[${k.index}].value"
-																				value="${uploadForm.propertyValue.propertyGroups[i.index].propertySubGroups[j.index].propertyFields[k.index].value}"
-																				type="text" /></td>
-																		</tr>
+																		<c:choose>
+																			<c:when test="${not empty newItem}">
+																				<tr>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<input type="hidden" name="fieldIds[${value_count}]" value="${field.id}" />
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
+																						name="values[${value_count}]"
+																						value=""
+																						type="text" /></td>
+																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																				</tr>
+																			</c:when>
+																			<c:otherwise>
+																				<tr>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<input type="hidden" name="valueIds[${value_count}]" value="${propertyValueMap[field.id].id}" />
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
+																						name="values[${value_count}]"
+																						value="${propertyValueMap[field.id].value}"
+																						type="text" /></td>
+																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																				</tr>
+																			</c:otherwise>
+																		</c:choose>
 																	</c:forEach>
 																</table>
 															</div>
@@ -268,236 +267,6 @@
 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
 								</div>
 							</form>
-
-
-
-
-							<%-- 							<form:form role="form" action="${form_upload_url}" --%>
-							<%-- 								class="productuploadform" modelAttribute="uploadForm" --%>
-							<%-- 								method="POST" enctype="multipart/form-data"> --%>
-							<!-- <!-- 								<div class="row" id="imagecontent"> -->
-							-->
-							<%-- 									<c:if test="${not empty propertyMetadata.primaryImage }"> --%>
-							<!-- 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4"> -->
-							<!-- 											<div class="panel panel-default"> -->
-							<!-- 												<div class="panel-heading"> -->
-							<%-- 													<form:label path="primaryImage">${propertyMetadata.primaryImage }</form:label> --%>
-							<!-- 												</div> -->
-							<!-- 												<div class="panel-body"> -->
-							<!-- 													<div class="row"> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<%-- 															<c:choose> --%>
-							<%-- 																<c:when --%>
-							<%-- 																	test="${not empty uploadForm.propertyValue.primaryImageModel}"> --%>
-							<!-- 																	<a class="thumbnail" -->
-							<%-- 																		href="${base_image_url}/${baseSizeDir}/${uploadForm.propertyValue.primaryImageModel.id}.${imageExtn}"> --%>
-							<!-- 																		<img class="image-responsive upload-preview" -->
-							<!-- 																		id="thumbnail_primaryImage" alt="..." -->
-							<%-- 																		src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.primaryImageModel.id}.${imageExtn}" /> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:when> --%>
-							<%-- 																<c:otherwise> --%>
-							<!-- 																	<a href="#" class="thumbnail"> <img -->
-							<!-- 																		class="image-responsive no-image upload-preview" -->
-							<!-- 																		id="thumbnail_primaryImage" alt="" -->
-							<%-- 																		src="${emptyImageUrl} "> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:otherwise> --%>
-							<%-- 															</c:choose> --%>
-							<!-- 														</div> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<!-- 															<div> -->
-							<!-- 																<button class="btn btn-default btn-block pull-right"> -->
-							<!-- 																	Upload File</button> -->
-							<%-- 																<form:input path="primaryImage" --%>
-							<%-- 																	class="imageuploadinput btn btn-default btn-block pull-right" --%>
-							<%-- 																	type="file" id="upload_input" --%>
-							<%-- 																	style="opacity: 0; margin-top: -34px; height: 35px;" /> --%>
-							<!-- 															</div> -->
-							<!-- 														</div> -->
-							<!-- 													</div> -->
-							<!-- 												</div> -->
-							<!-- 											</div> -->
-							<!-- 										</div> -->
-							<%-- 									</c:if> --%>
-							<%-- 									<c:if test="${not empty propertyMetadata.image1 }"> --%>
-							<!-- 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4"> -->
-							<!-- 											<div class="panel panel-default"> -->
-							<!-- 												<div class="panel-heading"> -->
-							<%-- 													<form:label path="image1">${propertyMetadata.image1 }</form:label> --%>
-							<!-- 												</div> -->
-							<!-- 												<div class="panel-body"> -->
-							<!-- 													<div class="row"> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<%-- 															<c:choose> --%>
-							<%-- 																<c:when --%>
-							<%-- 																	test="${not empty uploadForm.propertyValue.image1Model}"> --%>
-							<!-- 																	<a class="thumbnail" -->
-							<%-- 																		href="${base_image_url}/${baseSizeDir}/${uploadForm.propertyValue.image1Model.id}.${imageExtn}"> --%>
-							<!-- 																		<img class="image-responsive upload-preview" -->
-							<!-- 																		id="thumbnail_image1" alt="..." -->
-							<%-- 																		src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image1Model.id}.${imageExtn}" /> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:when> --%>
-							<%-- 																<c:otherwise> --%>
-							<!-- 																	<a href="#" class="thumbnail"> <img -->
-							<!-- 																		class="image-responsive no-image upload-preview" -->
-							<%-- 																		id="thumbnail_image1" alt="" src="${emptyImageUrl} "> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:otherwise> --%>
-							<%-- 															</c:choose> --%>
-							<!-- 														</div> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<!-- 															<div> -->
-							<!-- 																<button class="btn btn-default btn-block pull-right"> -->
-							<!-- 																	Upload File</button> -->
-							<%-- 																<form:input path="image1" --%>
-							<%-- 																	class="imageuploadinput btn btn-default btn-block pull-right" --%>
-							<%-- 																	type="file" id="upload_input" name="upload" --%>
-							<%-- 																	style="opacity: 0; margin-top: -34px; height: 35px;" /> --%>
-							<!-- 															</div> -->
-							<!-- 														</div> -->
-							<!-- 													</div> -->
-							<!-- 												</div> -->
-							<!-- 											</div> -->
-							<!-- 										</div> -->
-							<%-- 									</c:if> --%>
-
-							<%-- 									<c:if test="${not empty propertyMetadata.image2 }"> --%>
-							<!-- 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4"> -->
-							<!-- 											<div class="panel panel-default"> -->
-							<!-- 												<div class="panel-heading"> -->
-							<%-- 													<form:label path="image2">${propertyMetadata.image2 }</form:label> --%>
-							<!-- 												</div> -->
-							<!-- 												<div class="panel-body"> -->
-							<!-- 													<div class="row"> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<%-- 															<c:choose> --%>
-							<%-- 																<c:when --%>
-							<%-- 																	test="${not empty uploadForm.propertyValue.image2Model}"> --%>
-							<!-- 																	<a class="thumbnail" -->
-							<%-- 																		href="${base_image_url}/${baseSizeDir}/${uploadForm.propertyValue.image2Model.id}.${imageExtn}"> --%>
-							<!-- 																		<img class="image-responsive upload-preview" -->
-							<!-- 																		id="thumbnail_image2" alt="..." -->
-							<%-- 																		src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image2Model.id}.${imageExtn}" /> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:when> --%>
-							<%-- 																<c:otherwise> --%>
-							<!-- 																	<a href="#" class="thumbnail"> <img -->
-							<!-- 																		class="image-responsive no-image upload-preview" -->
-							<%-- 																		id="thumbnail_image2" alt="" src="${emptyImageUrl} "> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:otherwise> --%>
-							<%-- 															</c:choose> --%>
-							<!-- 														</div> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<!-- 															<div> -->
-							<!-- 																<button class="btn btn-default btn-block pull-right"> -->
-							<!-- 																	Upload File</button> -->
-							<%-- 																<form:input path="image2" --%>
-							<%-- 																	class="imageuploadinput btn btn-default btn-block pull-right" --%>
-							<%-- 																	type="file" id="upload_input" name="upload" --%>
-							<%-- 																	style="opacity: 0; margin-top: -34px; height: 35px;" /> --%>
-							<!-- 															</div> -->
-							<!-- 														</div> -->
-							<!-- 													</div> -->
-							<!-- 												</div> -->
-							<!-- 											</div> -->
-							<!-- 										</div> -->
-							<%-- 									</c:if> --%>
-
-							<%-- 									<c:if test="${not empty propertyMetadata.image3 }"> --%>
-							<!-- 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4"> -->
-							<!-- 											<div class="panel panel-default"> -->
-							<!-- 												<div class="panel-heading"> -->
-							<%-- 													<form:label path="image2">${propertyMetadata.image3 }</form:label> --%>
-							<!-- 												</div> -->
-							<!-- 												<div class="panel-body"> -->
-							<!-- 													<div class="row"> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<%-- 															<c:choose> --%>
-							<%-- 																<c:when --%>
-							<%-- 																	test="${not empty uploadForm.propertyValue.image3Model}"> --%>
-							<!-- 																	<a class="thumbnail" -->
-							<%-- 																		href="${base_image_url}/${baseSizeDir}/${uploadForm.propertyValue.image3Model.id}.${imageExtn}"> --%>
-							<!-- 																		<img class="image-responsive upload-preview" -->
-							<!-- 																		id="thumbnail_image3" alt="..." -->
-							<%-- 																		src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image3Model.id}.${imageExtn}" /> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:when> --%>
-							<%-- 																<c:otherwise> --%>
-							<!-- 																	<a href="#" class="thumbnail"> <img -->
-							<!-- 																		class="image-responsive no-image upload-preview" -->
-							<%-- 																		id="thumbnail_image3" alt="" src="${emptyImageUrl} "> --%>
-							<!-- 																	</a> -->
-							<%-- 																</c:otherwise> --%>
-							<%-- 															</c:choose> --%>
-							<!-- 														</div> -->
-							<!-- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"> -->
-							<!-- 															<div> -->
-							<!-- 																<button class="btn btn-default btn-block pull-right"> -->
-							<!-- 																	Upload File</button> -->
-							<%-- 																<form:input path="image3" --%>
-							<%-- 																	class="imageuploadinput btn btn-default btn-block pull-right" --%>
-							<%-- 																	type="file" id="upload_input" name="upload" --%>
-							<%-- 																	style="opacity: 0; margin-top: -34px; height: 35px;" /> --%>
-							<!-- 															</div> -->
-							<!-- 														</div> -->
-							<!-- 													</div> -->
-							<!-- 												</div> -->
-							<!-- 											</div> -->
-							<!-- 										</div> -->
-							<%-- 									</c:if> --%>
-							<!-- 								</div> -->
-							<!-- 								<div class="row" id="propertyContent"> -->
-							<!-- 									<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4"> -->
-							<%-- 										<c:if test="${not empty propertyMetadata.group1 }"> --%>
-							<!-- 											<div class="panel panel-default"> -->
-							<%-- 												<div class="panel-heading">${propertyMetadata.group1 }</div> --%>
-							<!-- 												<div class="panel-body"> -->
-							<%-- 													<c:if test="${not empty propertyMetadata.group1Subgroup1 }"> --%>
-							<%-- 														<h3>${propertyMetadata.group1Subgroup1}</h3> --%>
-							<!-- 														<table> -->
-							<%-- 															<c:if --%>
-							<%-- 																test="${not empty propertyMetadata.group1Subgroup1Property1 }"> --%>
-							<!-- 																<tr> -->
-							<%-- 																	<td><form:label --%>
-							<%-- 																			path="propertyValue.group1Subgroup1Property1">${propertyMetadata.group1Subgroup1Property1 }</form:label> --%>
-							<!-- 																	</td> -->
-							<%-- 																	<td><form:input --%>
-							<%-- 																			path="propertyValue.group1Subgroup1Property1" --%>
-							<%-- 																			type="text" /></td> --%>
-							<!-- 																</tr> -->
-							<%-- 															</c:if> --%>
-
-							<%-- 															<c:if --%>
-							<%-- 																test="${not empty propertyMetadata.group1Subgroup1Property2 }"> --%>
-							<!-- 																<tr> -->
-							<%-- 																	<td><form:label --%>
-							<%-- 																			path="propertyValue.group1Subgroup1Property2">${propertyMetadata.group1Subgroup1Property2 }</form:label> --%>
-							<!-- 																	</td> -->
-							<%-- 																	<td><form:input --%>
-							<%-- 																			path="propertyValue.group1Subgroup1Property2" --%>
-							<%-- 																			type="text" /></td> --%>
-							<!-- 																</tr> -->
-							<%-- 															</c:if> --%>
-							<!-- 														</table> -->
-							<%-- 													</c:if> --%>
-							<!-- 												</div> -->
-							<!-- 											</div> -->
-							<%-- 										</c:if> --%>
-							<!-- 									</div> -->
-							<!-- 								</div> -->
-							<!-- 								<br /> -->
-							<!-- 								<div class="row" id="submit"> -->
-							<!-- 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
-							<!-- 									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6"> -->
-							<!-- 										<button type="submit" class="btn btn-primary btn-block">Upload -->
-							<!-- 											Product</button> -->
-							<!-- 									</div> -->
-							<!-- 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
-							<!-- 								</div> -->
-							<%-- 							</form:form> --%>
 						</div>
 					</div>
 				</div>

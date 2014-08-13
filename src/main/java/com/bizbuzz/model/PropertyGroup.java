@@ -38,7 +38,7 @@ public class PropertyGroup implements Serializable{
   
   @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name="property_id", referencedColumnName="id")
-  private Property property;
+  private PropertyMetadata propertyMetadata;
   
   public void setPropertySubGroups(int size){
     this.propertySubGroups = new ArrayList<PropertySubGroup>(size);
@@ -64,12 +64,12 @@ public class PropertyGroup implements Serializable{
     this.propertySubGroups.addAll(propertySubGroups);
   }
 
-  public Property getProperty() {
-    return property;
+  public PropertyMetadata getProperty() {
+    return propertyMetadata;
   }
 
-  public void setProperty(Property property) {
-    this.property = property;
+  public void setProperty(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
   }
 
   public Long getId() {

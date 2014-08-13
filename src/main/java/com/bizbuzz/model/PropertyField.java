@@ -2,16 +2,22 @@ package com.bizbuzz.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class PropertyField implements Serializable{
@@ -29,6 +35,9 @@ public class PropertyField implements Serializable{
   @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name="property_sub_group_id", referencedColumnName="id")
   private PropertySubGroup propertySubGroup;
+  
+  @OneToMany(mappedBy="propertyField", fetch=FetchType.LAZY)
+  private List<PropertyValue> propertyValues;
   
   private String tag="";
   private String value="";
@@ -86,4 +95,13 @@ public class PropertyField implements Serializable{
     this.tag = tag;
   }
 
+  public List<PropertyValue> getPropertyValues() {
+    return propertyValues;
+  }
+
+  public void setPropertyValues(List<PropertyValue> propertyValues) {
+    this.propertyValues = propertyValues;
+  }
+
+  
 }
