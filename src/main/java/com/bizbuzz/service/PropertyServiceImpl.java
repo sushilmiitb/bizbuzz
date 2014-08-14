@@ -295,6 +295,7 @@ public class PropertyServiceImpl implements PropertyService{
       }
       ImageModel valueImageModel = saveByteImage(byteImages.get(i));
       valueImageModel.setItem(item);
+      valueImageModel.setTag(metaImageModelMap.get(imageMetaIds.get(i)).getTag());
       valueImageModel.setImageModelMetadata(metaImageModelMap.get(imageMetaIds.get(i)));
       valueImageModels.add(valueImageModel);
     }
@@ -344,6 +345,7 @@ public class PropertyServiceImpl implements PropertyService{
       else{//new image
         ImageModel valueImageModel = saveByteImage(byteImages.get(i));
         valueImageModel.setItem(item);
+        valueImageModel.setTag(metaImageModels.get(metaImageIds.get(i)).getTag());
         valueImageModel.setImageModelMetadata(metaImageModels.get(metaImageIds.get(i)));
         item.getImageModels().add(valueImageModel);
       }

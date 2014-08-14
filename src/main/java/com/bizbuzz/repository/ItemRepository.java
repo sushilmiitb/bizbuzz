@@ -16,7 +16,7 @@ import com.bizbuzz.model.PropertyMetadata;
 @Repository
 public interface ItemRepository extends JpaRepository<Item, Long>{
   @Query("select i "
-      + "from Item i inner join i.owner o inner join i.propertyValues pv inner join pv.propertyField pf "
+      + "from Item i inner join i.owner o left join i.propertyValues pv inner join pv.propertyField pf "
       + "where i.id=?1 "
       + "and o.id=?2")
   Item findItemByIdAndOwnerId(Long itemId, Long ownerId);

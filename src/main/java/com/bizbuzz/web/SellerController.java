@@ -367,20 +367,10 @@ public class SellerController {
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
-    
     item.setPropertyValues(propertyValuesNew);
-    
     Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
     item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
-
     itemService.saveItem(item);
-    
-    /*List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
-    //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
-    List<ImageModel> imageModels = propertyService.updateByteImagesInOrder(uploadedImages, propertyValue);
-    propertyValue.setImageModelsInOrder(imageModels);
-    propertyValue = propertyService.savePropertyValue(propertyValue);
-    */
     return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
   }
   
@@ -419,9 +409,9 @@ public class SellerController {
     Person seller = getSeller();
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
     m.addAttribute("parentCategoryName", categoryTree.getCategoryName());
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
-    m.addAttribute("propertyMetadata", propertyMetadata);
-    List<Item> items = itemService.getItemsByCategoryIdAndOwner(categoryId, seller.getId());
+    //PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
+    //m.addAttribute("propertyMetadata", propertyMetadata);
+    List<Item> items = itemService.getItemsByCategoryIdAndOwner(categoryId, seller.getId()); 
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
@@ -434,9 +424,15 @@ public class SellerController {
     Person seller =  getSeller();
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
     
-    //PropertyValue propertyValue = item.getPropertyValue();
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
+    
+    Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());
+    m.addAttribute("propertyValueMap", propertyValueMap);
+    
+    Map<Long, ImageModel> valueImageModelMap = propertyService.getImageModelValuesMappedByImageModelMeta(item.getImageModels());
+    m.addAttribute("valueImageModelMap", valueImageModelMap);
+    
     m.addAttribute("item", item);
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");

@@ -24,11 +24,16 @@
 								<c:forEach var="item" items="${items}">
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 										<a href="${base_product_url}${item.id}" class="thumbnail" align="center" >
+											<c:forEach var="imageModel" items="${item.imageModels}">
+												<c:if test="${imageModel.imageModelMetadata.tag=='0'}">
+													<c:set var="displayImage" value="${imageModel}" scope="page" />
+												</c:if>	
+											</c:forEach>
 											<c:choose>
 												<c:when
-													test="${not empty item.propertyValue.primaryImageModel}">
+													test="${not empty displayImage}">
 													<img class="image-responsive"
-														src="${base_image_url}/${sizeDir}/${item.propertyValue.primaryImageModel.id}.${imageExtn}"
+														src="${base_image_url}/${sizeDir}/${displayImage.id}.${imageExtn}"
 														alt="Image Not Uploaded" />
 												</c:when>
 												<c:otherwise>
@@ -44,20 +49,5 @@
 				</div>
 			</div>
 		</div>
-
-<%-- 		<c:forEach var="item" items="${items}"> --%>
-<%-- 			<a href="${base_product_url}${item.id}"> <c:choose> --%>
-<%-- 					<c:when test="${not empty item.propertyValue.primaryImageModel}"> --%>
-<!-- 						<img -->
-<%-- 							src="${base_image_url}/${sizeDir}/${item.propertyValue.primaryImageModel.id}.${imageExtn}" --%>
-<!-- 							alt="Image Not Uploaded" /> -->
-<%-- 					</c:when> --%>
-<%-- 					<c:otherwise> --%>
-<!-- 						<img src="" alt="Image Not Uploaded" /> -->
-<%-- 					</c:otherwise> --%>
-<%-- 				</c:choose> --%>
-<!-- 			</a> -->
-<!-- 			<br /> -->
-<%-- 		</c:forEach> --%>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

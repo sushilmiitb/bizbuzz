@@ -1,6 +1,7 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.ValidationMode;
 
 import org.hibernate.annotations.Fetch;
@@ -57,6 +60,9 @@ public class Item implements Serializable{
   @Fetch(value=FetchMode.SUBSELECT)
   private List<ImageModel> imageModels;
   
+  private Date created;
+  private Date updated;
+  
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
    * @param propertyMetadata
@@ -75,6 +81,18 @@ public class Item implements Serializable{
 //    this.properties.add(itemPropertyValue);
 //    propertyMetadata.getItems().add(itemPropertyValue);
 //  }
+  
+  public ImageModel getImageModelByTag(String tag){
+    if(imageModels == null){
+      return null;
+    }
+    for(int i=0; i<imageModels.size(); i++){
+      if(imageModels.get(i).getTag()==tag){
+        return imageModels.get(i);
+      }
+    }
+    return null;
+  }
   
   /**
    * getters and setters
@@ -152,4 +170,29 @@ public class Item implements Serializable{
     this.imageModels = imageModels;
   }
   
+  public Date getCreated() {
+    return created;
+  }
+
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+
+  public Date getUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(Date updated) {
+    this.updated = updated;
+  }
+
+  @PrePersist
+  protected void onCreate() {
+    created = new Date();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updated = new Date();
+  }
 }
