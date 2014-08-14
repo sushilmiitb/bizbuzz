@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,6 +66,7 @@ import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.Message;
+import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
 
 
 import org.springframework.web.bind.annotation.RequestParam;
@@ -89,9 +93,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 public class ChatController {
-
-  private static final Logger logger = LoggerFactory
-      .getLogger(ChatController.class);
+  private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -158,7 +160,8 @@ public class ChatController {
       
       Person person = partyManagementService.getPersonFromUsername(userId);
       ChatRoom chatRoom = chatRoomService.getChatRoomByChatRoomId(chatRoomId);
- 
+      List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatRoomId);
+      
       Chat chat = new Chat();
       chat.setSender((Party)person);
       chat.setMessage(message);
@@ -173,17 +176,18 @@ public class ChatController {
       chatRoom.setUpdatedAt(lastChatDate);
       chatRoomService.saveChatRoom(chatRoom);
       String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
-      /*    for(Person member : members){
-          BroadcasterFactory.getDefault().lookup(member.getUserId().getId()).broadcast(userId + " : " +message +"        " +dateOfBroadcast);
-        }    
+      /*     
        */
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
-      else
-        MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
-       
+      else{ 
+        //MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+        for(Person member : members){
+          BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast("<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+        }  
+      }
       
-      logger.info("Received message to broadcast: {}", userId +" : " +message +"           " +dateOfBroadcast);         
+      logger.info("Received message to broadcast: {}"+ userId +" : " +message +"           " +dateOfBroadcast);         
     }
     
     return  "<tr><td colspan='2'> message successfully send </td></tr>";
@@ -253,8 +257,56 @@ public String showChatRoom(Model m,HttpSession session,@PathVariable Long chatro
      else
         return "jsp/error/usernotfound";
   
-   List<Chat> chatFromDb = chatService.getAllChatsByChatRoomId(chatroomid);
-   m.addAttribute("chats", chatFromDb);
+   List<Chat> allChatsOfChatRoomFromDB = chatService.getAllChatsByChatRoomId(chatroomid); 
+   List<Chat> normalChats = new ArrayList<Chat>();
+   
+   Map<Long, List<Chat>> itemChatMap = new LinkedHashMap<Long, List<Chat>>();
+   for(Chat chat : allChatsOfChatRoomFromDB){
+     if(chat.getItem() == null){
+       normalChats.add(chat);
+       continue;
+     }
+     Long itemId = chat.getItem().getId();
+     if(itemChatMap.get(itemId) == null){
+       itemChatMap.put(itemId, new ArrayList<Chat>());
+     }
+     itemChatMap.get(itemId).add(chat);
+   }
+  
+   
+   List<SortedMixedChatsForChatRoomDTO> sortedMixedChatsOfChatRoomDTOList = new ArrayList<SortedMixedChatsForChatRoomDTO>();
+   List<List<Chat>> itemChatLists = new ArrayList<List<Chat>>(itemChatMap.values());
+   int i=0;
+   int j=0;
+   int iMax = normalChats.size();
+   int jMax = itemChatMap.size();
+   while(i<iMax || j<jMax){
+     if(i==iMax){
+       SortedMixedChatsForChatRoomDTO dto = new SortedMixedChatsForChatRoomDTO(itemChatLists.get(j),null);
+       sortedMixedChatsOfChatRoomDTOList.add(dto);
+       j++;
+       continue;
+     }
+     if(j==jMax){
+       SortedMixedChatsForChatRoomDTO dto = new SortedMixedChatsForChatRoomDTO(null,normalChats.get(i));
+       sortedMixedChatsOfChatRoomDTOList.add(dto);
+       i++;
+       continue;
+     }
+     if(normalChats.get(i).getCreatedAt().before(itemChatLists.get(j).get(0).getCreatedAt())){
+       SortedMixedChatsForChatRoomDTO dto = new SortedMixedChatsForChatRoomDTO(null,normalChats.get(i));
+       sortedMixedChatsOfChatRoomDTOList.add(dto);
+       i++;
+     }else{
+       SortedMixedChatsForChatRoomDTO dto = new SortedMixedChatsForChatRoomDTO(itemChatLists.get(j),null);
+       sortedMixedChatsOfChatRoomDTOList.add(dto);
+       j++;
+     }
+   }
+ 
+  
+  
+   m.addAttribute("allChatsOfChatroomDTOList",sortedMixedChatsOfChatRoomDTOList);
    session.setAttribute("userId",user.getId());
    session.setAttribute("chatroomId", chatroomid);
    return "jsp/chat/chatroom";
@@ -304,9 +356,9 @@ public String chatByAtmosphere(Model m,HttpSession session,@PathVariable Long ch
      else
         return "jsp/error/usernotfound";
      
-     List<Chat> chatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
   
-  m.addAttribute("chats", chatsFromDatabase);
   session.setAttribute("userId",user.getId());
   session.setAttribute("chatroomId",chatroomid);
   session.setAttribute("itemId",itemid);

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.UserLogin;
 
@@ -21,14 +22,13 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
   @Query("select c from "
       + "Chat c inner join c.sender p "
       + "where p.id=?1" )
-  List<Chat> getChatBySenderId(Long senderId);
-  
+  List<Chat> findAllChatsBySenderId(Long senderId);
   
   @Query("select c from "
       + "Chat c inner join c.chatRoom cr "
       + "where cr.id=?1" )
   List<Chat> findChatsByChatRoomId(Long chatRoomId);
-  
+ 
   /*
   @Query("delete from Chat c inner join c.chatRoom cr "
       + "where cr.id=?1")
@@ -38,4 +38,12 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
       + "Chat c inner join c.chatRoom cr inner join c.item i "
       + "where cr.id=?1 and i.id=?2") 
   List<Chat> findAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId);
+  
+  
+  @Query("select c from "
+      +"Chat c inner join c.chatRoom cr inner join c.item i " 
+      +"where cr.id=?1 and i.id is not null order by c.createdAt desc")
+  List<Chat> findChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId);
+  
+  
 }  
