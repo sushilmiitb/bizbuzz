@@ -8,6 +8,7 @@ import org.w3c.dom.ls.LSInput;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.repository.ChatRepository;
 import com.bizbuzz.repository.ChatRoomRepository;
 
@@ -27,7 +28,7 @@ public class ChatServiceImpl implements ChatService{
 
   @Override
   public List<Chat> getChat(Long senderId) {
-    return chatRepository.getChatBySenderId(senderId);  
+    return chatRepository.findAllChatsBySenderId(senderId);  
   }
 
   @Override
@@ -47,6 +48,13 @@ public class ChatServiceImpl implements ChatService{
         return null;
     else
         return chats;
+  }
+
+
+  @Override
+  public List<Chat> getChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId) {
+    
+    return chatRepository.findChatsByChatRoomIdAndItemIdNotNull(chatRoomId);
   }
 
 

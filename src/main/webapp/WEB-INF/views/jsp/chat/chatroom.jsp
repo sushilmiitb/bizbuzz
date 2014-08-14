@@ -31,36 +31,48 @@
 						<h3> <c:out value="${secondperson.firstName} ${secondperson.lastName}"></c:out> </h3>
 					</div>
 				</c:if>
-			  	
+				
 				<div class="ui-bar ui-bar-a">
 					<h3>Messages</h3>
 				</div>
-			  	<div class="ui-body ui-body-a">
-			  	<c:choose>
-      				<c:when test="${!empty chats}">
-         			    <table id="twitterMessages">
-							<c:forEach var="chat" items="${chats}">
-								<tr>
-										<td> ${chat.sender.userId.id} : </td>
-										<td> ${chat.message}   </td>
-										<td align="right">${chat.createdAt} </td>
-								 </tr>
-								</c:forEach>
-						</table>
-        			</c:when>
-      				<c:otherwise>
-       				    <table id="twitterMessages">
-       				    </table>
-     				</c:otherwise>
-    			</c:choose>
-		 
+				 <table id="twitterMessages">
+ 			  		<c:if test="${!empty allChatsOfChatroomDTOList}">
+ 			  			  
+ 			  			<c:forEach var="dto" items="${allChatsOfChatroomDTOList}">
+			    			<c:choose>
+			    				
+      								<c:when test="${!empty dto.chat}">
+         						
+										<tr>
+											<td> ${dto.chat.sender.userId.id} : ${dto.chat.item.id} :</td>
+											<td> ${dto.chat.message}   </td>
+											<td align="right">${dto.chat.createdAt} </td>
+										 </tr>
+								
+        						</c:when>
+        							
+      								<c:otherwise>
+       				    			  <c:forEach var="itemchat" items="${dto.listOfChats}">
+										<tr  style="outline: thin solid">
+											<td> ${itemchat.sender.userId.id} : ${itemchat.item.id} : </td>
+											<td> ${itemchat.message}   </td>
+											<td align="right">${itemchat.createdAt} </td>
+								 		</tr>
+									  </c:forEach>
+     								</c:otherwise>
+ 
+    						</c:choose>
+						</c:forEach>
+					  
+					</c:if>
+				</table>
 					<div class="ui-bar ui-bar-a">
 						<h3>Type Your Message Bellow</h3>
 					</div>
 				 <input id="message-field" type="text" size="40" value="Send a tweet to connected clients" />
 				</div>
 				
-			</div>
+			
 			<div class="ui-corner-all custom-corners">
 				<div class="ui-body ui-body-a">
 					<input type="button" id="message-button" value="Send" />

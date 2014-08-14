@@ -26,6 +26,7 @@
 						<h3> <c:out value="Conversation about Item : ${itemid}"></c:out> </h3>
 					</div>
 				</c:if>
+				
 	 			<c:if test="${!empty secondperson}">
 					<div class="ui-bar ui-bar-a">
 						<h3> <c:out value="${secondperson.firstName} ${secondperson.lastName}"></c:out> </h3>
@@ -37,9 +38,9 @@
 				</div>
 			  	<div class="ui-body ui-body-a">
 			  	<c:choose>
-      				<c:when test="${!empty chats}">
+      				<c:when test="${!empty chatsOfItem}">
          			    <table id="twitterMessages">
-							<c:forEach var="chat" items="${chats}">
+							<c:forEach var="chat" items="${chatsOfItem}">
 								<tr>
 										<td> ${chat.sender.userId.id} : </td>
 										<td> ${chat.message}   </td>
