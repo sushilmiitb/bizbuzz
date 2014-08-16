@@ -11,6 +11,28 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		$(document).ready(function(){
+			/*$('#uploadForm').submit(function(event) {
+				$.ajax({
+				    url: $("#uploadForm").attr( "action"),
+				    data: $("#uploadForm").serialize(),
+				    type: "POST",
+				    dataType: "json", 
+				    beforeSend: function(xhr) {
+				        xhr.setRequestHeader("Accept", "application/json");
+				        xhr.setRequestHeader("Content-Type", "application/json");
+				    },
+				    success: function(data) {
+				        
+				        $(".loader").remove();  
+				    },
+				    error: function(){
+				     	$(".loader").remove();
+				       }
+				}); 
+				event.preventDefault();
+			});*/
+		
+		
 			function androidLogger(arg){
 				$("#maincontent").append("<div>"+arg+"</div>");
 			}
@@ -147,6 +169,7 @@
 			<c:url var="form_upload_url"
 				value="/seller/uploadproduct/category/${categoryId}/item/${itemId }" />
 		</c:if>
+		<c:url var="newProductUpload" value="/seller/uploadproduct/category/${categoryId}" />
 		<c:url var="base_image_url" value="/${rootDir}" />
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
@@ -157,7 +180,17 @@
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						<div class="panel-body">
-							<form role="form" action="${form_upload_url}"
+							<c:if test="${not empty itemId }">
+								<div class="row">
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
+										<a href="${newProductUpload}" class="btn btn-success btn-block">Upload another ${parentCategoryName} product</a>
+									</div>
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+								</div>
+								<br/>
+							</c:if>
+							<form role="form" id="uploadForm" action="${form_upload_url}"
 								class="productuploadform" method="POST"
 								enctype="multipart/form-data">
  								<div class="row" id="imagecontent">

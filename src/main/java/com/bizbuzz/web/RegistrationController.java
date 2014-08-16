@@ -65,7 +65,7 @@ public class RegistrationController {
 
   @RequestMapping(value={"/", "/home"}, method=RequestMethod.GET)
   public String home(){
-    return "home";
+    return "redirect:/login";
   }
 
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)

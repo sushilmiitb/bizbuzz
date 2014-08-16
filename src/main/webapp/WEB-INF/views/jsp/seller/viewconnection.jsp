@@ -29,7 +29,33 @@
 			        	var baseGroupUrl = "/seller/viewgroup/";
 			        	var respContent="";
 			        	
-			        	respContent+="<tr>";
+			        	var linkElement = document.createElement('a');
+				          $(linkElement).addClass("list-group-item");
+				          $(linkElement).attr("href", "<c:url value='/seller/viewconnection/'/>"+data.id);
+				          var divOut = document.createElement('div');
+				          $(divOut).addClass('row');
+				          var divInner = document.createElement('div');
+				          $(divInner).addClass('col-xs-4 col-sm-4 col-md-4 col-lg-4');
+				          $(divInner).html(data.firstName + " " + data.middleName + " " + data.lastName);
+				          $(divOut).append(divInner);
+				          
+				          var divInner = document.createElement('div');
+				          $(divInner).addClass('col-xs-4 col-sm-4 col-md-4 col-lg-4');
+				          $(divInner).html(data.phoneNumber);
+				          $(divOut).append(divInner);
+				          
+				          var divInner = document.createElement('div');
+				          $(divInner).addClass('col-xs-4 col-sm-4 col-md-4 col-lg-4');
+				          $(divInner).html(data.groupName);
+				          $(divOut).append(divInner);
+				          
+				          $(linkElement).append(divOut);
+				          
+				          $(linkElement).insertAfter($(".list-group-item").filter(".heading").first());
+				          $(".loader").remove();
+			        	
+			        	
+			        	/*respContent+="<tr>";
 							respContent+="<td>";
 								respContent+="<a href="+baseUrl+data.id+">"+data.firstName+" "+data.middleName+" "+data.lastName+"</a>";
 							respContent+="</td>";
@@ -41,7 +67,7 @@
 							respContent+="</td>";
 
 			            $(respContent).insertBefore($(".displayrow").first());
-			            $(".loader").remove();  
+			            $(".loader").remove();  */
 			        },
 			        error: function(){
 			        	$(".loader").remove();
@@ -93,7 +119,7 @@
 							         Existing Connections
 							      </h4>
 							   </a>
-							   <a href="#" class="list-group-item">
+							   <a href="#" class="list-group-item heading">
 										<div class="row">
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 												<h4 class="list-group-item-heading">Name</h4>

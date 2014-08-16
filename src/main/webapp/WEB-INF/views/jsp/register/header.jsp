@@ -10,25 +10,26 @@
 					class="icon-bar"></span> <span class="icon-bar"></span> <span
 					class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Login</a>
+			<a class="navbar-brand" href="#">Bizbuzz</a>
 		</div>
 		<div class="navbar-collapse collapse">
 			<ul class="nav navbar-nav">
+				<li><a href='<c:url value="/login"/>'>Login</a></li>
 
-				<li><a href="#about">About</a></li>
-				<li><a href="#">Team</a></li>
-				<li><a href="#">Contact us</a></li>
-				<li class="dropdown"><a href="#" class="dropdown-toggle"
-					data-toggle="dropdown">Pricing <b class="caret"></b></a>
-					<ul class="dropdown-menu">
-						<li><a href="#">Action</a></li>
-						<li><a href="#">Another action</a></li>
-						<li><a href="#">Something else here</a></li>
-						<li class="divider"></li>
-						<li class="dropdown-header">Nav header</li>
-						<li><a href="#">Separated link</a></li>
-						<li><a href="#">One more separated link</a></li>
-					</ul></li>
+<!-- 				<li><a href="#about">About</a></li> -->
+<!-- 				<li><a href="#">Team</a></li> -->
+<!-- 				<li><a href="#">Contact us</a></li> -->
+<!-- 				<li class="dropdown"><a href="#" class="dropdown-toggle" -->
+<!-- 					data-toggle="dropdown">Pricing <b class="caret"></b></a> -->
+<!-- 					<ul class="dropdown-menu"> -->
+<!-- 						<li><a href="#">Action</a></li> -->
+<!-- 						<li><a href="#">Another action</a></li> -->
+<!-- 						<li><a href="#">Something else here</a></li> -->
+<!-- 						<li class="divider"></li> -->
+<!-- 						<li class="dropdown-header">Nav header</li> -->
+<!-- 						<li><a href="#">Separated link</a></li> -->
+<!-- 						<li><a href="#">One more separated link</a></li> -->
+<!-- 					</ul></li> -->
 			</ul>
 		</div>
 		<!--/.nav-collapse -->

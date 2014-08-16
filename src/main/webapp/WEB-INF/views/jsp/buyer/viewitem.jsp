@@ -1,7 +1,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
 
-<tiles:insertDefinition name="seller">
+<tiles:insertDefinition name="buyer">
 	<tiles:putAttribute name="title">
 		BizBuzz-Category
 	</tiles:putAttribute>
@@ -13,7 +13,7 @@
 		<c:url var="base_image_url" value="/${rootDir}" />
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
-		<c:url var="view_full_size_image_url" value="/seller/viewfullimage" />
+		<c:url var="view_full_size_image_url" value="/buyer/viewfullimage" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">

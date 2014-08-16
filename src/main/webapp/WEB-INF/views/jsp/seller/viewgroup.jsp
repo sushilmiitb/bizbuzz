@@ -5,7 +5,7 @@
 	<tiles:putAttribute name="title">
 		BizBuzz-Groups
 	</tiles:putAttribute>
-	
+
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 			$(document).ready(function() {
@@ -34,22 +34,20 @@
 				          	$(spanElement).before("<br/><br/>");
 				          	return;
 				          }
-				          var listElement = document.createElement('li');
 				          var linkElement = document.createElement('a');
-				          var html = "<span class='glyphicon glyphicon-user'></span>"+data.privateGroupName;
-				          $(linkElement).html(html);
+				          $(linkElement).addClass("list-group-item");
 				          $(linkElement).attr("href", "<c:url value='/seller/viewgroup/'/>"+data.id);
-				          $(listElement).append(linkElement);
+				          var divOut = document.createElement('div');
+				          $(divOut).addClass('row');
+				          var divInner = document.createElement('div');
+				          $(divInner).addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12');
 				          
-				          /*respContent += "<span class='group'>" + data.privateGroupName +"</span>";
-				          respContent += <li>
-									<a href="${base_group_url}${item.id}">
-										<span class="glyphicon glyphicon-user"></span>
-										${item.privateGroupName}
-									</a>
-								</li>*/
-					
-				          $(listElement).insertBefore($(".group").first());
+				          var innerhtml = '<span class="glyphicon glyphicon-user"></span> '+data.privateGroupName;
+				          $(divInner).append(innerhtml);
+				          $(divOut).append(divInner);
+				          $(linkElement).append(divOut);
+				          
+				          $(linkElement).insertAfter($(".list-group-item").filter(".active").first());
 				          $(".loader").remove();  
 				      },
 				      error: function(){
@@ -61,46 +59,50 @@
 			});
 		</script>
 	</tiles:putAttribute>
-	
+
 	<tiles:putAttribute name="body">
-		<c:url var="post_url" value="/seller/addgroup"/>
-		<c:url var="base_group_url" value="/seller/viewgroup/"/>
+		<c:url var="post_url" value="/seller/addgroup" />
+		<c:url var="base_group_url" value="/seller/viewgroup/" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-			<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
 				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
 					<div class="panel panel-primary">
-					<div class="panel-heading"> Create new group</div>
-					<div class="panel-body">
-						<form:form method="POST" action="${post_url}" id="seller_viewgroup_form" class="form" modelAttribute="privateGroupForm">
-							<form:label path="privateGroupName" for="seller_viewgroup_groupname">Group Name</form:label>
-							<form:input path="privateGroupName" class="form-control" id="seller_viewgroup_groupname" type="text"/>
-							<input id="seller_viewgroup_create" class="btn btn-md btn-primary btn-block" type="submit" value="Create Group" />
-						</form:form>
+						<div class="panel-heading">Create new group</div>
+						<div class="panel-body">
+							<form:form method="POST" action="${post_url}"
+								id="seller_viewgroup_form" class="form"
+								modelAttribute="privateGroupForm">
+								<form:label path="privateGroupName"
+									for="seller_viewgroup_groupname">Group Name</form:label>
+								<form:input path="privateGroupName" class="form-control"
+									id="seller_viewgroup_groupname" type="text" />
+								<input id="seller_viewgroup_create"
+									class="btn btn-md btn-primary btn-block" type="submit"
+									value="Create Group" />
+							</form:form>
+						</div>
 					</div>
-					</div>
-            		<hr>
-            		
-            		<div class="list-group">
+					<hr>
+
+					<div class="list-group">
 						<a href="#" class="list-group-item active">
-					      <h4 class="list-group-item-heading">
-					         Your Groups
-					      </h4>
-					   </a>
-						<c:forEach items="${privateGroups}" var="item" >
+							<h4 class="list-group-item-heading">Your Groups</h4>
+						</a>
+						<c:forEach items="${privateGroups}" var="item">
 							<a href="${base_group_url}${item.id}" class="list-group-item">
 								<div class="row">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 										<span class="glyphicon glyphicon-user"></span>
-											${item.privateGroupName}
+										${item.privateGroupName}
 									</div>
 								</div>
 							</a>
 						</c:forEach>
 					</div>
-          		</div>
-          		<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-      		</div>
-	    </div>
+				</div>
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
+			</div>
+		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

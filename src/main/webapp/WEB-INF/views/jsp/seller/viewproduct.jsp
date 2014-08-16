@@ -20,8 +20,10 @@
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						<div class="panel-body">
-							<div class="row">
-								<c:forEach var="item" items="${items}">
+							<c:forEach var="item" items="${items}" varStatus="i">
+								<c:if test="${i.index % 4 == 0}">
+									<div class="row">
+								</c:if>
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 										<a href="${base_product_url}${item.id}" class="thumbnail" align="center" >
 											<c:forEach var="imageModel" items="${item.imageModels}">
@@ -42,8 +44,10 @@
 											</c:choose>
 										</a>
 									</div>
-								</c:forEach>
-							</div>
+								<c:if test="${i.index % 4 == 3}">
+									</div>
+								</c:if>
+						</c:forEach>
 						</div>
 					</div>
 				</div>
