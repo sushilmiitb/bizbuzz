@@ -1,6 +1,14 @@
 package com.bizbuzz.web;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +38,7 @@ import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
 import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
 import com.bizbuzz.dto.ProductDetailDTO;
+import com.bizbuzz.dto.SendSmsRequestAjaxDTO;
 import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.ChatRoom;
@@ -49,6 +58,7 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.utils.SmsSender;
 
 @Controller
 public class SellerController {
@@ -176,6 +186,20 @@ public class SellerController {
     return "jsp/seller/viewsingleconnection";
   }
   
+  
+ 
+  /*
+  @RequestMapping(value="/seller/sendinvitation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public String sendInvitation(@RequestBody SendSmsRequestAjaxDTO request){
+  //-----------------------------                  Send SMS TO the Buyer  ------------------------------------------------
+    
+    String response = SmsSender.sendSms(request.getMobileNo(),"Hello Chirag"); 
+    return response;
+  }
+ */
+  
+  
   @RequestMapping(value="/seller/addconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public SellerAddConnectionResponseAjaxDTO addConnection(@RequestBody SellerAddConnectionRequestAjaxDTO request){
@@ -184,24 +208,25 @@ public class SellerController {
     Person seller = getSeller();
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getPhoneNumber());
     
-    
+    ajaxReply.setResponse("Not able to send the Message");
+    if(toPerson == null){
+      String response = SmsSender.sendSms(request.getPhoneNumber(),"Hello"); 
+      ajaxReply.setResponse(response);  
+      return ajaxReply;
+    }
+
     
  // below code for add members into chatroom   
-    Party sellerParty = partyManagementService.getParty(seller.getId());
-    Party buyerParty = partyManagementService.getParty(toPerson.getId());
+   // Party sellerParty = partyManagementService.getParty(seller.getId());
+    //Party buyerParty = partyManagementService.getParty(toPerson.getId());
     List<Party> members = new ArrayList<Party>();
-    members.add(sellerParty);
-    members.add(buyerParty);
+    members.add(seller);
+    members.add(toPerson);
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setMembers(members);
     chatRoomService.saveChatRoom(chatRoom);
  // Above  code for add members into chatroom
     
-    if(toPerson == null){
-      /**
-       * Person hasnot registered. Add code to ask him register him. Till then handle it in the validation.
-       */
-    }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
     if(errors.size()>0){
@@ -239,7 +264,7 @@ public class SellerController {
       connectionService.deleteConnection(privateGroup, toPerson);
     }
     
-    ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
+   // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
    // chatService.deleteAllChatByChatRoomId(chatroom.getId());
     //chatRoomService.deleteChatRoom(chatroom.getId());
     
