@@ -84,7 +84,7 @@ public class Chat implements Serializable{
   public Date getCreatedAt() {
     return createdAt;
   }
-  
+ 
   @PrePersist
   protected void onCreate() {
     createdAt = new Date();

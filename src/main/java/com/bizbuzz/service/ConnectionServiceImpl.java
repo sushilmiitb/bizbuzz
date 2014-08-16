@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Party;
@@ -100,4 +101,6 @@ public class ConnectionServiceImpl implements ConnectionService {
   public void flush(){
     connectionRepository.flush();
   }
+
+  
 }

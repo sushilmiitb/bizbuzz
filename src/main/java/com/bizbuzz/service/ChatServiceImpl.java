@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.ls.LSInput;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.repository.ChatRepository;
 import com.bizbuzz.repository.ChatRoomRepository;
 
@@ -19,19 +21,18 @@ public class ChatServiceImpl implements ChatService{
   
  
   @Override
-  public void saveMessage(Chat chat) {
+  public void saveChat(Chat chat) {
     chatRepository.save(chat);
   }
 
 
   @Override
   public List<Chat> getChat(Long senderId) {
-    return chatRepository.getChatBySenderId(senderId);  
+    return chatRepository.findAllChatsBySenderId(senderId);  
   }
 
-
   @Override
-  public List<Chat> getAllChats(Long chatRoomId) {
+  public List<Chat> getAllChatsByChatRoomId(Long chatRoomId) {
     List<Chat> chats = chatRepository.findChatsByChatRoomId(chatRoomId);
     if(chats==null)
         return null;
@@ -41,8 +42,27 @@ public class ChatServiceImpl implements ChatService{
 
 
   @Override
-  public List<ChatRoom> getAllSortedChatRooms() {
-    return chatRepository.findAllSortedChatRooms();
+  public List<Chat> getAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId) {
+    List<Chat> chats = chatRepository.findAllChatsByChatRoomIdAndItemId(chatRoomId,itemId);
+    if(chats==null)
+        return null;
+    else
+        return chats;
   }
+
+
+  @Override
+  public List<Chat> getChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId) {
+    
+    return chatRepository.findChatsByChatRoomIdAndItemIdNotNull(chatRoomId);
+  }
+
+
+/*
+  @Override
+  public void deleteAllChatByChatRoomId(Long chatRoomId) {
+    chatRepository.deleteAllChatsByChatRoomId(chatRoomId);
+  }
+*/
 
 }

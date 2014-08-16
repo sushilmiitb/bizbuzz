@@ -56,6 +56,11 @@ public class ItemServiceImpl implements ItemService{
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId){
     return itemRepository.findItemsByCategoryIdAndOwnerIdAndBuyerId(categoryId, sellerId, buyerId);
   }
+
+  @Override
+  public Item getItemByItemId(Long itemId) {
+    return itemRepository.findOne(itemId);
+  }
   
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId){
     return itemRepository.findItemByItemIdAndOwnerIdAndBuyerId(itemId, sellerId, buyerId);

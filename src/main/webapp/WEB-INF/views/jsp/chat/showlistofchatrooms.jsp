@@ -7,10 +7,7 @@
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
-			$(document).ready(function() {
-				$("#onetoone_messages_form").click(function(event) {
-				});
-			});
+		
 		</script>
 	</tiles:putAttribute>
 
@@ -21,22 +18,49 @@
 					<h3>List of ChatRooms</h3>
 				</div>
 				<div class="ui-body ui-body-a">
-					<c:if test="${!empty chatrooms}">
-						<table style="table-layout:fixed;">
-							<c:forEach var="chatroom" items="${chatrooms}">
-					  		<c:url var="post_url" value="/chat/showchatroom/chatroomid/${chatroom.id}" /> 
-								<tr>
+					<table style="table-layout:fixed;">
+						<c:if test="${!empty sortedchats}">
 						
-									<td>
+							<c:forEach  var="chat" items="${sortedchats}">
+					  		<c:url var="post_url" value="/chat/showchatroom/chatroomid/${chat.chatRoom.id}" />
+ 					  			<c:forEach var="member" items="${chat.chatRoom.members}">    
+					  				<c:if test="${member.id ne userid}">
+										 <c:set var="showperson" value="${member}"  />
+									</c:if>
+					  			</c:forEach> 
+	 							
+								<tr>
+										<td>
 										<a href="${post_url}" style="text-decoration: none;">
-												<input type="button" value="ChatRoomId : ${chatroom.id}  -  Go To This ChatRoom"/>
+												<input type="button" value="${showperson.firstName} ${showperson.lastName}       ${chat.message}        -${chat.createdAt}  "/>
+										</a>
+									</td>
+								</tr>
+							</c:forEach>
+						</c:if>
+						<c:if test="${!empty sortedChatrooms}">
+						
+							<c:forEach  var="chatroom" items="${sortedChatrooms}">
+					  		<c:url var="post_url" value="/chat/showchatroom/chatroomid/${chatroom.id}" />
+ 					  			<c:forEach var="member" items="${chatroom.members}">    
+					  				<c:if test="${member.id ne userid}">
+										 <c:set var="showperson" value="${member}"  />
+									</c:if>
+					  			</c:forEach> 
+	 							
+								<tr>
+										<td>
+										<a href="${post_url}" style="text-decoration: none;">
+												<input type="button" value="${showperson.firstName} ${showperson.lastName}       -Connected At ${chatroom.createdAt}  "/>
 										</a>
 									</td>
 								</tr>
 							</c:forEach>
 							
-						</table>
-					</c:if>
+						</c:if>
+						
+					</table>
+					
 				</div>
 			</div>
 	</tiles:putAttribute>

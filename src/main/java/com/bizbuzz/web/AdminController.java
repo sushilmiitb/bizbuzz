@@ -51,7 +51,7 @@ public class AdminController {
     return "jsp/admin/viewcategory";
   }
   
-  @RequestMapping(value="/admin/viewcategory", method = RequestMethod.GET)
+  @RequestMapping(value={"/admin/", "/admin/home/", "/admin/viewcategory"}, method = RequestMethod.GET)
   public String viewAllCategories(Model m){
     CategoryTree category = categoryService.getCategory(1L);
     List<CategoryTree> categoryList = categoryService.getCategories(1L);

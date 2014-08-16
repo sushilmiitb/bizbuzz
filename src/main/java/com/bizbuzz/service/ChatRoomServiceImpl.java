@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
@@ -18,7 +19,7 @@ public class ChatRoomServiceImpl implements ChatRoomService{
   ChatRoomRepository chatRoomRepository;
   
   
-  public void saveChatroomMembers(ChatRoom chatRoom) { 
+  public void saveChatRoom(ChatRoom chatRoom) { 
    chatRoomRepository.save(chatRoom); 
   }
 
@@ -31,24 +32,33 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
 
   @Override
-  public ChatRoom getChatRoom(Long id) {
+  public ChatRoom getChatRoomByChatRoomId(Long id) {
     return chatRoomRepository.findOne(id);
   }
 
 
-  
-
   @Override
-  public Person getPersonByChatRoomId(Long chatRoomId,Long personId) {
- Person person = chatRoomRepository.findPersonByChatRoomId(chatRoomId,personId);
- if(person==null) return null;
- else return person;
+  public List<Person> getAllMembersOfChatRoomByChatRoomId(Long chatRoomId) {
+    List<Person> members = chatRoomRepository.findAllMembersOfChatRoomByChatRoomId(chatRoomId);
+    if(members==null) return null;
+    else return members;
+    
   }
 
 
   @Override
-  public List<ChatRoom> getSortedChatRoomsOfPerson(Long personId) {
-   return chatRoomRepository.findSortedChatRoomsOfPerson(personId);
+  public List<Chat> getSortedChatsOfPerson(Person person) {
+    return  chatRoomRepository.findSortedChatsOfPerson(person.getId()); 
+  }
+  
+
+  @Override
+  public List<ChatRoom> getAllNewSortedChatRoomsOfPerson(Person person) {  
+    return chatRoomRepository.findAllNewSortedChatRoomsOfPerson(person.getId());
+  }
+  
+  public void deleteChatRoom(Long chatRoomId) {
     
+    chatRoomRepository.delete(chatRoomId);
   }
 }
