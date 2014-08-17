@@ -140,7 +140,7 @@ public class RegistrationController {
           return "redirect:/seller/home";
         }
         if(authorityString.equals("ROLE_ADMIN")){
-          return "redirect:/admin/home";
+          return "redirect:/admin/home/";
         }
       }
     }
