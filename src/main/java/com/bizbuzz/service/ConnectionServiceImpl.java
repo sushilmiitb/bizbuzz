@@ -68,12 +68,10 @@ public class ConnectionServiceImpl implements ConnectionService {
   }
   
   public List<PrivateGroup> getPrivateGroupsByGroupOnwer(Person person){
-    List <Connection> connections = connectionRepository.findByFromPartyIdAndConnectionType(person.getId(), ConnectionType.GROUPOWNER_GROUP);
-    List<PrivateGroup> privateGroups = new ArrayList<PrivateGroup>(connections.size());
-    for(int i=0; i<connections.size();i++){
-      privateGroups.add((PrivateGroup)connections.get(i).getToParty());
+    if(person==null){
+      return null;
     }
-    return privateGroups;
+    return connectionRepository.findPrivateGroupByFromPartyIdAndConnectionTypeOrderByPrivateGroupName(person.getId(), ConnectionType.GROUPOWNER_GROUP);
   }
   
   public PrivateGroup getPrivateGroupByPersonAndPrivateGroupId(Person person, Long privateGroupId){
@@ -82,6 +80,10 @@ public class ConnectionServiceImpl implements ConnectionService {
 
   public List<Person> getAllSellersConnections(Person seller){
     return connectionRepository.findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(seller.getId(), ConnectionType.SELLER_BUYER);
+  }
+  
+  public List<Connection> getAllSellerConnectionsUsingPrivateGroup(Person seller){
+    return connectionRepository.findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(seller.getId(), ConnectionType.GROUPOWNER_GROUP);
   }
   
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMember(Party groupOwner, Party groupMember){

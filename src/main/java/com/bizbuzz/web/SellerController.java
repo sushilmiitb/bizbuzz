@@ -1,6 +1,14 @@
 package com.bizbuzz.web;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -30,9 +38,11 @@ import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
 import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
 import com.bizbuzz.dto.ProductDetailDTO;
+import com.bizbuzz.dto.SendSmsRequestAjaxDTO;
 import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ImageModel;
@@ -40,6 +50,7 @@ import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.PropertyField;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.service.CategoryService;
@@ -49,6 +60,7 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.utils.SmsSender;
 
 @Controller
 public class SellerController {
@@ -81,6 +93,11 @@ public class SellerController {
   @Autowired
   ChatService chatService;
   
+  
+  @RequestMapping(value={"/seller", "/seller/home"}, method = RequestMethod.GET)
+  public String sellerHome(){
+    return "jsp/seller/home";
+  }
   
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
@@ -120,6 +137,7 @@ public class SellerController {
     }
     partyManagementService.savePrivateGroup(privateGroup);
     connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
+    privateGroupDTO.setId(privateGroup.getId());
     return privateGroupDTO;
   }
 
@@ -134,7 +152,7 @@ public class SellerController {
     }
     PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
     partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
-    return "redirect:/seller/viewgroup";
+    return "redirect:/seller/viewgroup/"+oldGroupId;
   }
   
   @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
@@ -153,8 +171,12 @@ public class SellerController {
   @RequestMapping(value="/seller/viewconnection", method = RequestMethod.GET)
   public String getConnections(Model m){
     Person seller = getSeller();
-    List<Person> allConnections = connectionService.getAllSellersConnections(seller);
+    //List<Person> allConnections = connectionService.getAllSellersConnections(seller);
+    //m.addAttribute("connectionList", allConnections);
+    List<Connection> allConnections = connectionService.getAllSellerConnectionsUsingPrivateGroup(seller);
+    
     m.addAttribute("connectionList", allConnections);
+    
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     m.addAttribute("privateGroupList", privateGroups);
     
@@ -176,32 +198,47 @@ public class SellerController {
     return "jsp/seller/viewsingleconnection";
   }
   
+  
+ 
+  /*
+  @RequestMapping(value="/seller/sendinvitation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public String sendInvitation(@RequestBody SendSmsRequestAjaxDTO request){
+  //-----------------------------                  Send SMS TO the Buyer  ------------------------------------------------
+    
+    String response = SmsSender.sendSms(request.getMobileNo(),"Hello Chirag"); 
+    return response;
+  }
+ */
+  
+  
   @RequestMapping(value="/seller/addconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public SellerAddConnectionResponseAjaxDTO addConnection(@RequestBody SellerAddConnectionRequestAjaxDTO request){
     Map<String, String> errors;
     SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
     Person seller = getSeller();
-    Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getPhoneNumber());
+    Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
     
-    
+    ajaxReply.setResponse("Not able to send the Message");
+    if(toPerson == null){
+      String response = SmsSender.sendSms(request.getUserId(),"Hello"); 
+      ajaxReply.setResponse(response);  
+      return ajaxReply;
+    }
+
     
  // below code for add members into chatroom   
-    Party sellerParty = partyManagementService.getParty(seller.getId());
-    Party buyerParty = partyManagementService.getParty(toPerson.getId());
+   // Party sellerParty = partyManagementService.getParty(seller.getId());
+    //Party buyerParty = partyManagementService.getParty(toPerson.getId());
     List<Party> members = new ArrayList<Party>();
-    members.add(sellerParty);
-    members.add(buyerParty);
+    members.add(seller);
+    members.add(toPerson);
     ChatRoom chatRoom = new ChatRoom();
     chatRoom.setMembers(members);
     chatRoomService.saveChatRoom(chatRoom);
  // Above  code for add members into chatroom
     
-    if(toPerson == null){
-      /**
-       * Person hasnot registered. Add code to ask him register him. Till then handle it in the validation.
-       */
-    }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
     if(errors.size()>0){
@@ -213,11 +250,12 @@ public class SellerController {
      * change other functions also to use generic createconnection
      */
     connectionService.createConnection(seller, toPerson, ConnectionType.SELLER_BUYER);
+    PrivateGroup privateGroup = null;
     if(request.getGroupId()!=-1){
-      PrivateGroup privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
+      privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
       connectionService.createConnection(privateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
-    ajaxReply.addDetails(toPerson);
+    ajaxReply.addDetails(toPerson, privateGroup);
     return ajaxReply;
   }
  
@@ -239,7 +277,7 @@ public class SellerController {
       connectionService.deleteConnection(privateGroup, toPerson);
     }
     
-    ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
+   // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
    // chatService.deleteAllChatByChatRoomId(chatroom.getId());
     //chatRoomService.deleteChatRoom(chatroom.getId());
     
@@ -273,32 +311,45 @@ public class SellerController {
     if(oldGroup!=null){
       connectionService.deleteConnection(oldGroup, toPerson);
     }
+    PrivateGroup newPrivateGroup = null;
     if(request.getGroupId()!=-1){
-      PrivateGroup newPrivateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
+      newPrivateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
       connectionService.createConnection(newPrivateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
-    ajaxReply.addDetails(toPerson);
+    ajaxReply.addDetails(toPerson, newPrivateGroup);
     return ajaxReply;
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategoryForUpload(Model m, @PathVariable Long categoryId){
-    //Person seller = getSeller();
-    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree categoryTree = null;
+    if(categoryId==null || categoryId==-1){
+      Person seller = getSeller();
+      categoryTree = seller.getCategoryRoot();
+    }
+    else{
+      categoryTree = categoryService.getCategory(categoryId);
+    }
     Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     if(isLeaf){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
+      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryTree.getId());
       m.addAttribute("propertyMetadata", propertyMetadata);
+//      ProductDetailDTO pdd = new ProductDetailDTO();
+//      pdd.initialize(propertyMetadata);
+      m.addAttribute("newItem", true);
       m.addAttribute("uploadForm", new ProductDetailDTO());
-      m.addAttribute("categoryId", categoryId);
+      m.addAttribute("categoryId", categoryTree.getId());
       m.addAttribute("parentCategoryName", parentCategoryName);
       return "jsp/seller/viewuploadproduct";
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryId);
+      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
       m.addAttribute("categoryList", categories);
       m.addAttribute("parentCategoryName", parentCategoryName);
       //m.addAttribute("depth", depth+1);
@@ -308,32 +359,37 @@ public class SellerController {
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.POST)
   public String saveProductUpload(@PathVariable Long categoryId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    PropertyValue propertyValue = propertyService.savePropertyValue(uploadForm.getPropertyValue());
-    //List<MultipartFile> uploadedImages = uploadForm.getImagesInOrder();
-    List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
-    //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
-    List<ImageModel> imageModels = propertyService.saveByteImagesInOrder(uploadedImages, propertyValue);
-    propertyValue.setImageModelsInOrder(imageModels);
-    propertyValue = propertyService.savePropertyValue(propertyValue);
-    
+    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
+    Person seller = getSeller();
     Item item = new Item();
     item.setItemCategory(categoryService.getCategory(categoryId));
-    item.setPropertyValue(propertyValue);
-    item.setOwner(getSeller());
+    item.setOwner(seller);
+    item = itemService.saveItem(item);
+    
+    List<PropertyValue> propertyValues = propertyService.populatePropertyValues(propertyFieldMap, uploadForm.getFieldIds(), uploadForm.getValues(), item);
+    item.setPropertyValues(propertyValues);
+    
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    List<ImageModel> valueImageModels = propertyService.populateImageModels(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), item);
+    item.setImageModels(valueImageModels);
+    
     itemService.saveItem(item);
     return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
   public String viewProductUpload(@PathVariable Long categoryId, @PathVariable Long itemId, Model m){
+    Person seller = getSeller();
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     m.addAttribute("propertyMetadata", propertyMetadata);
     
-    ProductDetailDTO productDetailDTO = new ProductDetailDTO();
-    Person seller = getSeller();
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
-    PropertyValue propertyValue = item.getPropertyValue();
-    productDetailDTO.setPropertyValue(propertyValue);
+    Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());
+    m.addAttribute("propertyValueMap", propertyValueMap);
+    ProductDetailDTO productDetailDTO = new ProductDetailDTO();
+    
+    Map<Long, ImageModel> valueImageModelMap = propertyService.getImageModelValuesMappedByImageModelMeta(item.getImageModels());
+    m.addAttribute("valueImageModelMap", valueImageModelMap);
     
     m.addAttribute("itemId", itemId);
     m.addAttribute("rootDir", propertyService.getImageDir());
@@ -347,37 +403,40 @@ public class SellerController {
   
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    Person seller = getSeller();
+    Person seller = getSeller();    
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
-    
-    PropertyValue propertyValueOld = item.getPropertyValue();
-    if(propertyValueOld.getId()==null){
-      return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
-    }
-    PropertyValue propertyValue = propertyService.updatePropertyValue(uploadForm.getPropertyValue(), propertyValueOld);
-    
-    List<byte[]> uploadedImages = uploadForm.getByteImagesFromBase64InOrder();
-    //List<ImageModel> imageModels = propertyService.saveImagesInOrder(uploadedImages, propertyValue);
-    List<ImageModel> imageModels = propertyService.updateByteImagesInOrder(uploadedImages, propertyValue);
-    propertyValue.setImageModelsInOrder(imageModels);
-    propertyValue = propertyService.savePropertyValue(propertyValue);
-    
+    Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
+    List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
+    item.setPropertyValues(propertyValuesNew);
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
+    itemService.saveItem(item);
     return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
   }
   
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategory(Model m, @PathVariable Long categoryId){
-    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree categoryTree = null;
+    if(categoryId==null || categoryId==-1){
+      Person seller = getSeller();
+      categoryTree = seller.getCategoryRoot();
+    }
+    else{
+      categoryTree = categoryService.getCategory(categoryId);
+    }
     Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
     if(isLeaf){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
       
-      return "redirect:/seller/viewproduct/category/"+categoryId;
+      return "redirect:/seller/viewproduct/category/"+categoryTree.getId();
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryId);
+      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      m.addAttribute("rootDir", propertyService.getImageDir());
+      m.addAttribute("sizeDir", "360");
+      m.addAttribute("imageExtn", "jpg");
       m.addAttribute("categoryList", categories);
       m.addAttribute("parentCategoryName", parentCategoryName);
       //m.addAttribute("depth", depth+1);
@@ -388,10 +447,11 @@ public class SellerController {
   @RequestMapping(value="/seller/viewproduct/category/{categoryId}", method=RequestMethod.GET)
   public String viewProduct(Model m, @PathVariable Long categoryId){
     Person seller = getSeller();
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
-    m.addAttribute("propertyMetadata", propertyMetadata);
-    List<Item> items = itemService.getItemsByCategoryIdAndOwner(categoryId, seller.getId());
-    
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    m.addAttribute("parentCategoryName", categoryTree.getCategoryName());
+    //PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
+    //m.addAttribute("propertyMetadata", propertyMetadata);
+    List<Item> items = itemService.getItemsByCategoryIdAndOwner(categoryId, seller.getId()); 
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
@@ -404,15 +464,34 @@ public class SellerController {
     Person seller =  getSeller();
     Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
     
-    //PropertyValue propertyValue = item.getPropertyValue();
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
+    
+    Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());
+    m.addAttribute("propertyValueMap", propertyValueMap);
+    
+    Map<Long, ImageModel> valueImageModelMap = propertyService.getImageModelValuesMappedByImageModelMeta(item.getImageModels());
+    m.addAttribute("valueImageModelMap", valueImageModelMap);
+    
     m.addAttribute("item", item);
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
     
     return "jsp/seller/viewitem";
+  }
+  
+  @RequestMapping(value="/seller/viewfullimage/{id}/extn/{extn}")
+  public String viewProduct(@PathVariable String id, @PathVariable String extn, Model m){
+    int width=600;
+    int height=600*4/3;
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "600");
+    m.addAttribute("id", id);
+    m.addAttribute("extn", extn);
+    m.addAttribute("width", width);
+    m.addAttribute("height", height);
+    return "jsp/common/viewfullimage";
   }
   
   public Person getSeller(){

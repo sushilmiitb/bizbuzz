@@ -51,7 +51,7 @@ public class AdminController {
     return "jsp/admin/viewcategory";
   }
   
-  @RequestMapping(value="/admin/viewcategory", method = RequestMethod.GET)
+  @RequestMapping(value={"/admin/", "/admin/home/", "/admin/viewcategory"}, method = RequestMethod.GET)
   public String viewAllCategories(Model m){
     CategoryTree category = categoryService.getCategory(1L);
     List<CategoryTree> categoryList = categoryService.getCategories(1L);
@@ -101,10 +101,39 @@ public class AdminController {
   
   @RequestMapping(value="/admin/property/save/category/{categoryId}", method = RequestMethod.POST)
   public String savePropertyMetadata(Model m, @PathVariable("categoryId")Long categoryId, @ModelAttribute("propertyMetadata") PropertyMetadata propertyMetadata, @RequestParam("propertyMetadataId") Long propertyMetadataId){
-    propertyMetadata.setId(propertyMetadataId);
-    propertyService.savePropertyMetadata(propertyMetadata, categoryId);
+    //if(propertyMetadataId != null){
+      propertyService.savePropertyMetadata(propertyMetadata, categoryId);
+    //}
+    //propertyMetadata.setId(propertyMetadataId);
+    //else{
+    //  propertyService.savePropertyMetadata(propertyMetadata, categoryId);
+    //}
     m.addAttribute("propertyMetadata", propertyMetadata);
     m.addAttribute("categoryId", categoryId);
+    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
+  }
+  
+  @RequestMapping(value="/admin/property/delete/category/{categoryId}/field/{fieldId}", method = RequestMethod.GET)
+  public String deleteFieldProperty(@PathVariable("categoryId")Long categoryId, @PathVariable("fieldId") Long fieldId){
+    propertyService.deletePropertyField(fieldId);
+    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
+  }
+  
+  @RequestMapping(value="/admin/property/delete/category/{categoryId}/group/{groupId}", method = RequestMethod.GET)
+  public String deleteGroupProperty(@PathVariable("categoryId")Long categoryId, @PathVariable("groupId") Long groupId){
+    propertyService.deletePropertyGroup(groupId);
+    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
+  }
+  
+  @RequestMapping(value="/admin/property/delete/category/{categoryId}/subgroup/{subgroupId}", method = RequestMethod.GET)
+  public String deleteSubGroupProperty(@PathVariable("categoryId")Long categoryId, @PathVariable("subgroupId") Long subgroupId){
+    propertyService.deletePropertySubGroup(subgroupId);
+    return "redirect:/admin/viewproperty/category/"+categoryId.toString();
+  }
+  
+  @RequestMapping(value="/admin/property/delete/category/{categoryId}/image/{imageId}", method = RequestMethod.GET)
+  public String deleteImageProperty(@PathVariable("categoryId")Long categoryId, @PathVariable("imageId") Long imageId){
+    propertyService.deleteImageModel(imageId);
     return "redirect:/admin/viewproperty/category/"+categoryId.toString();
   }
 //  

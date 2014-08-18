@@ -1,130 +1,41 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
 
-<tiles:insertDefinition name="admin">
+
+
+<tiles:insertDefinition name="seller">
 	<tiles:putAttribute name="title">
 		BizBuzz-Category
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
-			/*$(document).ready(function(){
-				// (C) WebReflection Mit Style License
-				var global = this;
-				
-				// simple FileReader detection
-				if (!global.FileReader){
-					// no way to do what we are trying to do ...
-					//return $message.innerHTML = "FileReader API not supported";
-				}
-				
-				// async callback, received the
-				// base 64 encoded resampled image
-				function resampled(data) {
-					//$message.innerHTML = "done";
-					$('#blah').attr('src', data);
-				}
-			
-				// async callback, fired when the image
-				// file has been loaded
-				function load(e) {
-					//$message.innerHTML = "resampling ...";
-					// see resample.js
-					Resample(
-							this.result,
-							this._width || null,
-							this._height || null,
-							resampled
-					);
-			
-				}
-			
-				// async callback, fired if the operation
-				// is aborted ( for whatever reason )
-				function abort(e) {
-					//$message.innerHTML = "operation aborted";
-				}
-			
-				// async callback, fired
-				// if an error occur (i.e. security)
-				function error(e) {
-					//$message.innerHTML = "Error: " + (this.result || e);
-				}
-			
-				// listener for the input@file onchange
-				$('.fileuploadinput').change(function change(){
-					var
-					// retrieve the width in pixel
-					width = 180,
-					// retrieve the height in pixels
-					height = null,
-					// temporary variable, different purposes
-					file
-					;
-					// no width and height specified
-					// or both are NaN
-					if (!width && !height) {
-						// reset the input simply swapping it
-						this.parentNode.replaceChild(
-								file = this.cloneNode(false),
-								this
-						);
-						// remove the listener to avoid leaks, if any
-						this.removeEventListener("change", change, false);
-						// reassign the this DOM pointer
-						// with the new input text and
-						// add the change listener
-						this.addEventListener("change", change, false);
-					} else if(
-							// there is a files property
-							// and this has a length greater than 0
-							(this.files || []).length &&
-							// the first file in this list 
-							// has an image type, hopefully
-							// compatible with canvas and drawImage
-							// not strictly filtered in this example
-							/^image\//.test((file = this.files[0]).type)
-					) {
-						// reading action notification
-						//$message.innerHTML = "reading ...";
-						// create a new object
-						file = new FileReader;
-						// assign directly events
-						// as example, Chrome does not
-						// inherit EventTarget yet
-						// so addEventListener won't
-						// work as expected
-						file.onload = load;
-						file.onabort = abort;
-						file.onerror = error;
-						// cheap and easy place to store
-						// desired width and/or height
-						file._width = width;
-						file._height = height;
-						// time to read as base 64 encoded
-						// data te selected image
-						file.readAsDataURL(this.files[0]);
-						// it will notify onload when finished
-						// An onprogress listener could be added
-						// as well, not in this demo tho (I am lazy)
-					} else if (file) {
-						// if file variable has been created
-						// during precedent checks, there is a file
-						// but the type is not the expected one
-						// wrong file type notification
-						//$message.innerHTML = "please chose an image";
-					} else {
-						// no file selected ... or no files at all
-						// there is really nothing to do here ...
-						//$message.innerHTML = "nothing to do";
-					}
-				});
-			});*/
-		</script>
-		
-		
-		<script type="text/javascript">
 		$(document).ready(function(){
+			/*$('#uploadForm').submit(function(event) {
+				$.ajax({
+				    url: $("#uploadForm").attr( "action"),
+				    data: $("#uploadForm").serialize(),
+				    type: "POST",
+				    dataType: "json", 
+				    beforeSend: function(xhr) {
+				        xhr.setRequestHeader("Accept", "application/json");
+				        xhr.setRequestHeader("Content-Type", "application/json");
+				    },
+				    success: function(data) {
+				        
+				        $(".loader").remove();  
+				    },
+				    error: function(){
+				     	$(".loader").remove();
+				       }
+				}); 
+				event.preventDefault();
+			});*/
+		
+		
+			function androidLogger(arg){
+				$("#maincontent").append("<div>"+arg+"</div>");
+			}
 			$('.productuploadform').submit(function onsubmit(event){
 				$('.imageuploadinput').val('');
 			});
@@ -150,33 +61,45 @@
 		
 					// read the files
 					var reader = new FileReader();
-					reader.readAsArrayBuffer(file);
+					//reader.readAsArrayBuffer(file);
+					reader.readAsDataURL(file);
 		
 					reader.onload = function (event) {
 						// blob stuff
-						var blob = new Blob([event.target.result]); // create blob...
+						/*var blob = new Blob([event.target.result]); // create blob...	
 						window.URL = window.URL || window.webkitURL;
 						var blobURL = window.URL.createObjectURL(blob); // and get it's URL
+						*/
 		
 						// helper Image object
-						var image = new Image();
-						image.src = blobURL;
+						//var image = new Image();
+						var image = document.createElement("img");
+						//image.src = blobURL;
+						image.src = event.target.result;
 						//preview.appendChild(image); // preview commented out, I am using the canvas instead
 						image.onload = function() {
 							// have to wait till it's loaded
 							var resized = resizeMe(image); // send it to canvas
 							var newinput = document.createElement("input");
 							newinput.type = 'hidden';
-							newinput.id = $(imageInput).attr("id")+"hidden";
-							newinput.name = $(imageInput).attr("name")+"Hidden";
+							var name = $(imageInput).attr("name");
+							var nameArray = name.split('[');
+							newinput.name = nameArray[0]+"Hidden["+nameArray[1];
+							var index = nameArray[1].split(']');
+							newinput.id = nameArray[0]+"Hidden_"+index[0];
 							newinput.value = resized; // put result from canvas into new hidden input
 							$(form).append(newinput);
+							//putting image into thumbnail
+							$("#thumbnail_"+nameArray[0]+"_"+index[0]).attr("src", resized);
 						}
 					};
 				}
 		
 				function readfile() {
-					var prevInput = $("#"+$(imageInput).attr("id")+"hidden");
+					var name = $(imageInput).attr("name");
+					var nameArray = name.split('[');
+					var index = nameArray[1].split(']');
+					var prevInput = $("#"+nameArray[0]+"Hidden_"+index[0]);
 					if(prevInput !== undefined){
 						$(prevInput).remove();
 					}
@@ -228,7 +151,7 @@
 		
 					//preview.appendChild(canvas); // do the actual resized preview
 		
-					return canvas.toDataURL("image/jpeg",0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
+					return canvas.toDataURL("image/jpeg", 0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
 		
 				}
 				readfile();
@@ -236,120 +159,151 @@
 			});
 		});
 		</script>
-				
+
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-		<c:url var="form_upload_url" value="/seller/uploadproduct/category/${categoryId}"/>
+		<c:url var="form_upload_url"
+			value="/seller/uploadproduct/category/${categoryId}" />
 		<c:if test="${not empty itemId }">
-			<c:url var="form_upload_url" value="/seller/uploadproduct/category/${categoryId}/item/${itemId }"/>
+			<c:url var="form_upload_url"
+				value="/seller/uploadproduct/category/${categoryId}/item/${itemId }" />
 		</c:if>
+		<c:url var="newProductUpload" value="/seller/uploadproduct/category/${categoryId}" />
 		<c:url var="base_image_url" value="/${rootDir}" />
-		<h1>${parentCategoryName}</h1>
-		<form:form action="${form_upload_url}" class="productuploadform" modelAttribute="uploadForm" method="POST" enctype="multipart/form-data">
-			<table>
-				<c:if test="${not empty propertyMetadata.primaryImage }">
-					<tr>
-						<td>
-							<form:label path="primaryImage">${propertyMetadata.primaryImage }</form:label>
-						</td>
-						<td>
-							<form:input class="imageuploadinput" path="primaryImage" type="file"/>
-						</td>
-					</tr>
-					<c:if test="${not empty uploadForm.propertyValue.primaryImageModel}">
-					<tr>
-						<td colspan="2">
-							<img src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.primaryImageModel.id}.${imageExtn}" />
-						</td>
-					</tr>
-					</c:if>
-				</c:if>
-				
-				<c:if test="${not empty propertyMetadata.image1 }">
-					<tr>
-						<td>
-							<form:label path="image1">${propertyMetadata.image1 }</form:label>
-						</td>
-						<td>
-							<form:input class="imageuploadinput" path="image1" type="file"/>
-						</td>
-					</tr>
-					<c:if test="${not empty uploadForm.propertyValue.image1Model}">
-					<tr>
-						<td colspan="2">
-							<img src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image1Model.id}.${imageExtn}" />
-						</td>
-					</tr>
-					</c:if>
-				</c:if>
-				
-				<c:if test="${not empty propertyMetadata.image2 }">
-					<tr>
-						<td>
-							<form:label path="image2">${propertyMetadata.image2 }</form:label>
-						</td>
-						<td>
-							<form:input class="imageuploadinput" path="image2" type="file"/>
-						</td>
-					</tr>
-					<c:if test="${not empty uploadForm.propertyValue.image2Model}">
-					<tr>
-						<td colspan="2">
-							<img src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image2Model.id}.${imageExtn}" />
-						</td>
-					</tr>
-					</c:if>
-				</c:if>
-				
-				<c:if test="${not empty propertyMetadata.image3 }">
-					<tr>
-						<td>
-							<form:label path="image3">${propertyMetadata.image3 }</form:label>
-						</td>
-						<td>
-							<form:input class="imageuploadinput" path="image3" type="file"/>
-						</td>
-					</tr>
-					<c:if test="${not empty uploadForm.propertyValue.image3Model}">
-					<tr>
-						<td colspan="2">
-							<img src="${base_image_url}/${sizeDir}/${uploadForm.propertyValue.image3Model.id}.${imageExtn}" />
-						</td>
-					</tr>
-					</c:if>
-				</c:if>
-			</table>
-			<c:if test="${not empty propertyMetadata.group1 }">
-				<h2>${propertyMetadata.group1 }</h2>
-				<c:if test="${not empty propertyMetadata.group1Subgroup1 }">
-					<h3>${propertyMetadata.group1Subgroup1}</h3>
-					<table>
-						<c:if test="${not empty propertyMetadata.group1Subgroup1Property1 }">
-							<tr>
-								<td>
-									<form:label path="propertyValue.group1Subgroup1Property1">${propertyMetadata.group1Subgroup1Property1 }</form:label>
-								</td>
-								<td>
-									<form:input path="propertyValue.group1Subgroup1Property1" type="text"/>
-								</td>
-							</tr>
-						</c:if>
-						
-						<c:if test="${not empty propertyMetadata.group1Subgroup1Property2 }">
-							<tr>
-								<td>
-									<form:label path="propertyValue.group1Subgroup1Property2">${propertyMetadata.group1Subgroup1Property2 }</form:label>
-								</td>
-								<td>
-									<form:input path="propertyValue.group1Subgroup1Property2" type="text"/>
-								</td>
-							</tr>
-						</c:if>
-					</table>
-				</c:if>
-			</c:if>
-			<input type="submit" value="Upload Product" />
-		</form:form>
+		<c:url var="emptyImageUrl"
+			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
+		<c:set var="value_count" value="0" scope="page" />
+		<div class="container" role="main">
+			<div class="row" id="maincontent">
+				<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+					<div class="panel panel-primary">
+						<div class="panel-heading center-align-text">${parentCategoryName}</div>
+						<div class="panel-body">
+							<c:if test="${not empty itemId }">
+								<div class="row">
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
+										<a href="${newProductUpload}" class="btn btn-success btn-block">Upload another ${parentCategoryName} product</a>
+									</div>
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+								</div>
+								<br/>
+							</c:if>
+							<form role="form" id="uploadForm" action="${form_upload_url}"
+								class="productuploadform" method="POST"
+								enctype="multipart/form-data">
+ 								<div class="row" id="imagecontent">
+									<c:forEach var="item" items="${propertyMetadata.imageModels}"
+ 										varStatus="i">
+										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4">
+											<div class="panel panel-default">
+												<div class="panel-heading">
+													<label>${item.name}</label>
+												</div>
+												<div class="panel-body">
+													<div class="row">
+														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+															<c:choose>
+																<c:when
+ 																	test="${not empty valueImageModelMap[item.id]}">
+ 																	<input type="hidden" name="imagesValueId[${i.index}]" value="${valueImageModelMap[item.id].id}" />
+																	<a class="thumbnail"
+ 																		href="${base_image_url}/${baseSizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}">
+ 																		<img class="image-responsive upload-preview"
+ 																		id="thumbnail_images_${i.index}" alt="..."
+																		src="${base_image_url}/${sizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}" />
+ 																	</a>
+ 																</c:when>
+ 																<c:otherwise>
+ 																	<a href="#" class="thumbnail"> <img
+ 																		class="image-responsive no-image upload-preview"
+ 																		id="thumbnail_images_${i.index}" alt=""
+ 																		src="${emptyImageUrl}"> 
+ 																	</a>
+ 																</c:otherwise> 
+ 															</c:choose> 
+ 														</div>
+ 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+ 															<div>
+ 																<button class="btn btn-default btn-block pull-right">
+ 																	Upload File</button>
+ 																<input type="hidden" name="imagesMetaId[${i.index}]" value="${item.id}" />
+ 																<input name="images[${i.index}]"
+ 																	class="imageuploadinput btn btn-default btn-block pull-right"
+ 																	type="file" id="upload_input"
+ 																	style="opacity: 0; margin-top: -34px; height: 35px;" />
+ 															</div>
+ 														</div>
+ 													</div>
+ 												</div>
+ 											</div>
+ 										</div>
+ 									</c:forEach>
+ 								</div>
+								<div class="row" id="propertyContent">
+									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+										<c:forEach var="group"
+											items="${propertyMetadata.propertyGroups}" varStatus="i">
+											<div class="panel panel-default">
+												<div class="panel-heading">${group.name}</div>
+												<div class="panel-body">
+													<div class="row">
+														<c:forEach var="subgroup"
+															items="${group.propertySubGroups}" varStatus="j">
+															<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+																<h3>${subgroup.name}</h3>
+																<table>
+																	<c:forEach var="field"
+																		items="${subgroup.propertyFields}" varStatus="k">
+																		<c:choose>
+																			<c:when test="${not empty newItem}">
+																				<tr>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<input type="hidden" name="fieldIds[${value_count}]" value="${field.id}" />
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
+																						name="values[${value_count}]"
+																						value=""
+																						type="text" /></td>
+																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																				</tr>
+																			</c:when>
+																			<c:otherwise>
+																				<tr>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<input type="hidden" name="valueIds[${value_count}]" value="${propertyValueMap[field.id].id}" />
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
+																						name="values[${value_count}]"
+																						value="${propertyValueMap[field.id].value}"
+																						type="text" /></td>
+																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																				</tr>
+																			</c:otherwise>
+																		</c:choose>
+																	</c:forEach>
+																</table>
+															</div>
+														</c:forEach>
+													</div>
+												</div>
+											</div>
+										</c:forEach>
+									</div>
+								</div>
+								<br />
+								<div class="row" id="submit">
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
+										<button type="submit" class="btn btn-primary btn-block">Upload
+											Product</button>
+									</div>
+									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

@@ -3,8 +3,8 @@
 	<company>
 	    <companyrole>Buyer</companyrole>
 	    <companyrole>Seller</companyrole>
-	    <companyrole>Agent</companyrole>
-	    <companyrole>Admin</companyrole>
+<!-- 	    <companyrole>Agent</companyrole> -->
+<!-- 	    <companyrole>Admin</companyrole> -->
 	</company>
 	<person>
 	    <personrole>Solo Owner</personrole>

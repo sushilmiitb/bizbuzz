@@ -29,6 +29,14 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
 //      + "where c.fromPartyId=?1 and "
 //      + "c.connectionType=?2 and "
 //      + "pg.privateGroupName=?3")
+  
+  @Query("select p from "
+      + "Connection c inner join c.toParty p "
+      + "where c.fromPartyId=?1 and "
+      + "c.connectionType=?2 "
+      + "order by p.privateGroupName asc")
+  List<PrivateGroup> findPrivateGroupByFromPartyIdAndConnectionTypeOrderByPrivateGroupName(Long fromPartyId, ConnectionType connectionType);
+  
   @Query("select p from "
       + "Connection c inner join c.toParty p "
       + "where c.fromPartyId=?1 and "
@@ -48,6 +56,20 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "c.connectionType=?2 "
       + "order by p.firstName asc")
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
+  
+//  @Query("select t from "
+//      + "PrivateGroup p inner join p.fromParties f inner join p.toParties t inner join Person t.toParty b "
+//      + "where f.fromPartyId=?1 and "
+//      + "f.connectionType=?2 "
+//      + "order by b.firstName asc ")
+//  List<Connection> findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(Long fromPartyId, ConnectionType connectionType);
+  
+  @Query("select c from "
+      + "Person p inner join p.fromParties c inner join c.fromParty pg inner join pg.fromParties f "
+      + "where f.fromPartyId=?1 and "
+      + "f.connectionType=?2 "
+      + "order by p.firstName asc ")
+  List<Connection> findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(Long fromPartyId, ConnectionType connectionType);
  
   @Query("select p from "
       + "Connection c inner join c.toParty p "

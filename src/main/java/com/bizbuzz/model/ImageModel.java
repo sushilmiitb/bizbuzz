@@ -2,13 +2,17 @@ package com.bizbuzz.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -24,24 +28,30 @@ public class ImageModel implements Serializable{
 
   @Id
   @GeneratedValue(strategy = GenerationType.TABLE)
-  private Long id;
+  private Long id = null;
   
-  private String originalFilename;
-  private String tag;
+  private String originalFilename = "";
+  private String tag = "";
+  private String name = "";
   
-  @OneToOne(mappedBy="primaryImageModel")
-  private Property primaryImageProperty;
-  @OneToOne(mappedBy="image1Model")
-  private Property image1Property;
-  @OneToOne(mappedBy="image2Model")
-  private Property image2Property;
-  @OneToOne(mappedBy="image3Model")
-  private Property image3Property;
+  @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn(name="property_id", referencedColumnName="id")
+  private PropertyMetadata propertyMetadata;
   
+  @ManyToOne
+  @JoinColumn(name="image_model_metadata_id", referencedColumnName="id")
+  private ImageModel imageModelMetadata;
+  
+  @OneToMany(mappedBy="imageModelMetadata", fetch=FetchType.LAZY)
+  private List<ImageModel> imageModelValues;
+  
+  @ManyToOne
+  @JoinColumn(name="item_id", referencedColumnName="id")
+  private Item item;
   
   private Date created;
   private Date updated;
-
+  
   public String getFilename(){
     return id.toString();
   }
@@ -52,6 +62,14 @@ public class ImageModel implements Serializable{
 
   public void setTag(String tag) {
     this.tag = tag;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getOriginalFilename() {
@@ -66,6 +84,14 @@ public class ImageModel implements Serializable{
     return id;
   }
   
+  public PropertyMetadata getProperty() {
+    return propertyMetadata;
+  }
+
+  public void setProperty(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
+  }
+
   public Date getCreated() {
     return created;
   }
@@ -74,36 +100,40 @@ public class ImageModel implements Serializable{
     return updated;
   }
 
-  public Property getPrimaryImageProperty() {
-    return primaryImageProperty;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public void setPrimaryImageProperty(Property primaryImageProperty) {
-    this.primaryImageProperty = primaryImageProperty;
+  public PropertyMetadata getPropertyMetadata() {
+    return propertyMetadata;
   }
 
-  public Property getImage1Property() {
-    return image1Property;
+  public void setPropertyMetadata(PropertyMetadata propertyMetadata) {
+    this.propertyMetadata = propertyMetadata;
   }
 
-  public void setImage1Property(Property image1Property) {
-    this.image1Property = image1Property;
+  public ImageModel getImageModelMetadata() {
+    return imageModelMetadata;
   }
 
-  public Property getImage2Property() {
-    return image2Property;
+  public void setImageModelMetadata(ImageModel imageModelMetadata) {
+    this.imageModelMetadata = imageModelMetadata;
   }
 
-  public void setImage2Property(Property image2Property) {
-    this.image2Property = image2Property;
+  public List<ImageModel> getImageModelValues() {
+    return imageModelValues;
   }
 
-  public Property getImage3Property() {
-    return image3Property;
+  public void setImageModelValues(List<ImageModel> imageModelValues) {
+    this.imageModelValues = imageModelValues;
   }
 
-  public void setImage3Property(Property image3Property) {
-    this.image3Property = image3Property;
+  public Item getItem() {
+    return item;
+  }
+
+  public void setItem(Item item) {
+    this.item = item;
   }
 
   @PrePersist

@@ -2,7 +2,9 @@ package com.bizbuzz.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -23,6 +25,8 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hsqldb.lib.ArrayListIdentity;
+
+import com.bizbuzz.model.Connection.ConnectionType;
 
 @Entity
 @Table(name="party")
@@ -61,7 +65,8 @@ public abstract class Party implements Serializable{
   @JoinColumn(name="category_root", referencedColumnName="id")
   private CategoryTree categoryRoot;
   
-  @ManyToMany
+  @ManyToMany(fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   @JoinTable(
       name="share",
       joinColumns={@JoinColumn(name="party_id", referencedColumnName="id")},
@@ -79,6 +84,28 @@ public abstract class Party implements Serializable{
   @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Item> ownedItems = new ArrayList<Item>();
+  
+  Map<ConnectionType, List<Party>>getFromPartiesHashMappedWithConnectionType(){
+    Map<ConnectionType, List<Party>> map = new LinkedHashMap<Connection.ConnectionType, List<Party>>();
+    for(int i=0; i<fromParties.size(); i++){
+      if(map.get(fromParties.get(i)) == null){
+        map.put(fromParties.get(i).getConnectionType(), new ArrayList<Party>());
+      }
+      map.get(fromParties.get(i).getConnectionType()).add(fromParties.get(i).getFromParty());
+    }
+    return map;
+  }
+  
+  Map<ConnectionType, List<Party>>getToPartiesHashMappedWithConnectionType(){
+    Map<ConnectionType, List<Party>> map = new LinkedHashMap<Connection.ConnectionType, List<Party>>();
+    for(int i=0; i<toParties.size(); i++){
+      if(map.get(toParties.get(i)) == null){
+        map.put(toParties.get(i).getConnectionType(), new ArrayList<Party>());
+      }
+      map.get(toParties.get(i).getConnectionType()).add(toParties.get(i).getToParty());
+    }
+    return map;
+  }
   
   /**
    * This function models the addToParty function for many-to-many

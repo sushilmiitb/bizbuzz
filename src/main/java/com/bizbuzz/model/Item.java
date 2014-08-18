@@ -1,22 +1,26 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.persistence.FetchType;
+
+import java.util.Date;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+
 
 @Entity
 public class Item implements Serializable{
@@ -38,7 +42,8 @@ public class Item implements Serializable{
 //  @ManyToOne
 //  private PropertyMetadata propertyMetadata;
 //  
-  @ManyToMany(mappedBy="sharedItems")
+  @ManyToMany(mappedBy="sharedItems", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
   private List<Party> sharedToParties;
   
   @OneToMany(mappedBy="item", fetch = FetchType.EAGER)
@@ -49,10 +54,17 @@ public class Item implements Serializable{
   @JoinColumn(name="owner_id", referencedColumnName="id")
   private Party owner;
   
-  @OneToOne
-  @JoinColumn(name="property_value_id", referencedColumnName="id")
-  private PropertyValue propertyValue;
+  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<PropertyValue> propertyValues;
     
+  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<ImageModel> imageModels;
+  
+  private Date created;
+  private Date updated;
+  
   /**
    * Function handling many-to-many association between Item and PropertyMetaData
    * @param propertyMetadata
@@ -71,6 +83,18 @@ public class Item implements Serializable{
 //    this.properties.add(itemPropertyValue);
 //    propertyMetadata.getItems().add(itemPropertyValue);
 //  }
+  
+  public ImageModel getImageModelByTag(String tag){
+    if(imageModels == null){
+      return null;
+    }
+    for(int i=0; i<imageModels.size(); i++){
+      if(imageModels.get(i).getTag()==tag){
+        return imageModels.get(i);
+      }
+    }
+    return null;
+  }
   
   /**
    * getters and setters
@@ -120,12 +144,16 @@ public class Item implements Serializable{
     this.chats = chats;
   }
 
-  public PropertyValue getPropertyValue() {
-    return propertyValue;
+  public void setId(Long id) {
+    this.id = id;
   }
 
-  public void setPropertyValue(PropertyValue propertyValue) {
-    this.propertyValue = propertyValue;
+  public List<PropertyValue> getPropertyValues() {
+    return propertyValues;
+  }
+
+  public void setPropertyValues(List<PropertyValue> propertyValue) {
+    this.propertyValues = propertyValue;
   }
 
   public Party getOwner() {
@@ -135,5 +163,38 @@ public class Item implements Serializable{
   public void setOwner(Party owner) {
     this.owner = owner;
   }
+
+  public List<ImageModel> getImageModels() {
+    return imageModels;
+  }
+
+  public void setImageModels(List<ImageModel> imageModels) {
+    this.imageModels = imageModels;
+  }
   
+  public Date getCreated() {
+    return created;
+  }
+
+  public void setCreated(Date created) {
+    this.created = created;
+  }
+
+  public Date getUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(Date updated) {
+    this.updated = updated;
+  }
+
+  @PrePersist
+  protected void onCreate() {
+    created = new Date();
+  }
+
+  @PreUpdate
+  protected void onUpdate() {
+    updated = new Date();
+  }
 }

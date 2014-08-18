@@ -1,148 +1,119 @@
-//package com.bizbuzz.model;
-//
-//import java.io.Serializable;
-//import java.util.List;
-//
-//import javax.persistence.Entity;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.Id;
-//import javax.persistence.JoinColumn;
-//import javax.persistence.ManyToOne;
-//import javax.persistence.OneToMany;
-//
-//@Entity
-//public class PropertyMetadata implements Serializable{
-//  private static final long serialVersionUID = 1L;
-//  
-//  @Id
-//  @GeneratedValue
-//  private Long id;
-//  
-//  private String propertyName;
-//  private String possibleUnits;//in form of comma separated words
-//  private String possibleValues;//in form of comma separated words
-//  private String groupingName1;//1 is the lowest order grouping
-//  private String groupingName2;
-//  
-//  /**
-//   *  Code values will be used to position the elements on UI.
-//   *  (groupingcode2,groupingCode1,propertyCode) should be unique
-//   */
-//  private String propertyCode;
-//  private String groupingCode1;
-//  private String groupingCode2;
-//  
-//  @ManyToOne
-//  @JoinColumn(name="property_metadata_category_id")
-//  private CategoryTree category;
-//
-//  @OneToMany(mappedBy="propertyMetadata")
-//  private List<ItemPropertyValue> items;
-//  
-//
-//  /**
-//   * Setters and Getters
-//   */
-//  public Long getId(){
-//    return id;
-//  }
-//  
-//  public String getPropertyName() {
-//    return propertyName;
-//  }
-//
-//  public void setPropertyName(String propertyName) {
-//    this.propertyName = propertyName;
-//  }
-//
-//  public String getPossibleUnits() {
-//    return possibleUnits;
-//  }
-//
-//  public void setPossibleUnits(String possibleUnits) {
-//    this.possibleUnits = possibleUnits;
-//  }
-//
-//  public String getPossibleValues() {
-//    return possibleValues;
-//  }
-//
-//  public void setPossibleValues(String possibleValues) {
-//    this.possibleValues = possibleValues;
-//  }
-//
-//  public List<ItemPropertyValue> getItems() {
-//    return items;
-//  }
-//
-//  public void setItems(List<ItemPropertyValue> items) {
-//    this.items = items;
-//  }
-//
-//  public String getGroupingName1() {
-//    return groupingName1;
-//  }
-//
-//  public void setGroupingName1(String groupingName1) {
-//    this.groupingName1 = groupingName1;
-//  }
-//
-//  public String getGroupingName2() {
-//    return groupingName2;
-//  }
-//
-//  public void setGroupingName2(String groupingName2) {
-//    this.groupingName2 = groupingName2;
-//  }
-//
-//
-//  public CategoryTree getCategory() {
-//    return category;
-//  }
-//
-//  public void setCategory(CategoryTree category) {
-//    this.category = category;
-//  }
-//
-//  public String getPropertyCode() {
-//    return propertyCode;
-//  }
-//
-//  public void setPropertyCode(String propertyCode) {
-//    this.propertyCode = propertyCode;
-//  }
-//
-//  public String getGroupingCode1() {
-//    return groupingCode1;
-//  }
-//
-//  public void setGroupingCode1(String groupingCode1) {
-//    this.groupingCode1 = groupingCode1;
-//  }
-//
-//  public String getGroupingCode2() {
-//    return groupingCode2;
-//  }
-//
-//  public void setGroupingCode2(String groupingCode2) {
-//    this.groupingCode2 = groupingCode2;
-//  }
-//  
-//}
-
 package com.bizbuzz.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
+
+/**
+ * 
+ * @author sushil
+ * Any Changes in this file require changes in dto.ProductDetailDTO, seller/viewproductupload.jsp, ItemService/saveFiles,
+ * PropertyValue (for file changes), 
+ * 
+ */
 @Entity
-@DiscriminatorValue("metadata")
-public class PropertyMetadata extends Property{
-  private static final long serialVersionUID = 1L;
+public class PropertyMetadata implements Serializable{
+  private static final long serialVersionUID = 4009473233597932062L;
+  
+  @Id
+  @GeneratedValue(strategy = GenerationType.TABLE)
+  private Long id;
+  
+  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<ImageModel> imageModels = new ArrayList<ImageModel>();
+  
+  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @Fetch(value=FetchMode.SUBSELECT)
+  private List<PropertyGroup> propertyGroups = new ArrayList<PropertyGroup>();
   
   @OneToOne(mappedBy="propertyMetadata")
   private CategoryTree category;
+  
+  private Date createdAt;
+  
+  private Date updatedAt;
+  
+  public void initialize(int imageModelsSize, int propertyGroupsSize){
+    imageModels = new ArrayList<ImageModel>(imageModelsSize);
+    for(int i=0; i<imageModelsSize; i++){
+      imageModels.add(new ImageModel());
+    }
+    propertyGroups = new ArrayList<PropertyGroup>(propertyGroupsSize);
+    for(int i=0; i<propertyGroupsSize; i++){
+      propertyGroups.add(new PropertyGroup());
+    }
+  }
+  
+  public List<String> getImageTags(){
+    List<String> tags = new ArrayList<String>();
+    for(int i=0; i<imageModels.size();i++){
+      tags.add(i, imageModels.get(i).getTag());
+    }
+    return tags;
+  }
+  
+  public void setImageModelsInOrder(List<ImageModel> imageModels){
+    
+  }
+  
+  public List<ImageModel> getImageModelsInOrder(){
+    List<ImageModel> imageModels = new ArrayList<ImageModel>();
+    
+    return imageModels;
+  }
+  
+  public Long getId() {
+    return id;
+  }
+  public void setId(Long id){
+    this.id = id;
+  }
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+  public Date getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public List<ImageModel> getImageModels() {
+    return imageModels;
+  }
+
+  public void setImageModels(List<ImageModel> imageModels) {
+    this.imageModels.clear();
+    this.imageModels.addAll(imageModels);
+  }
+
+  public List<PropertyGroup> getPropertyGroups() {
+    return propertyGroups;
+  }
+
+  public void setPropertyGroups(List<PropertyGroup> propertyGroups) {
+    this.propertyGroups.clear();
+    this.propertyGroups.addAll(propertyGroups);
+  }
 
   public CategoryTree getCategory() {
     return category;
@@ -151,5 +122,14 @@ public class PropertyMetadata extends Property{
   public void setCategory(CategoryTree category) {
     this.category = category;
   }
-  
+
+  @PrePersist
+  protected void onCreate() {
+    createdAt = new Date();
+  }
+  @PreUpdate
+  protected void onUpdate() {
+    updatedAt = new Date();
+  }
+    
 }

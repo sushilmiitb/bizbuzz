@@ -1,11 +1,17 @@
 package com.bizbuzz.web;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javax.jws.WebParam.Mode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +32,7 @@ import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.service.CategoryService;
@@ -37,30 +44,30 @@ import com.bizbuzz.utils.HelperFunctions;
 @Controller
 public class RegistrationController {
   private static final Logger logger = LoggerFactory.getLogger(RegistrationController.class);
-  
+
   @Autowired
   PartyManagementService partyManagementService;
-  
+
   @Autowired
   ConnectionService connectionService;
-  
+
   @Autowired
   CategoryService categoryService;
-  
+
   @Autowired
   @Qualifier("personRegistrationFormValidator")
   private Validator validator;
-  
+
   @InitBinder
   private void initBinder(WebDataBinder binder) {
-      binder.setValidator(validator);
+    binder.setValidator(validator);
   }
-  
+
   @RequestMapping(value={"/", "/home"}, method=RequestMethod.GET)
   public String home(){
-    return "home";
+    return "redirect:/login";
   }
-  
+
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
     RegistrationPersonRegistrationFormDTO personRegistration = new RegistrationPersonRegistrationFormDTO();
@@ -76,7 +83,7 @@ public class RegistrationController {
     m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
     return "jsp/register/personregistration";
   }
-  
+
   @RequestMapping(value="/register/personregistration", method = RequestMethod.POST)
   public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated RegistrationPersonRegistrationFormDTO personRegistration, BindingResult bindingResult, Model model){
     if (bindingResult.hasErrors()) {
@@ -89,26 +96,54 @@ public class RegistrationController {
     partyManagementService.saveUserLogin(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
     personRegistration.getPerson().setUserId(personRegistration.getUserLogin());
     Person person = personRegistration.getPerson();
-    
     Long categoryId = Long.parseLong(HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), "sarees").get(0));
     CategoryTree categoryRoot = categoryService.getCategory(categoryId);
     person.setCategoryRoot(categoryRoot);
     partyManagementService.savePerson(personRegistration.getPerson());
-    
+
     partyManagementService.saveCompany(personRegistration.getCompany());
     connectionService.createConnection(personRegistration.getCompany(), personRegistration.getPerson(), ConnectionType.COMPANY_PERSON);
-    
+
+    if(personRegistration.getCompany().getCompanyRole().equals("Seller")){
+      PrivateGroup privateGroup = new PrivateGroup();
+      privateGroup.setPrivateGroupName("General");
+      partyManagementService.savePrivateGroup(privateGroup);
+      connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
+    }
     return "jsp/register/registrationsuccess";
   }
-  
+
   @RequestMapping(value="/login/{error}", method = RequestMethod.GET)
   public String errorInLogin(Model model, @PathVariable final String error){
     model.addAttribute("error", error);
     return "jsp/register/login";
   }
-  
+
   @RequestMapping(value="/login", method = RequestMethod.GET)
   public String login(){
     return "jsp/register/login";
+  }
+
+  @RequestMapping(value="/rolehome", method = RequestMethod.GET)
+  public String getRoleHome(){
+    Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+    if(authorities==null ||authorities.size()==0){
+      return "redirect:/home";
+    }
+    if(authorities.size()==1){
+      for(GrantedAuthority authority: authorities){
+        String authorityString = authority.getAuthority();
+        if(authorityString.equals("ROLE_BUYER")){
+          return "redirect:/buyer/home";
+        }
+        if(authorityString.equals("ROLE_SELLER")){
+          return "redirect:/seller/home";
+        }
+        if(authorityString.equals("ROLE_ADMIN")){
+          return "redirect:/admin/home/";
+        }
+      }
+    }
+    return "redirect:/home";
   }
 }
