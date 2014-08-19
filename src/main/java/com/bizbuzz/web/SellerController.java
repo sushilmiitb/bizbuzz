@@ -323,8 +323,8 @@ public class SellerController {
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategoryForUpload(Model m, @PathVariable Long categoryId){
     CategoryTree categoryTree = null;
+    Person seller = getSeller();
     if(categoryId==null || categoryId==-1){
-      Person seller = getSeller();
       categoryTree = seller.getCategoryRoot();
     }
     else{
@@ -345,6 +345,14 @@ public class SellerController {
       m.addAttribute("uploadForm", new ProductDetailDTO());
       m.addAttribute("categoryId", categoryTree.getId());
       m.addAttribute("parentCategoryName", parentCategoryName);
+      
+//      List<Connection> allConnections = connectionService.getAllSellerConnectionsUsingPrivateGroup(seller);
+//      m.addAttribute("connections", allConnections);
+      
+      List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
+      m.addAttribute("privateGroups", privateGroups);
+      
+
       return "jsp/seller/viewuploadproduct";
     }
     else{
@@ -373,6 +381,10 @@ public class SellerController {
     List<ImageModel> valueImageModels = propertyService.populateImageModels(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), item);
     item.setImageModels(valueImageModels);
     
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
+    Map<Long, PrivateGroup> privateGroupMap = connectionService.convertToMap(privateGroups);
+    itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
+    
     itemService.saveItem(item);
     return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
@@ -390,6 +402,13 @@ public class SellerController {
     
     Map<Long, ImageModel> valueImageModelMap = propertyService.getImageModelValuesMappedByImageModelMeta(item.getImageModels());
     m.addAttribute("valueImageModelMap", valueImageModelMap);
+    
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
+    m.addAttribute("privateGroups", privateGroups);
+    
+    List<PrivateGroup> sharedPrivateGroups = itemService.getSharedPrivateGroups(item);
+    Map<Long,PrivateGroup> sharedPrivateGroupsMap = connectionService.convertToMap(sharedPrivateGroups);
+    m.addAttribute("sharedPrivateGroupMap", sharedPrivateGroupsMap);
     
     m.addAttribute("itemId", itemId);
     m.addAttribute("rootDir", propertyService.getImageDir());
@@ -410,6 +429,11 @@ public class SellerController {
     item.setPropertyValues(propertyValuesNew);
     Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
     item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
+    
+    List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
+    Map<Long, PrivateGroup> privateGroupMap = connectionService.convertToMap(privateGroups);
+    itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
+    
     itemService.saveItem(item);
     return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
   }

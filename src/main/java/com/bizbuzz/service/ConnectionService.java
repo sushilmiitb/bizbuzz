@@ -1,6 +1,7 @@
 package com.bizbuzz.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Company;
@@ -24,5 +25,5 @@ public interface ConnectionService {
   public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId);
   public List<Connection> getAllSellerConnectionsUsingPrivateGroup(Person seller);
   public void flush();
- 
+  public Map<Long, PrivateGroup> convertToMap(List<PrivateGroup> list);
 }

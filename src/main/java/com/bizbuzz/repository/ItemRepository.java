@@ -12,6 +12,7 @@ import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 
 @Transactional
@@ -45,12 +46,13 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
   List<Company> findCompaniesSellersByBuyerIdOrderByLatestItemUpload(Long buyerId, Long categoryId);
   
   @Query("select distinct i "
-      + "from Item i inner join i.owner o inner join o.toParties otp "
+      + "from Item i inner join i.owner o inner join i.sharedToParties sp inner join sp.toParties buyerConnection "
       + "where i.itemCategory.id=?1 "
       + "and i.owner.id=?2 "
-      + "and otp.toPartyId=?3 "
+      + "and buyerConnection.toPartyId=?3 "
+      + "and buyerConnection.connectionType=?4 "
       + "order by i.created desc")
-  List<Item> findItemsByCategoryIdAndOwnerIdAndBuyerId(Long categoryId, Long ownerId, Long buyerId);
+  List<Item> findItemsByCategoryIdAndOwnerIdAndBuyerIdSharedThroughPrivateGroup(Long categoryId, Long ownerId, Long buyerId, ConnectionType connectionType);
   
   @Query("select distinct i "
       + "from Item i inner join i.owner o inner join o.toParties otp "
@@ -58,6 +60,11 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
       + "and o.id=?2 "
       + "and otp.toPartyId=?3")
   Item findItemByItemIdAndOwnerIdAndBuyerId(Long itemId, Long sellerId, Long buyerId);
+  
+  @Query("select pg "
+      + "from PrivateGroup pg inner join pg.sharedItems si "
+      + "where si.id=?1")
+  List<PrivateGroup> findSharedToPrivateGroupsByItemId(Long itemId);
 //  @Query("select pm "
 //      + "from Item i inner join i.propertyValues pv inner join pv.propertyField pf inner join pf.propertySubGroup psg inner join psg.propertyGroup pg inner join pg.propertyMetadata pm "
 //      + "where i.owner.id=?1 and "

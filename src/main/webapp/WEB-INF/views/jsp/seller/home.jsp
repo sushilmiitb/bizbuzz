@@ -23,7 +23,7 @@
 										class="glyphicon glyphicon-search"></span> View Products </a></li>
 								<li><a href="<c:url value="/seller/uploadproduct/category/-1"/>"><span
 										class="glyphicon glyphicon-upload"></span> Upload Products </a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-user"></span>
+								<li><a href="/chat/showchatrooms"><span class="glyphicon glyphicon-user"></span>
 										Chat </a></li>
 								<li><a href="<c:url value="/seller/viewgroup"/>"><span class="glyphicon glyphicon-cog"></span>
 										Group Management </a></li>

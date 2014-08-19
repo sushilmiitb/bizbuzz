@@ -11,6 +11,10 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		$(document).ready(function(){
+			$("#selectall").click(function(){
+				$(".second").prop("checked",$("#selectall").prop("checked"));
+			});
+			
 			/*$('#uploadForm').submit(function(event) {
 				$.ajax({
 				    url: $("#uploadForm").attr( "action"),
@@ -169,7 +173,8 @@
 			<c:url var="form_upload_url"
 				value="/seller/uploadproduct/category/${categoryId}/item/${itemId }" />
 		</c:if>
-		<c:url var="newProductUpload" value="/seller/uploadproduct/category/${categoryId}" />
+		<c:url var="newProductUpload"
+			value="/seller/uploadproduct/category/${categoryId}" />
 		<c:url var="base_image_url" value="/${rootDir}" />
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
@@ -184,18 +189,29 @@
 								<div class="row">
 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
 									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
-										<a href="${newProductUpload}" class="btn btn-success btn-block">Upload another ${parentCategoryName} product</a>
+										<a href="${newProductUpload}"
+											class="btn btn-success btn-block">Upload another
+											${parentCategoryName} product</a>
 									</div>
 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
 								</div>
-								<br/>
+								<br />
 							</c:if>
+							<div class="row">
+								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+								<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
+									<button class="btn btn-success btn-block" data-toggle="modal"
+										data-target="#shareModal">Share the product</button>
+								</div>
+								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+							</div>
+							<br />
 							<form role="form" id="uploadForm" action="${form_upload_url}"
 								class="productuploadform" method="POST"
 								enctype="multipart/form-data">
- 								<div class="row" id="imagecontent">
+								<div class="row" id="imagecontent">
 									<c:forEach var="item" items="${propertyMetadata.imageModels}"
- 										varStatus="i">
+										varStatus="i">
 										<div class="col-xs-12 col-md-6 col-sm-6 col-lg-4">
 											<div class="panel panel-default">
 												<div class="panel-heading">
@@ -205,42 +221,42 @@
 													<div class="row">
 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
 															<c:choose>
-																<c:when
- 																	test="${not empty valueImageModelMap[item.id]}">
- 																	<input type="hidden" name="imagesValueId[${i.index}]" value="${valueImageModelMap[item.id].id}" />
+																<c:when test="${not empty valueImageModelMap[item.id]}">
+																	<input type="hidden" name="imagesValueId[${i.index}]"
+																		value="${valueImageModelMap[item.id].id}" />
 																	<a class="thumbnail"
- 																		href="${base_image_url}/${baseSizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}">
- 																		<img class="image-responsive upload-preview"
- 																		id="thumbnail_images_${i.index}" alt="..."
+																		href="${base_image_url}/${baseSizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}">
+																		<img class="image-responsive upload-preview"
+																		id="thumbnail_images_${i.index}" alt="..."
 																		src="${base_image_url}/${sizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}" />
- 																	</a>
- 																</c:when>
- 																<c:otherwise>
- 																	<a href="#" class="thumbnail"> <img
- 																		class="image-responsive no-image upload-preview"
- 																		id="thumbnail_images_${i.index}" alt=""
- 																		src="${emptyImageUrl}"> 
- 																	</a>
- 																</c:otherwise> 
- 															</c:choose> 
- 														</div>
- 														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
- 															<div>
- 																<button class="btn btn-default btn-block pull-right">
- 																	Upload File</button>
- 																<input type="hidden" name="imagesMetaId[${i.index}]" value="${item.id}" />
- 																<input name="images[${i.index}]"
- 																	class="imageuploadinput btn btn-default btn-block pull-right"
- 																	type="file" id="upload_input"
- 																	style="opacity: 0; margin-top: -34px; height: 35px;" />
- 															</div>
- 														</div>
- 													</div>
- 												</div>
- 											</div>
- 										</div>
- 									</c:forEach>
- 								</div>
+																	</a>
+																</c:when>
+																<c:otherwise>
+																	<a href="#" class="thumbnail"> <img
+																		class="image-responsive no-image upload-preview"
+																		id="thumbnail_images_${i.index}" alt=""
+																		src="${emptyImageUrl}">
+																	</a>
+																</c:otherwise>
+															</c:choose>
+														</div>
+														<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+															<div>
+																<button class="btn btn-default btn-block pull-right">
+																	Upload File</button>
+																<input type="hidden" name="imagesMetaId[${i.index}]"
+																	value="${item.id}" /> <input name="images[${i.index}]"
+																	class="imageuploadinput btn btn-default btn-block pull-right"
+																	type="file" id="upload_input"
+																	style="opacity: 0; margin-top: -34px; height: 35px;" />
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</c:forEach>
+								</div>
 								<div class="row" id="propertyContent">
 									<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 										<c:forEach var="group"
@@ -260,23 +276,27 @@
 																			<c:when test="${not empty newItem}">
 																				<tr>
 																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
-																					<input type="hidden" name="fieldIds[${value_count}]" value="${field.id}" />
+																					<input type="hidden"
+																						name="fieldIds[${value_count}]"
+																						value="${field.id}" />
 																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
-																						name="values[${value_count}]"
-																						value=""
-																						type="text" /></td>
-																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																						name="values[${value_count}]" value="" type="text" /></td>
+																					<c:set var="value_count" value="${value_count + 1}"
+																						scope="page" />
 																				</tr>
 																			</c:when>
 																			<c:otherwise>
 																				<tr>
 																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
-																					<input type="hidden" name="valueIds[${value_count}]" value="${propertyValueMap[field.id].id}" />
+																					<input type="hidden"
+																						name="valueIds[${value_count}]"
+																						value="${propertyValueMap[field.id].id}" />
 																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
 																						name="values[${value_count}]"
 																						value="${propertyValueMap[field.id].value}"
 																						type="text" /></td>
-																					<c:set var="value_count" value="${value_count + 1}" scope="page"/>
+																					<c:set var="value_count" value="${value_count + 1}"
+																						scope="page" />
 																				</tr>
 																			</c:otherwise>
 																		</c:choose>
@@ -291,11 +311,60 @@
 									</div>
 								</div>
 								<br />
+
+								<div class="modal fade" id="shareModal" tabindex="-1"
+									role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog">
+										<div class="modal-content">
+											<div class="modal-header">
+												<button type="button" class="close" data-dismiss="modal"
+													aria-hidden="true">&times;</button>
+												<h4 class="modal-title" id="myModalLabel">Share Product</h4>
+											</div>
+											<div class="modal-body">
+												<div class="row">
+													<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+														<h4 class="modal-title" id="myModalLabel">Share with
+															groups</h4>
+														<div class="checkbox">
+															<label><input type="checkbox" name="check_all"
+																id="selectall" class="second" />Check/Uncheck All</label>
+														</div>
+														<c:forEach var="item" items="${privateGroups}">
+															<c:choose>
+																<c:when
+																	test="${not empty sharedPrivateGroupMap[item.id]}">
+																	<div class="checkbox">
+																		<label><input type="checkbox" id="selectall"
+																			class="second" name="share" value="${item.id}" checked="true">${item.privateGroupName}</label>
+																	</div>
+																</c:when>
+																<c:otherwise>
+																	<div class="checkbox">
+																		<label><input type="checkbox" id="selectall"
+																			class="second" name="share" value="${item.id}">${item.privateGroupName}</label>
+																	</div>
+																</c:otherwise>
+															</c:choose>
+														</c:forEach>
+													</div>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-default"
+													data-dismiss="modal">Ok</button>
+											</div>
+										</div>
+										<!-- /.modal-content -->
+									</div>
+									<!-- /.modal -->
+								</div>
+
 								<div class="row" id="submit">
 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
 									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
-										<button type="submit" class="btn btn-primary btn-block">Upload
-											Product</button>
+										<button type="submit" class="btn btn-primary btn-block">Save
+											Product Details</button>
 									</div>
 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
 								</div>

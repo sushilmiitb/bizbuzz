@@ -65,12 +65,9 @@ public abstract class Party implements Serializable{
   @JoinColumn(name="category_root", referencedColumnName="id")
   private CategoryTree categoryRoot;
   
-  @ManyToMany(fetch = FetchType.EAGER)
+
+  @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
-  @JoinTable(
-      name="share",
-      joinColumns={@JoinColumn(name="party_id", referencedColumnName="id")},
-          inverseJoinColumns={@JoinColumn(name="item_id", referencedColumnName="id")})
   private List<Item> sharedItems = new ArrayList<Item>();
   
   @ManyToMany(mappedBy="members", fetch = FetchType.EAGER)

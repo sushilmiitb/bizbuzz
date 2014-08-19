@@ -21,7 +21,7 @@
 							<ul class="nav nav-pills nav-stacked n">
 								<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>"><span
 										class="glyphicon glyphicon-search"></span> View Products </a></li>
-								<li><a href="#"><span class="glyphicon glyphicon-user"></span>
+								<li><a href="/chat/showchatrooms"><span class="glyphicon glyphicon-user"></span>
 										Chat </a></li>
 								<li><a href="<c:url value="/buyer/viewconnection"/>"><span
 										class="glyphicon glyphicon-search"></span> View connections </a></li>

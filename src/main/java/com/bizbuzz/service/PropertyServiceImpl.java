@@ -45,7 +45,7 @@ public class PropertyServiceImpl implements PropertyService{
   PropertySubGroupRepository propertySubGroupRepository;
   @Autowired
   PropertyGroupRepository propertyGroupRepository;
-  
+
 
 
   public PropertyMetadata getPropertyMetadata(Person seller, Integer depth, Long categoryId){
@@ -93,16 +93,16 @@ public class PropertyServiceImpl implements PropertyService{
     categoryTreeRepository.save(categoryTree);
     return propertyMetadata;
   }
-  
+
   public PropertyMetadata updatePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId){
     PropertyMetadata oldMetadata = propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
     propertyMetadata.setId(oldMetadata.getId());
-    
+
     List<ImageModel> imageModels = oldMetadata.getImageModels();
     for(int i=0; i<imageModels.size(); i++){
       propertyMetadata.getImageModels().get(i).setId(imageModels.get(i).getId());
     }
-    
+
     List<PropertyGroup> groups = oldMetadata.getPropertyGroups();
     for(int i=0; (groups!=null && i<groups.size()); i++){
       propertyMetadata.getPropertyGroups().get(i).setId(groups.get(i).getId());
@@ -115,7 +115,7 @@ public class PropertyServiceImpl implements PropertyService{
         }
       }
     }
-    
+
     propertyMetadata = propertyMetadataRepository.save(propertyMetadata);
     imageModels = propertyMetadata.getImageModels();
     for(int i=0; i<imageModels.size(); i++){
@@ -137,15 +137,15 @@ public class PropertyServiceImpl implements PropertyService{
     return propertyMetadata;
   }
 
-  
 
-//  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId){
-//    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
-//    PropertyMetadata propertyMetadata = propertyMetadataRepository.findOne(propertyMetadataId);
-//    categoryTree.setPropertyMetadata(propertyMetadata);
-//    categoryTreeRepository.save(categoryTree);
-//    return propertyMetadata;
-//  }
+
+  //  public PropertyMetadata saveExistingPropertyMetadata(Long propertyMetadataId, Long categoryId){
+  //    CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
+  //    PropertyMetadata propertyMetadata = propertyMetadataRepository.findOne(propertyMetadataId);
+  //    categoryTree.setPropertyMetadata(propertyMetadata);
+  //    categoryTreeRepository.save(categoryTree);
+  //    return propertyMetadata;
+  //  }
 
   public PropertyValue savePropertyValue(PropertyValue propertyValue){
     return propertyValueRepository.save(propertyValue);
@@ -189,7 +189,7 @@ public class PropertyServiceImpl implements PropertyService{
   /***
    * As a convention this function saves the images in order in which it appears in the model.
    */
- /* public List<ImageModel> saveImagesInOrder(List<MultipartFile> images, PropertyValue propertyValue){
+  /* public List<ImageModel> saveImagesInOrder(List<MultipartFile> images, PropertyValue propertyValue){
     List<String> tags = propertyValue.getImageTags();
     List<ImageModel> imageModels = new ArrayList<ImageModel>(images.size());
     for(int i=0; i<images.size(); i++){
@@ -236,27 +236,27 @@ public class PropertyServiceImpl implements PropertyService{
     newPropertyValue.setImageModelsInOrder(oldPropertyValue.getImageModelsInOrder());
     return newPropertyValue;
   }
-*/
+   */
   public String getImageDir(){
     return HelperFunctions.getImageDir(getClass().getResourceAsStream("/application/AppConstants.xml"));
   }
-  
+
   public void deletePropertyField(long fieldId){
     propertyFieldRepository.deletePropertyFieldById(fieldId);
   }
-  
+
   public void deletePropertySubGroup(long subgroupId){
     propertySubGroupRepository.deletePropertySubGroupById(subgroupId);
   }
-  
+
   public void deletePropertyGroup(long groupId){
     propertyGroupRepository.deletePropertyGroupById(groupId);
   }
-  
+
   public void deleteImageModel(long imageId){
     imageModelRepository.deleteImageModelById(imageId);
   }
-  
+
   public Map<Long, PropertyField> getPropertyFieldByCategoryIdMappedByPropertyFieldId(Long categoryId){
     List<PropertyField> propertyFields = propertyFieldRepository.findPropertyFieldsByCategoryIdOrderByPropertyFieldId(categoryId);
     Map<Long, PropertyField> propertyFieldMap = new HashMap<Long, PropertyField>();
@@ -265,7 +265,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return propertyFieldMap;
   }
-  
+
   public List<PropertyValue> populatePropertyValues(Map<Long, PropertyField> propertyFieldMap, List<Long> fieldIds, List<String> values, Item item){
     List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
     for(int i=0; i<fieldIds.size(); i++){
@@ -277,7 +277,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return propertyValues;
   }
-  
+
   public Map<Long, ImageModel> getImageModelMetaByCategoryIdMappedByImageModelId(Long categoryId){
     List<ImageModel> imageModels = imageModelRepository.findImageModelsByCategoryIdOrderByImageModelId(categoryId);
     Map<Long, ImageModel> imageModelMap = new HashMap<Long, ImageModel>();
@@ -286,8 +286,11 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return imageModelMap;
   }
-  
+
   public List<ImageModel> populateImageModels(Map<Long, ImageModel> metaImageModelMap, List<byte[]> byteImages, List<Long> imageMetaIds, Item item){
+    if(byteImages==null){
+      return null;
+    }
     List<ImageModel> valueImageModels = new ArrayList<ImageModel>();
     for(int i=0; i<byteImages.size(); i++){
       if(byteImages.get(i)==null){
@@ -309,7 +312,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return valueMap;
   }
-  
+
   public Map<Long, ImageModel> getImageModelValuesMappedByImageModelMeta(List<ImageModel> valueImageModels){
     Map<Long, ImageModel> valueImageModelMap = new HashMap<Long, ImageModel>();
     for(int i=0; i<valueImageModels.size(); i++){
@@ -317,7 +320,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return valueImageModelMap;
   }
-  
+
   public Map<Long, PropertyValue> getPropertyValuesMappedByPropertyValue(List<PropertyValue> propertyValues){
     Map<Long, PropertyValue> valueMap = new HashMap<Long, PropertyValue>();
     for(int i=0; i<propertyValues.size(); i++){
@@ -325,7 +328,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return valueMap;
   }
-  
+
   public Map<Long, ImageModel> getImageModelValuesMappedByImageModelValue(List<ImageModel> imageModelValues){
     Map<Long, ImageModel> valueMap = new HashMap<Long, ImageModel>();
     for(int i=0; i<imageModelValues.size(); i++){
@@ -333,13 +336,16 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return valueMap;
   }
-  
+
   public Item updateImageModelValues(Map<Long, ImageModel> metaImageModels, List<byte[]> byteImages, List<Long> metaImageIds, List<Long> valueIds, Item item){
+    if(byteImages==null){
+      return item;
+    }
     for(int i=0; i<byteImages.size(); i++){
       if(byteImages.get(i) == null){//no image upload
         continue;
       }
-      if(valueIds.get(i) != null){//image replacement
+      if(valueIds!=null && valueIds.get(i) != null){//image replacement
         HelperFunctions.saveAllSizeImages(valueIds.get(i).toString(), byteImages.get(i));
       }
       else{//new image
@@ -352,16 +358,17 @@ public class PropertyServiceImpl implements PropertyService{
     }
     return item;
   }
-  
+
   public List<PropertyValue> updatePropertyValues(Map<Long, PropertyValue> propertyValueMap, List<Long> valueIds, List<String> values){
     for(int i=0; i<valueIds.size(); i++){
       propertyValueMap.get(valueIds.get(i)).setValue(values.get(i));
     }
     return new ArrayList<PropertyValue>(propertyValueMap.values());
   }
-  
+
   //  public List<PropertyValue> getPropertyValueListByOwnerIdAndCategoryId(Long ownerId, Long categoryId){
   //    
   //  }
-
+  
 }
+

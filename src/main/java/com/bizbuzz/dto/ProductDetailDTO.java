@@ -19,12 +19,13 @@ public class ProductDetailDTO {
   List<Long> fieldIds;
   List<Long> valueIds;
   List<String> values;
-  
- /* public void initialize(PropertyMetadata metadata){
+  Long[] share;
+
+  /* public void initialize(PropertyMetadata metadata){
     int imageNumber = metadata.getImageModels().size();
     this.images = new ArrayList<MultipartFile>(imageNumber);
     this.imagesHidden = new ArrayList<String>(imageNumber);
-    
+
     this.propertyValue = new PropertyValue();
     this.propertyValue.initialize(metadata.getImageModels().size(), metadata.getPropertyGroups().size());
     for(int i=0; i<metadata.getPropertyGroups().size(); i++){
@@ -36,17 +37,20 @@ public class ProductDetailDTO {
       }
     }
   }*/
-  
-//  public List<MultipartFile> getImagesInOrder(){
-//    List<MultipartFile> imageFiles = new ArrayList<MultipartFile>();
-//    imageFiles.add(0, primaryImage);
-//    imageFiles.add(1, image1);
-//    imageFiles.add(2, image2);
-//    imageFiles.add(3, image3);
-//    return imageFiles;
-//  }
-  
+
+  //  public List<MultipartFile> getImagesInOrder(){
+  //    List<MultipartFile> imageFiles = new ArrayList<MultipartFile>();
+  //    imageFiles.add(0, primaryImage);
+  //    imageFiles.add(1, image1);
+  //    imageFiles.add(2, image2);
+  //    imageFiles.add(3, image3);
+  //    return imageFiles;
+  //  }
+
   public List<byte[]> getByteImagesFromBase64InOrder(){
+    if(imagesHidden==null){
+      return null;
+    }
     List<byte[]> imageFiles = new ArrayList<byte[]>(imagesHidden.size());
     for(int i=0; i<imagesHidden.size();i++){
       if(imagesHidden.get(i)!=null){
@@ -56,41 +60,41 @@ public class ProductDetailDTO {
         imageFiles.add(i, null);
       }
     }
-    
-//    if(primaryImageHidden!=null)
-//      imageFiles.set(0, Base64.decodeBase64(primaryImageHidden.substring(22)));
-//    if(image1Hidden!=null)
-//      imageFiles.set(1, Base64.decodeBase64(image1Hidden.substring(22)));
-//    if(image2Hidden!=null)
-//      imageFiles.set(2, Base64.decodeBase64(image2Hidden.substring(22)));
-//    if(image3Hidden!=null)
-//      imageFiles.set(3, Base64.decodeBase64(image3Hidden.substring(22)));
-    
-//    
-//    if(primaryImageHidden!=null)
-//      imageFiles.set(0, DatatypeConverter.parseBase64Binary(primaryImageHidden));
-//    if(image1Hidden!=null)
-//      imageFiles.set(1, DatatypeConverter.parseBase64Binary(image1Hidden));
-//    if(image2Hidden!=null)
-//      imageFiles.set(2, DatatypeConverter.parseBase64Binary(image2Hidden));
-//    if(image3Hidden!=null)
-//      imageFiles.set(3, DatatypeConverter.parseBase64Binary(image3Hidden));
-//    
+
+    //    if(primaryImageHidden!=null)
+    //      imageFiles.set(0, Base64.decodeBase64(primaryImageHidden.substring(22)));
+    //    if(image1Hidden!=null)
+    //      imageFiles.set(1, Base64.decodeBase64(image1Hidden.substring(22)));
+    //    if(image2Hidden!=null)
+    //      imageFiles.set(2, Base64.decodeBase64(image2Hidden.substring(22)));
+    //    if(image3Hidden!=null)
+    //      imageFiles.set(3, Base64.decodeBase64(image3Hidden.substring(22)));
+
+    //    
+    //    if(primaryImageHidden!=null)
+    //      imageFiles.set(0, DatatypeConverter.parseBase64Binary(primaryImageHidden));
+    //    if(image1Hidden!=null)
+    //      imageFiles.set(1, DatatypeConverter.parseBase64Binary(image1Hidden));
+    //    if(image2Hidden!=null)
+    //      imageFiles.set(2, DatatypeConverter.parseBase64Binary(image2Hidden));
+    //    if(image3Hidden!=null)
+    //      imageFiles.set(3, DatatypeConverter.parseBase64Binary(image3Hidden));
+    //    
     return imageFiles;
   }
-  
-//  public void setImagesInOrder(List<MultipartFile> images){
-//    primaryImage = images.get(0);
-//    image1 = images.get(1);
-//    image2 = images.get(2);
-//    image3 = images.get(3);
-//  }
-  
-  
+
+  //  public void setImagesInOrder(List<MultipartFile> images){
+  //    primaryImage = images.get(0);
+  //    image1 = images.get(1);
+  //    image2 = images.get(2);
+  //    image3 = images.get(3);
+  //  }
+
+
   public List<String> getImagesHidden() {
     return imagesHidden;
   }
-  
+
   public List<Long> getFieldIds() {
     return fieldIds;
   }
@@ -140,5 +144,12 @@ public class ProductDetailDTO {
   public void setImagesValueId(List<Long> imagesValueId) {
     this.imagesValueId = imagesValueId;
   }
-  
+
+  public Long[] getShare() {
+    return share;
+  }
+
+  public void setShare(Long[] share) {
+    this.share = share;
+  }
 }

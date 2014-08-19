@@ -2,7 +2,9 @@ package com.bizbuzz.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.map.LinkedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -101,6 +103,13 @@ public class ConnectionServiceImpl implements ConnectionService {
   public void flush(){
     connectionRepository.flush();
   }
-
+  
+  public Map<Long, PrivateGroup> convertToMap(List<PrivateGroup> list){
+    Map<Long, PrivateGroup> map = new LinkedMap();
+    for(int i=0; i<list.size(); i++){
+      map.put(list.get(i).getId(), list.get(i));
+    }
+    return map;
+  }
   
 }

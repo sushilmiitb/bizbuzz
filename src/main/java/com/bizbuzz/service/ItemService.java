@@ -2,11 +2,13 @@ package com.bizbuzz.service;
 
 
 import java.util.List;
+import java.util.Map;
 
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 
 public interface ItemService {
@@ -18,6 +20,7 @@ public interface ItemService {
   public List<Company> getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree);
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId);
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId);
-  
   public Item getItemByItemId(Long itemId);
+  public Item populateItemWithSharedPrivateGroups(Item item, Map<Long, PrivateGroup> groupMap, Long[] sharedGroupIds);
+  public List<PrivateGroup> getSharedPrivateGroups(Item item);
 }

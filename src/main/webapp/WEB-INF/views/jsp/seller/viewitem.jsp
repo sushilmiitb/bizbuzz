@@ -14,12 +14,21 @@
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 		<c:url var="view_full_size_image_url" value="/seller/viewfullimage" />
+		<c:url var="edit_item_url" value="/seller/uploadproduct/category/${item.itemCategory.id}"/>
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">Product name</div>
 						<div class="panel-body">
+							<div class="row">
+								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+								<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
+									<a href="${edit_item_url}/item/${item.id}" class="btn btn-success btn-block">Edit Item</a>
+								</div>
+								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
+							</div>
+							<br/>
 							<div class="row image-area">
 								<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
 									<div class="panel panel-default">

@@ -1,6 +1,7 @@
 package com.bizbuzz.service;
 
 import java.security.acl.Owner;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,7 +13,9 @@ import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Item;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.repository.ImageModelRepository;
@@ -54,7 +57,7 @@ public class ItemServiceImpl implements ItemService{
   }
   
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId){
-    return itemRepository.findItemsByCategoryIdAndOwnerIdAndBuyerId(categoryId, sellerId, buyerId);
+    return itemRepository.findItemsByCategoryIdAndOwnerIdAndBuyerIdSharedThroughPrivateGroup(categoryId, sellerId, buyerId, ConnectionType.GROUP_MEMBERS);
   }
 
   @Override
@@ -64,5 +67,20 @@ public class ItemServiceImpl implements ItemService{
   
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId){
     return itemRepository.findItemByItemIdAndOwnerIdAndBuyerId(itemId, sellerId, buyerId);
+  }
+  
+  public Item populateItemWithSharedPrivateGroups(Item item, Map<Long, PrivateGroup> groupMap, Long[] sharedGroupIds){
+    List<Party> sharedList = new ArrayList<Party>();
+    for(int i=0; sharedGroupIds!=null && i<sharedGroupIds.length; i++){
+      if(groupMap.get(sharedGroupIds[i])!=null){
+        sharedList.add(groupMap.get(sharedGroupIds[i]));
+      }
+    }
+    item.setSharedToParties(sharedList);
+    return item;
+  }
+  
+  public List<PrivateGroup> getSharedPrivateGroups(Item item){
+    return itemRepository.findSharedToPrivateGroupsByItemId(item.getId());
   }
 }
