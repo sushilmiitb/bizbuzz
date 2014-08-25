@@ -1,144 +1,121 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
+<c:url var="static_base_url" value="/static" />
 
-<tiles:insertDefinition name="chat">
-	
-	<tiles:putAttribute name="title">
-		BizBuzz-Chatroom
-	</tiles:putAttribute>
-	
-	<tiles:putAttribute name="customJsCode">
-		<script type="text/javascript">
-			
-		</script>
-	</tiles:putAttribute>
-<tiles:putAttribute name="header">
-<link rel="stylesheet" href="<c:url value='/static/css/main.css'/>" type="text/css"> 
-	<script src="<c:url value='/static/js/jquery/jquery.js'/>"></script>
-    <script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
-    <script src="<c:url value='/static/js/jquery/jquery.tmpl.min.js'/>"></script>
-  
-</tiles:putAttribute>
+<div class="panel-heading chat-header">
+	<c:choose>
+		<c:when test="${!empty secondperson}">
+			<span>
+				<c:out value="${secondperson.firstName} ${secondperson.middleName} ${secondperson.lastName}"></c:out>
+			</span>
+		</c:when>
+		<c:otherwise>
+			<span>
+				Chat Room
+			</span>
+		</c:otherwise>
+	</c:choose>
+	<span class="chat-back glyphicon glyphicon-arrow-left pull-right"></span>
+</div>
 
-	<tiles:putAttribute name="body">
-		<%-- This is used when new chats are saved in database 
-		 <c:url var="post_url" value="/chat/showonetoonechatmessages/${chatroomid}" />
-		<form:form method="POST" action="${post_url}"
-			id="onetoone_messages_form" class="form" modelAttribute="chat"> --%>
-			<div class="ui-corner-all custom-corners">
-	 			<c:if test="${!empty secondperson}">
-					<div class="ui-bar ui-bar-a">
-						<h3> <c:out value="${secondperson.firstName} ${secondperson.lastName}"></c:out> </h3>
-					</div>
-				</c:if>
-				
-				<div class="ui-bar ui-bar-a">
-					<h3>Messages</h3>
-				</div>
-				 <table id="twitterMessages">
- 			  		<c:if test="${!empty allChatsOfChatroomDTOList}">
- 			  			  
- 			  			<c:forEach var="dto" items="${allChatsOfChatroomDTOList}">
-			    			<c:choose>
-			    				
-      								<c:when test="${!empty dto.chat}">
-         						
-										<tr>
-											<td> ${dto.chat.sender.userId.id} : ${dto.chat.item.id} :</td>
-											<td> ${dto.chat.message}   </td>
-											<td align="right">${dto.chat.createdAt} </td>
-										 </tr>
-								
-        						</c:when>
-        							
-      								<c:otherwise>
-       				    			  <c:forEach var="itemchat" items="${dto.listOfChats}">
-										<tr  style="outline: thin solid">
-											<td> ${itemchat.sender.userId.id} : ${itemchat.item.id} : </td>
-											<td> ${itemchat.message}   </td>
-											<td align="right">${itemchat.createdAt} </td>
-								 		</tr>
-									  </c:forEach>
-     								</c:otherwise>
- 
-    						</c:choose>
+<div class="panel-body chat-body">
+	<c:if test="${!empty allChatsOfChatroomDTOList}">
+		<c:forEach var="dto" items="${allChatsOfChatroomDTOList}">
+			<c:choose>
+				<c:when test="${!empty dto.chat}">
+					<c:choose>
+						<c:when test="${person.id == dto.chat.sender.id}">
+							<div class="ind-chat-panel ind-chat-panel-right">
+								<div class="arrow"></div>
+								<div class="ind-chat-body">
+									<c:set var="temp" value="one
+									two"/>
+									<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
+									<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+									<p>
+										<c:forEach var="item" items="${lines}">
+											<span>${item}</span>
+										</c:forEach>
+									</p>
+								</div>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div class="ind-chat-panel ind-chat-panel-left">
+								<div class="arrow"></div>
+								<div class="ind-chat-body">
+									<c:set var="temp" value="one
+									two"/>
+									<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
+									<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+									<p>
+										<c:forEach var="item" items="${lines}">
+											<span>${item}</span>
+										</c:forEach>
+									</p>
+								</div>
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</c:when>
+				<c:otherwise>
+					<div class="item-chat">
+						<img class="image-responsive chat-item-image"
+							src="images/images.png" alt="Image Not Uploaded" />
+						<c:forEach var="itemchat" items="${dto.listOfChats}">
+							<c:choose>
+								<c:when test="${person.id == dto.chat.sender.id}">
+									<div class="ind-chat-panel ind-chat-panel-right">
+										<div class="arrow"></div>
+										<div class="ind-chat-body">
+											<c:set var="temp" value="one
+											two"/>
+											<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
+											<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+											<p>
+												<c:forEach var="item" items="${lines}">
+													<span>${item}</span>
+												</c:forEach>
+											</p>
+										</div>
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div class="ind-chat-panel ind-chat-panel-left">
+										<div class="arrow"></div>
+										<div class="ind-chat-body">
+											<c:set var="temp" value="one
+											two"/>
+											<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
+											<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+											<p>
+												<c:forEach var="item" items="${lines}">
+													<span>${item}</span>
+												</c:forEach>
+											</p>
+										</div>
+									</div>
+								</c:otherwise>
+							</c:choose>
 						</c:forEach>
-					  
-					</c:if>
-				</table>
-					<div class="ui-bar ui-bar-a">
-						<h3>Type Your Message Bellow</h3>
 					</div>
-				 <input id="message-field" type="text" size="40" value="Send a tweet to connected clients" />
-				</div>
-				
-			
-			<div class="ui-corner-all custom-corners">
-				<div class="ui-body ui-body-a">
-					<input type="button" id="message-button" value="Send" />
-				</div>
-			</div>
-			
-   <script type="text/javascript">
-
-      $(function() {
-
-        if (!window.console) {
-          console = {log: function() {}};
-        }
-
-        function refresh() {
-          console.log("Refreshing data tables...");
-        }
-
-        var socket = $.atmosphere;
-        var request = new $.atmosphere.AtmosphereRequest();
-        
-        request.url = document.location.toString() + '/../../../../websockets';
-        request.contentType = "application/json";
-        request.transport = 'websocket';
-        request.fallbackTransport = 'long-polling';
-        
-        
-        request.onOpen = function(response){
-          
-          console.log('onOpen: connection opened using transport:' + response.transport);
-          subSocket.push(JSON.stringify({"message":"0Open0","userId": ${userId},"chatroomId":${chatroomId},"itemId":0}));
-         
-        }
-        
-        request.onReconnect = function(request, response){
-          console.log('onReconnect:');
-          socket.info("Reconnecting");
-        }
-        
-        request.onMessage = function(response){
-          var message = response.responseBody;
-          console.log('onMessage: Message is:'+message);
-          try {
-            $("#twitterMessages").append(message);
-          } catch (e) {
-            console.log('Error: ', message.data);
-            return;
-          }
-        }
-        
-        request.onError = function(response){
-          content.html($('<p>', { text: 'Sorry, but '
-                  + 'there some problem with your '
-                  + 'socket or the server is down' }));
-        }
-        
-        var subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
-        
-        $('#message-button').click(function() {
-          console.log('Clicked MessageButton'+$('#message-field').val());
-          subSocket.push(JSON.stringify({"message":$('#message-field').val(),"userId": ${userId},"chatroomId":${chatroomId},"itemId":0}));
-        });
-      });
-  </script>
-		
-	</tiles:putAttribute>
-</tiles:insertDefinition>
-								
-									
+				</c:otherwise>
+			</c:choose>
+		</c:forEach>
+	</c:if>
+</div>
+<div class="chat-input-area">
+	<div class="row">
+		<div class="col-xs-9 col-sm-9 col-md-9 col-lg-9">
+			<textarea class="form-control" id="message-field"></textarea>
+		</div>
+		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
+			<button class="btn btn-success btn-block" id="message-button">Send</button>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	$(document).ready(function(){
+		initializeNormalChatRoom('<c:url value="/websockets" />', ${userId}, ${person.id}, ${chatroomId});
+	});
+</script>

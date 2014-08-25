@@ -32,7 +32,6 @@
 <body role="document">
 	<tiles:insertAttribute name="header" ignore="true" />
 	<tiles:insertAttribute name="body" />
-	<tiles:insertAttribute name="footer" ignore="true" />
 
 	<!-- Bootstrap core JavaScript
     ================================================== -->
@@ -41,7 +40,11 @@
 	<script src="${static_base_url}/js/bootstrap/bootstrap.min.js"></script>
 	<script src="${static_base_url}/assets/js/docs.min.js"></script>
 	<script src="${static_base_url}/js/customjs.js"></script>
+	<script src="${static_base_url}/js/chat.js"></script>
+	<script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
+	
+	<tiles:insertAttribute name="footer" ignore="true" />
 </body>
 </html>

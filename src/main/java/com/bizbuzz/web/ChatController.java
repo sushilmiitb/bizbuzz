@@ -43,7 +43,6 @@ import org.atmosphere.websocket.WebSocket;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +64,10 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.utils.AtmosphereUtils;
+import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
+import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
-
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.security.core.Authentication;
@@ -137,13 +137,12 @@ public class ChatController {
   @ResponseBody
   public String post(final AtmosphereResource event, @RequestBody  String request )
       throws JsonGenerationException, JsonMappingException, IOException {   
-
+    ChatResponseDTO chatResponseDTO = new ChatResponseDTO();
     JSONObject jsonObject = JSONObject.fromObject(request);
     String message = jsonObject.get("message").toString();
     String userId = jsonObject.get("userId").toString();
     Long chatRoomId = (long)jsonObject.get("chatroomId").hashCode();   
     Long itemId = (long)jsonObject.get("itemId").hashCode();
-
 
     if(message.equals("0Open0")){
       Broadcaster b;
@@ -178,19 +177,24 @@ public class ChatController {
       String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
       /*     
        */
+      chatResponseDTO.setChatRoomId(chatRoomId);
+      chatResponseDTO.setItemId(itemId);
+      chatResponseDTO.setSenderId(person.getId());
+      chatResponseDTO.setMessage(message);
+      chatResponseDTO.setDate(lastChatDate.getYear(), lastChatDate.getMonth(), lastChatDate.getDay(), lastChatDate.getHours(), lastChatDate.getMinutes());
       if(itemId.intValue()!=0)
-        MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+        MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
         //MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
         for(Person member : members){
-          BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast("<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
+          BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
         }  
       }
 
       logger.info("Received message to broadcast: {}"+ userId +" : " +message +"           " +dateOfBroadcast);         
     }
 
-    return  "<tr><td colspan='2'> message successfully send </td></tr>";
+    return  "success";
   }
 
   /**
@@ -222,11 +226,59 @@ public class ChatController {
 
   }
 
-
-  @RequestMapping(value = "/chat/showchatrooms", method = RequestMethod.GET)
-  public String showChatRooms(Model m) {
+  @RequestMapping(value="/chat/controller", method = RequestMethod.GET)
+  public String chatController(HttpSession session, @RequestParam Map<String, String> allRequestParams){
+    String action = allRequestParams.get("chatpage");
+    if(action.equals("savevisibilitystate")){
+      String isChatPanelVisible = allRequestParams.get("ischatpanelvisible");
+      if(isChatPanelVisible.equals("true")){
+        session.setAttribute("ischatpanelvisible", true);
+      }
+      else{
+        session.removeAttribute("ischatpanelvisible");
+      }
+    }
+    else if(action.equals("determine")){
+      String chatPage = (String)session.getAttribute("chatpage");
+      if(chatPage==null){
+        return "redirect:/chat/showchatrooms";
+      }
+      else if(chatPage.equals("listofchatrooms")){
+        return "redirect:/chat/showchatrooms";
+      }
+      else if(chatPage.equals("singlechatroom")){
+        Long chatroomId = (Long)session.getAttribute("chatroomid");
+        return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+      }
+    }
+    else if(action.equals("listofchatrooms")){
+      return "redirect:/chat/showchatrooms";
+    }
+    else if(action.equals("singlechatroom")){
+      String chatroomId = allRequestParams.get("chatroomid");
+      return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+    }
+    else if(action.equals("back")){
+      String chatPage = (String)session.getAttribute("chatpage");
+      if(chatPage==null){
+        return "redirect:/chat/showchatrooms";
+      }
+      else if(chatPage.equals("listofchatrooms")){
+        return "redirect:/chat/showchatrooms";
+      }
+      else if(chatPage.equals("singlechatroom")){
+        return "redirect:/chat/showchatrooms";
+      }
+    }
+    return "";
+  }
+  
+  @RequestMapping(value="/chat/showchatrooms", method = RequestMethod.GET)
+  public String showChatRooms(Model m, HttpSession session){
+    /***Saving chat state***/
+    session.setAttribute("chatpage", "listofchatrooms");
+    
     Person person = getPerson();
-
     List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
@@ -236,7 +288,11 @@ public class ChatController {
   }
 
   @RequestMapping(value="/chat/showchatroom/chatroomid/{chatroomid}", method = RequestMethod.GET)
-  public String showChatRoom(Model m,HttpSession session,@PathVariable Long chatroomid) {
+  public String showChatRoom(Model m,HttpSession session,@PathVariable Long chatroomid, HttpServletRequest request) {
+    /***Saving chat state***/
+    session.setAttribute("chatpage", "singlechatroom");
+    session.setAttribute("chatroomid", chatroomid);
+    
     Person person = getPerson();
     UserLogin user = person.getUserId();
 
@@ -303,10 +359,8 @@ public class ChatController {
         j++;
       }
     }
-
-
-
     m.addAttribute("allChatsOfChatroomDTOList",sortedMixedChatsOfChatRoomDTOList);
+    m.addAttribute("person", person);
     session.setAttribute("userId",user.getId());
     session.setAttribute("chatroomId", chatroomid);
     return "jsp/chat/chatroom";
