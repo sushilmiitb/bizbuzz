@@ -1,9 +1,10 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+
+
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -19,6 +20,8 @@ import javax.persistence.PreUpdate;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+
+
 
 @Entity
 public class Item implements Serializable{
