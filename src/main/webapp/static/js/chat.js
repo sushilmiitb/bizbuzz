@@ -42,12 +42,13 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		$(".chat-body").addClass("div-loader");
+		$(".chat-panel").addClass("div-loader");
 		$.ajax({
 			url: url,
 			type: "GET",
 			data: {chatpage: "back"},
 			success: function(data) {
+			$(".chat-panel").removeClass("div-loader");
 			removeChatPanelToggleCallback();
 			removeChatBackButtonCallback();
 			$(parentObj).children().remove();
@@ -89,7 +90,7 @@ function removeChatPanelResizeCallback(){
 	$(window).unbind("resize");
 }
 
-function loadCurrentChatRoomState(){
+function loadCurrentChatRoomState(isShow){
 	var url = "/bizbuzz/chat/controller";
 	var parentObj = $(".chat-panel");
 	$.ajax({
@@ -98,6 +99,9 @@ function loadCurrentChatRoomState(){
 		data: {chatpage: "determine"},
 		success: function(data) {
 			$(parentObj).append(data);
+			if(isShow){
+				$(".chat-content").show();
+			}
 		},
 		error: function(){
 		}
@@ -122,13 +126,15 @@ function loadChatRoomList(){
 
 function loadNormalChatRoom(url){
 	var parentObj = $(".chat-panel");
-	$(".chat-body").addClass("div-loader");
+	$(".chat-panel").addClass("div-loader");
 	$.ajax({
 		url: url,
 		type: "GET",
 		success: function(data) {
+		$(".chat-panel").removeClass("div-loader");
 		removeChatPanelToggleCallback();
 		removeChatBackButtonCallback();
+		removeChatPanelResizeCallback();
 		$(parentObj).children().remove();
 		$(parentObj).append(data);
 	},
@@ -160,7 +166,6 @@ function insertChatMessage(msg, isSelf){
 }
 
 function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
-	removeChatPanelResizeCallback();
 	initializeChatPanel(128);
 	setChatPanelResizeCallback(128);
 	setChatPanelToggleCallback();

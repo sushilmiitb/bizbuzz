@@ -90,7 +90,7 @@ input.error {
 	height: 100%;
 	z-index: 9999;
 	background: url('images/icons/loader.gif') 50% 50% no-repeat
-		rgba(0, 0, 0, 0.4);
+		rgba(0, 0, 0, 0.1);
 }
 /* .no-image-preview{ */
 /* 	color:#999999; */
@@ -125,8 +125,9 @@ input.error {
 	position:absolute;
 	top:0px;
 	left:0px;
-	background-color: #f0f0f0;
-	width:100%
+	background-color: #f6f6f6;
+	width:100%;
+	border-color: #d0d0d0 !important;
 }
 
 .chat-header{
@@ -135,6 +136,9 @@ input.error {
 	left:0px;
 	width:100%;
 	z-index: 4;
+	background-repeat: repeat-x !important;
+	background-image: linear-gradient(to bottom, #f5f5f5 0px, #c8c8c8 100%) !important;
+	border-color: #b0b0b0 !important;
 }
 
 .chat-header .chat-back{
@@ -177,7 +181,7 @@ input.error {
 
 /******************ChatRoom style********************/
 .ind-chat-panel{
-	background-color:#fcfcfc;
+	background-color:#ffffff;
 	position:relative;
 	margin-left:10px;
 	margin-right:10px;
@@ -193,7 +197,7 @@ input.error {
 	border-bottom-left-radius: 10px;
 	border-top-left-radius: 10px;
 	display: inline-block;
-	border: solid 1px #e8e8e8;
+	border: solid 1px #efefef;
 	clear: both;
 	z-index: 3;
 }
@@ -307,19 +311,19 @@ input.error {
 }
 @media(min-width:768px){
 	.chat-content{
-		width:768px;
+		width:50%;
 		right:0px;
 	}
 }
 @media(min-width:992px){
 	.chat-content{
-		width:768px;
+		width:50%;
 		right:0px;
 	}
 }
 @media(min-width:1200px){
 	.chat-content{
-		width:768px;
+		width:50%;
 		right:0px;
 	}
 }

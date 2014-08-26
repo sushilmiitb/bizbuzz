@@ -110,7 +110,7 @@
 			<textarea class="form-control" id="message-field"></textarea>
 		</div>
 		<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
-			<button class="btn btn-success btn-block" id="message-button">Send</button>
+			<button class="btn btn-info btn-block" id="message-button">Send</button>
 		</div>
 	</div>
 </div>
