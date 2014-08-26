@@ -17,8 +17,6 @@
 			<ul class="nav navbar-nav">
 				<li><a href="<c:url value="/buyer/home"/>">Home</a></li>
 				<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>">View</a></li>
-				<li><a href="<c:url value="//chat/showchatrooms"/>">Chat</a></li>
-				<li><a href="<c:url value="/buyer/viewconnection"/>">Connections</a></li>
 				<li><a href='<c:url value="/j_spring_security_logout"/>'>Logout</a></li>
 			</ul>
 		</div>
