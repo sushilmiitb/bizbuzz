@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.repository.ChatRepository;
@@ -26,8 +27,10 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
   @Override
   public ChatRoom getChatRoomByMembers(Long topartyId,Long fromPartyId) {
-    return  chatRoomRepository.findChatRoomByMembers(topartyId,fromPartyId);
-    
+    List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomByMembers(topartyId,fromPartyId);
+    if(chatRooms==null || chatRooms.size()==0)
+      return null;
+    return chatRooms.get(0);
   }
 
 
@@ -51,10 +54,19 @@ public class ChatRoomServiceImpl implements ChatRoomService{
     return  chatRoomRepository.findSortedChatsOfPerson(person.getId()); 
   }
   
-
+  @Override
+  public List<Chat> getSortedItemChatsOfPerson(Long personId, Long itemId) {
+    return  chatRoomRepository.findSortedItemChatsOfPerson(personId, itemId);
+  }
+  
   @Override
   public List<ChatRoom> getAllNewSortedChatRoomsOfPerson(Person person) {  
     return chatRoomRepository.findAllNewSortedChatRoomsOfPerson(person.getId());
+  }
+  
+  @Override
+  public List<ChatRoom> getAllItemChatRoomsWithNoCoversation(Long personId, Long itemId) {  
+    return chatRoomRepository.findAllChatRoomsByNotItemIdAndPersonIdOrderedByPersonName(personId, itemId);
   }
   
   public void deleteChatRoom(Long chatRoomId) {

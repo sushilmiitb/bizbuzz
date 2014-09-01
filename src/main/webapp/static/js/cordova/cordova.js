@@ -1873,7 +1873,677 @@ function UUIDcreatePart(length) {
 
 window.cordova = require('cordova');
 // file: src/scripts/bootstrap.js
+cordova.define('cordova/plugin_list', function(require, exports, module) {
+module.exports = [
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/contacts.js",
+        "id": "org.apache.cordova.contacts.contacts",
+        "clobbers": [
+            "navigator.contacts"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/Contact.js",
+        "id": "org.apache.cordova.contacts.Contact",
+        "clobbers": [
+            "Contact"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactAddress.js",
+        "id": "org.apache.cordova.contacts.ContactAddress",
+        "clobbers": [
+            "ContactAddress"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactError.js",
+        "id": "org.apache.cordova.contacts.ContactError",
+        "clobbers": [
+            "ContactError"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactField.js",
+        "id": "org.apache.cordova.contacts.ContactField",
+        "clobbers": [
+            "ContactField"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactFindOptions.js",
+        "id": "org.apache.cordova.contacts.ContactFindOptions",
+        "clobbers": [
+            "ContactFindOptions"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactName.js",
+        "id": "org.apache.cordova.contacts.ContactName",
+        "clobbers": [
+            "ContactName"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactOrganization.js",
+        "id": "org.apache.cordova.contacts.ContactOrganization",
+        "clobbers": [
+            "ContactOrganization"
+        ]
+    },
+    {
+        "file": "plugins/org.apache.cordova.contacts/www/ContactFieldType.js",
+        "id": "org.apache.cordova.contacts.ContactFieldType"
+    }
+];
+module.exports.metadata = 
+// TOP OF METADATA
+{
+    "org.apache.cordova.contacts": "0.2.12-dev"
+}
+// BOTTOM OF METADATA
+});
+cordova.define("org.apache.cordova.contacts.contacts", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
 
+var argscheck = require('cordova/argscheck'),
+    exec = require('cordova/exec'),
+    ContactError = require('./ContactError'),
+    utils = require('cordova/utils'),
+    Contact = require('./Contact'),
+    fieldType = require('./ContactFieldType');
+    
+
+/**
+* Represents a group of Contacts.
+* @constructor
+*/
+var contacts = {
+    fieldType: fieldType,
+    /**
+     * Returns an array of Contacts matching the search criteria.
+     * @param fields that should be searched
+     * @param successCB success callback
+     * @param errorCB error callback
+     * @param {ContactFindOptions} options that can be applied to contact searching
+     * @return array of Contacts matching search criteria
+     */
+    find:function(fields, successCB, errorCB, options) {
+        argscheck.checkArgs('afFO', 'contacts.find', arguments);
+        if (!fields.length) {
+            errorCB && errorCB(new ContactError(ContactError.INVALID_ARGUMENT_ERROR));
+        } else {
+            var win = function(result) {
+                var cs = [];
+                for (var i = 0, l = result.length; i < l; i++) {
+                    cs.push(contacts.create(result[i]));
+                }
+                successCB(cs);
+            };
+            exec(win, errorCB, "Contacts", "search", [fields, options]);
+        }
+    },
+    
+    /**
+     * This function picks contact from phone using contact picker UI
+     * @returns new Contact object
+     */
+    pickContact: function (successCB, errorCB) {
+
+        argscheck.checkArgs('fF', 'contacts.pick', arguments);
+
+        var win = function (result) {
+            // if Contacts.pickContact return instance of Contact object
+            // don't create new Contact object, use current
+            var contact = result instanceof Contact ? result : contacts.create(result);
+            successCB(contact);
+        };
+        exec(win, errorCB, "Contacts", "pickContact", []);
+    },
+
+    /**
+     * This function creates a new contact, but it does not persist the contact
+     * to device storage. To persist the contact to device storage, invoke
+     * contact.save().
+     * @param properties an object whose properties will be examined to create a new Contact
+     * @returns new Contact object
+     */
+    create:function(properties) {
+        argscheck.checkArgs('O', 'contacts.create', arguments);
+        var contact = new Contact();
+        for (var i in properties) {
+            if (typeof contact[i] !== 'undefined' && properties.hasOwnProperty(i)) {
+                contact[i] = properties[i];
+            }
+        }
+        return contact;
+    }
+};
+
+module.exports = contacts;
+
+});
+
+cordova.define("org.apache.cordova.contacts.Contact", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+var argscheck = require('cordova/argscheck'),
+    exec = require('cordova/exec'),
+    ContactError = require('./ContactError'),
+    utils = require('cordova/utils');
+
+/**
+* Converts primitives into Complex Object
+* Currently only used for Date fields
+*/
+function convertIn(contact) {
+    var value = contact.birthday;
+    try {
+      contact.birthday = new Date(parseFloat(value));
+    } catch (exception){
+      console.log("Cordova Contact convertIn error: exception creating date.");
+    }
+    return contact;
+}
+
+/**
+* Converts Complex objects into primitives
+* Only conversion at present is for Dates.
+**/
+
+function convertOut(contact) {
+    var value = contact.birthday;
+    if (value !== null) {
+        // try to make it a Date object if it is not already
+        if (!utils.isDate(value)){
+            try {
+                value = new Date(value);
+            } catch(exception){
+                value = null;
+            }
+        }
+        if (utils.isDate(value)){
+            value = value.valueOf(); // convert to milliseconds
+        }
+        contact.birthday = value;
+    }
+    return contact;
+}
+
+/**
+* Contains information about a single contact.
+* @constructor
+* @param {DOMString} id unique identifier
+* @param {DOMString} displayName
+* @param {ContactName} name
+* @param {DOMString} nickname
+* @param {Array.<ContactField>} phoneNumbers array of phone numbers
+* @param {Array.<ContactField>} emails array of email addresses
+* @param {Array.<ContactAddress>} addresses array of addresses
+* @param {Array.<ContactField>} ims instant messaging user ids
+* @param {Array.<ContactOrganization>} organizations
+* @param {DOMString} birthday contact's birthday
+* @param {DOMString} note user notes about contact
+* @param {Array.<ContactField>} photos
+* @param {Array.<ContactField>} categories
+* @param {Array.<ContactField>} urls contact's web sites
+*/
+var Contact = function (id, displayName, name, nickname, phoneNumbers, emails, addresses,
+    ims, organizations, birthday, note, photos, categories, urls) {
+    this.id = id || null;
+    this.rawId = null;
+    this.displayName = displayName || null;
+    this.name = name || null; // ContactName
+    this.nickname = nickname || null;
+    this.phoneNumbers = phoneNumbers || null; // ContactField[]
+    this.emails = emails || null; // ContactField[]
+    this.addresses = addresses || null; // ContactAddress[]
+    this.ims = ims || null; // ContactField[]
+    this.organizations = organizations || null; // ContactOrganization[]
+    this.birthday = birthday || null;
+    this.note = note || null;
+    this.photos = photos || null; // ContactField[]
+    this.categories = categories || null; // ContactField[]
+    this.urls = urls || null; // ContactField[]
+};
+
+/**
+* Removes contact from device storage.
+* @param successCB success callback
+* @param errorCB error callback
+*/
+Contact.prototype.remove = function(successCB, errorCB) {
+    argscheck.checkArgs('FF', 'Contact.remove', arguments);
+    var fail = errorCB && function(code) {
+        errorCB(new ContactError(code));
+    };
+    if (this.id === null) {
+        fail(ContactError.UNKNOWN_ERROR);
+    }
+    else {
+        exec(successCB, fail, "Contacts", "remove", [this.id]);
+    }
+};
+
+/**
+* Creates a deep copy of this Contact.
+* With the contact ID set to null.
+* @return copy of this Contact
+*/
+Contact.prototype.clone = function() {
+    var clonedContact = utils.clone(this);
+    clonedContact.id = null;
+    clonedContact.rawId = null;
+
+    function nullIds(arr) {
+        if (arr) {
+            for (var i = 0; i < arr.length; ++i) {
+                arr[i].id = null;
+            }
+        }
+    }
+
+    // Loop through and clear out any id's in phones, emails, etc.
+    nullIds(clonedContact.phoneNumbers);
+    nullIds(clonedContact.emails);
+    nullIds(clonedContact.addresses);
+    nullIds(clonedContact.ims);
+    nullIds(clonedContact.organizations);
+    nullIds(clonedContact.categories);
+    nullIds(clonedContact.photos);
+    nullIds(clonedContact.urls);
+    return clonedContact;
+};
+
+/**
+* Persists contact to device storage.
+* @param successCB success callback
+* @param errorCB error callback
+*/
+Contact.prototype.save = function(successCB, errorCB) {
+    argscheck.checkArgs('FFO', 'Contact.save', arguments);
+    var fail = errorCB && function(code) {
+        errorCB(new ContactError(code));
+    };
+    var success = function(result) {
+        if (result) {
+            if (successCB) {
+                var fullContact = require('./contacts').create(result);
+                successCB(convertIn(fullContact));
+            }
+        }
+        else {
+            // no Entry object returned
+            fail(ContactError.UNKNOWN_ERROR);
+        }
+    };
+    var dupContact = convertOut(utils.clone(this));
+    exec(success, fail, "Contacts", "save", [dupContact]);
+};
+
+
+module.exports = Contact;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactAddress", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+* Contact address.
+* @constructor
+* @param {DOMString} id unique identifier, should only be set by native code
+* @param formatted // NOTE: not a W3C standard
+* @param streetAddress
+* @param locality
+* @param region
+* @param postalCode
+* @param country
+*/
+
+var ContactAddress = function(pref, type, formatted, streetAddress, locality, region, postalCode, country) {
+    this.id = null;
+    this.pref = (typeof pref != 'undefined' ? pref : false);
+    this.type = type || null;
+    this.formatted = formatted || null;
+    this.streetAddress = streetAddress || null;
+    this.locality = locality || null;
+    this.region = region || null;
+    this.postalCode = postalCode || null;
+    this.country = country || null;
+};
+
+module.exports = ContactAddress;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactError", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+ *  ContactError.
+ *  An error code assigned by an implementation when an error has occurred
+ * @constructor
+ */
+var ContactError = function(err) {
+    this.code = (typeof err != 'undefined' ? err : null);
+};
+
+/**
+ * Error codes
+ */
+ContactError.UNKNOWN_ERROR = 0;
+ContactError.INVALID_ARGUMENT_ERROR = 1;
+ContactError.TIMEOUT_ERROR = 2;
+ContactError.PENDING_OPERATION_ERROR = 3;
+ContactError.IO_ERROR = 4;
+ContactError.NOT_SUPPORTED_ERROR = 5;
+ContactError.PERMISSION_DENIED_ERROR = 20;
+
+module.exports = ContactError;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactField", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+* Generic contact field.
+* @constructor
+* @param {DOMString} id unique identifier, should only be set by native code // NOTE: not a W3C standard
+* @param type
+* @param value
+* @param pref
+*/
+var ContactField = function(type, value, pref) {
+    this.id = null;
+    this.type = (type && type.toString()) || null;
+    this.value = (value && value.toString()) || null;
+    this.pref = (typeof pref != 'undefined' ? pref : false);
+};
+
+module.exports = ContactField;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactFindOptions", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+ * ContactFindOptions.
+ * @constructor
+ * @param filter used to match contacts against
+ * @param multiple boolean used to determine if more than one contact should be returned
+ */
+
+var ContactFindOptions = function(filter, multiple, desiredFields) {
+    this.filter = filter || '';
+    this.multiple = (typeof multiple != 'undefined' ? multiple : false);
+    this.desiredFields = typeof desiredFields != 'undefined' ? desiredFields : [];
+};
+
+module.exports = ContactFindOptions;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactName", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+* Contact name.
+* @constructor
+* @param formatted // NOTE: not part of W3C standard
+* @param familyName
+* @param givenName
+* @param middle
+* @param prefix
+* @param suffix
+*/
+var ContactName = function(formatted, familyName, givenName, middle, prefix, suffix) {
+    this.formatted = formatted || null;
+    this.familyName = familyName || null;
+    this.givenName = givenName || null;
+    this.middleName = middle || null;
+    this.honorificPrefix = prefix || null;
+    this.honorificSuffix = suffix || null;
+};
+
+module.exports = ContactName;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactOrganization", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/**
+* Contact organization.
+* @constructor
+* @param {DOMString} id unique identifier, should only be set by native code // NOTE: not a W3C standard
+* @param name
+* @param dept
+* @param title
+* @param startDate
+* @param endDate
+* @param location
+* @param desc
+*/
+
+var ContactOrganization = function(pref, type, name, dept, title) {
+    this.id = null;
+    this.pref = (typeof pref != 'undefined' ? pref : false);
+    this.type = type || null;
+    this.name = name || null;
+    this.department = dept || null;
+    this.title = title || null;
+};
+
+module.exports = ContactOrganization;
+
+});
+
+cordova.define("org.apache.cordova.contacts.ContactFieldType", function(require, exports, module) { /*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+    // Possible field names for various platforms.
+    // Some field names are platform specific
+
+    var fieldType = {
+        addresses:      "addresses",
+        birthday:       "birthday",
+        categories:     "categories",
+        country:        "country",
+        department:     "department",
+        displayName:    "displayName",
+        emails:         "emails",
+        familyName:     "familyName",
+        formatted:      "formatted",
+        givenName:      "givenName",
+        honorificPrefix: "honorificPrefix",
+        honorificSuffix: "honorificSuffix",
+        id:             "id",
+        ims:            "ims",
+        locality:       "locality",
+        middleName:     "middleName",
+        name:           "name",
+        nickname:       "nickname",
+        note:           "note",
+        organizations:  "organizations",
+        phoneNumbers:   "phoneNumbers",
+        photos:         "photos",
+        postalCode:     "postalCode",
+        region:         "region",
+        streetAddress:  "streetAddress",
+        title:          "title",
+        urls:           "urls"
+    };
+
+    module.exports = fieldType;
+
+});
+
+//insert packages here
 require('cordova/init');
 
 })();

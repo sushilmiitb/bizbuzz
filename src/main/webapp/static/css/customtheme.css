@@ -11,11 +11,15 @@ body {
 	z-index:100;
 }
 
-.footer .glyphicon-comment{
+.footer .chat-toggle-btn{
 	font-size: 1.8em;
+	width: 150px;
+	margin-top: -8px;
+	height: 40px;
+	font-size: 16px;
 }
 
-.footer .glyphicon-comment:hover{
+.footer .chat-toggle-btn:hover{
 	cursor: pointer;
 }
 
@@ -261,10 +265,10 @@ input.error {
 	border-bottom-right-radius:5px;	
 }
 .item-chat{
-	margin-left:10px;
-	margin-right:10px;
+	margin-left:1%;
+	margin-right:1%;
 	margin-top:5px;
-	margin-right:10px;
+	margin-bottom:5px;
 	padding-bottom:5px;	
 	border:solid 1px #e8e8e8;
 	background-color: #fcfcfc;
@@ -274,6 +278,10 @@ input.error {
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius: 10px;
 	border-top-left-radius: 10px;
+	width:98%;
+}
+.item-chat:hover{
+	cursor: pointer;
 }
 .item-chat > .ind-chat-panel{
 	background-color: #f0f0f0;

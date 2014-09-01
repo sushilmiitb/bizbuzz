@@ -57,7 +57,6 @@ public class ChatServiceImpl implements ChatService{
     return chatRepository.findChatsByChatRoomIdAndItemIdNotNull(chatRoomId);
   }
 
-
 /*
   @Override
   public void deleteAllChatByChatRoomId(Long chatRoomId) {

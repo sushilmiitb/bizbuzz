@@ -59,19 +59,19 @@
 					</c:choose>
 				</c:when>
 				<c:otherwise>
-					<div class="item-chat">
+					<div class="item-chat" id="${dto.listOfChats[0].item.id}">
 						<img class="image-responsive chat-item-image"
 							src="images/images.png" alt="Image Not Uploaded" />
 						<c:forEach var="itemchat" items="${dto.listOfChats}">
 							<c:choose>
-								<c:when test="${person.id == dto.chat.sender.id}">
+								<c:when test="${person.id == itemchat.sender.id}">
 									<div class="ind-chat-panel ind-chat-panel-right">
 										<div class="arrow"></div>
 										<div class="ind-chat-body">
 											<c:set var="temp" value="one
 											two"/>
 											<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
-											<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+											<c:set var="lines" value="${fn:split(itemchat.message, newline)}" />
 											<p>
 												<c:forEach var="item" items="${lines}">
 													<span>${item}</span>
@@ -87,7 +87,7 @@
 											<c:set var="temp" value="one
 											two"/>
 											<c:set var="newline" value="${fn:substring(temp,3,4)}"/>
-											<c:set var="lines" value="${fn:split(dto.chat.message, newline)}" />
+											<c:set var="lines" value="${fn:split(itemchat.message, newline)}" />
 											<p>
 												<c:forEach var="item" items="${lines}">
 													<span>${item}</span>
@@ -116,6 +116,9 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		initializeNormalChatRoom('<c:url value="/websockets" />', ${userId}, ${person.id}, ${chatroomId});
+		initializeNormalChatRoom('<c:url value="/websockets" />', ${userId}, ${person.id}, ${chatroomId}, 0);
+		$(".item-chat").click(function(){
+			loadItemChatRoom(${chatroomId}, $(this).attr("id"), "normalchatroom");
+		});
 	});
 </script>

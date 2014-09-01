@@ -44,7 +44,7 @@
 										</c:choose>
 									</a>
 								</div>
-								<c:if test="${i.index % 4 == 3}">
+								<c:if test="${i.index % 4 == 3 || i.last}">
 									</div>
 								</c:if>
 						</c:forEach>
