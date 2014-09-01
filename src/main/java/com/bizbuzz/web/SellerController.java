@@ -204,8 +204,6 @@ public class SellerController {
   @RequestMapping(value="/seller/sendinvitation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public String sendInvitation(@RequestBody SendSmsRequestAjaxDTO request){
-  //-----------------------------                  Send SMS TO the Buyer  ------------------------------------------------
-    
     String response = SmsSender.sendSms(request.getMobileNo(),"Hello Chirag"); 
     return response;
   }
@@ -220,17 +218,13 @@ public class SellerController {
     Person seller = getSeller();
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
     
-    ajaxReply.setResponse("Not able to send the Message");
     if(toPerson == null){
-      String response = SmsSender.sendSms(request.getUserId(),"Hello"); 
-      ajaxReply.setResponse(response);  
+      SmsSender.sendSms(request.getUserId(),"Hello");   
       return ajaxReply;
     }
 
     
  // below code for add members into chatroom   
-   // Party sellerParty = partyManagementService.getParty(seller.getId());
-    //Party buyerParty = partyManagementService.getParty(toPerson.getId());
     List<Party> members = new ArrayList<Party>();
     members.add(seller);
     members.add(toPerson);

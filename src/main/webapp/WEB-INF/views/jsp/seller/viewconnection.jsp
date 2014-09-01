@@ -9,9 +9,6 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		$(document).ready(function() {
-			alert("Document.ready");
-
-			//	----------------------------------------------------------------
 		
 			//	Dynamically loading cordova.js              -------------------------------------------------------------
 		
@@ -27,7 +24,7 @@
 					script.onreadystatechange = function(){
 						if (script.readyState == "loaded" || script.readyState == "complete"){
 							script.onreadystatechange = null;
-							alert("successfully loaded.");
+							//do your stuff
 						}
 					};
 				} else {  //Others
@@ -36,26 +33,12 @@
 		
 			}
 		
-			function allContactJs(){
-		
-		
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/Contact.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactAddress.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactError.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactField.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactFieldType.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactFindOptions.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactName.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactOrganization.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/contacts.js'/>",function(){});
-				loadjsfile("<c:url value='/static/js/cordova/cordova_plugins.js'/>",function(){
-						loadjsfile("<c:url value='/static/js/cordova/cordova.js'/>", function(){});});
-			}
 		
 			var ua = navigator.userAgent.toLowerCase();   
 			var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
 			if(isAndroid) {
 				alert("This is android platform.");
+				$("#phonebookbox").show();
 							//As Per Native Code----------------------------------------------------------------
 				var contact = {
 					// Application Constructor
@@ -63,10 +46,6 @@
 						alert("Inside contact initialization");
 						this.bindEvents();
 					},
-					// Bind Event Listeners
-					//
-					// Bind any events that are required on startup. Common events are:
-					// 'load', 'deviceready', 'offline', and 'online'.
 					bindEvents: function() {
 						document.addEventListener('deviceready', this.onDeviceReady(), false);
 					},
@@ -81,16 +60,24 @@
 					},
 					onSuccess: function(contacts){
 						alert("contact length: " + contacts.length);	
-						var total ="";
-						for (var i = 0; i < contacts.length; i++) {
-							alert("contact:"+contacts[i].displayName);
+					//	var total ="";
+						//for (var i = 0; i < contacts.length; i++) {
+							//alert("contact:"+contacts[i].displayName);
+							$("#contact_selection").html(""); //reset child options
+						    $(contacts).each(function (i) { //populate child options 
+						    	if(contacts[i].phoneNumbers!=null){
+						        $("#contact_selection").append("<option value=\""+contacts[i].phoneNumbers[0].value+"\">"+contacts[i].displayName+"</option>");
+						    	}
+						    });
 							/*for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
 								total =  total + "Contact Name: "         + contacts[i].displayName + "\n" 
 								+ "Value: " + contacts[i].phoneNumbers[j].value + "\n";
 							} */                                          
-						}
-				
-						alert("total: "+total);
+						//}
+						    $('#contact_selection').on('change', function() {
+						    	  $("#seller_viewconnection_phonenumber").attr("value",$(this).val());
+						    	});
+						//alert("total: "+total);
 					},
 					onError: function(error){
 						alert("Contacts Error : "+error);
@@ -99,7 +86,7 @@
 				
 				function onCordovaLoad(){
 					alert("cordova Loaded");
-					$('#select_phonebook_button').click(function(event) {
+					$('#phonebook_button').click(function(event) {
 						event.preventDefault();
 						contact.initialize();
 					});
@@ -107,8 +94,9 @@
 				
 				loadjsfile("<c:url value='/static/js/cordova/cordova.js'/>", onCordovaLoad);
 			}
-			//----------------------------------------------------------------------------------
-		
+			else{
+				$("#phonebookbox").hide();
+			}
 		
 			$('#seller_viewconnection_form').submit(function(event) {
 				var json = { "userId" : $('#seller_viewconnection_phonenumber').val(),
@@ -182,13 +170,19 @@
 							<form method="POST" role="form" class="form-signin"
 								action="${post_url}" id="seller_viewconnection_form"
 								class="form">
-								<label for="seller_viewconnection_phonenumber">Phone
-									number of the person</label> <input class="form-control"
-									id="seller_viewconnection_phonenumber" type="text"
-									placeholder="10 digit phone number" /> <label
-									for="seller_viewconnection_groupname">Group Name</label> <select
-									class="form-control"
-									id="seller_viewconnection_privategroupoption">
+								<label for="seller_viewconnection_phonenumber">Phonenumber of the person</label>
+								<input class="form-control" id="seller_viewconnection_phonenumber" type="text"
+									placeholder="10 digit phone number" />
+									
+									<div id="phonebookbox">
+								    <input id="phonebook_button" type="button" class="btn btn-primary btn-block" 
+									value="Phonebook" />
+									<select id="contact_selection" name="contact_selection"></select>
+									</div>
+									
+									 <label for="seller_viewconnection_groupname">Group Name</label> 
+									 <select class="form-control" id="seller_viewconnection_privategroupoption">
+									
 									<c:forEach var="item" items="${privateGroupList}">
 										<option value="${item.id}"
 											<c:if test="${item.privateGroupName == 'General' }">
@@ -198,8 +192,7 @@
 								</select> <input id="seller_viewconnection_connect" type="submit"
 									class="btn btn-primary btn-block" value="Connect" />
 									<br/>
-									<input id="select_phonebook_button" type="submit"
-									class="btn btn-primary btn-block" value="Phonebook" />
+									
 							</form>
 							<br />
 							<div class="list-group">
