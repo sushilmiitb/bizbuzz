@@ -5,6 +5,12 @@ function loaderAnimation(){
 	$(element).show();
 }
 
+function loadDivLoader(parentObj){
+	var divElem = document.createElement("div");
+	$(divElem).addClass("div-loader");
+	$(parentObj).append(divElem);
+}
+
 $(window).load(function(){
 	$(".loader").remove();
 });

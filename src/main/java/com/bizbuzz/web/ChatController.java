@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,6 +78,7 @@ import com.bizbuzz.service.ChatService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
+import com.bizbuzz.service.PropertyService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
@@ -126,6 +128,9 @@ public class ChatController {
 
   @Autowired
   ItemService itemService;
+  
+  @Autowired
+  PropertyService propertyService;
 
 
 
@@ -438,6 +443,9 @@ public class ChatController {
     m.addAttribute("person", person);
     m.addAttribute("userId", user.getId());
     m.addAttribute("chatroomId", chatroomid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     return "jsp/chat/chatroom";
   }
 
@@ -491,11 +499,17 @@ public class ChatController {
       return "jsp/error/usernotfound";
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+    
+    Item item = itemService.getItemByItemId(itemid);
+    m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
     m.addAttribute("person", person);
     m.addAttribute("userId", user.getId());
     m.addAttribute("chatroomId", chatroomid);
     m.addAttribute("itemId", itemid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     return "jsp/chat/itemchatroom";
   }
   
@@ -525,11 +539,16 @@ public class ChatController {
       return "jsp/error/usernotfound";
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+    Item item = itemService.getItemByItemId(itemid);
+    m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
     m.addAttribute("person", person);
     m.addAttribute("userId", user.getId());
     m.addAttribute("chatroomId", chatroomid);
     m.addAttribute("itemId", itemid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     return "jsp/chat/itemchatroom";
   }
 
