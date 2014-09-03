@@ -60,24 +60,18 @@
 					},
 					onSuccess: function(contacts){
 						alert("contact length: " + contacts.length);	
-					//	var total ="";
+				
 						//for (var i = 0; i < contacts.length; i++) {
 							//alert("contact:"+contacts[i].displayName);
-							$("#contact_selection").html(""); //reset child options
-						    $(contacts).each(function (i) { //populate child options 
+							$("#contact_selection").html(""); //reset contact_selection options
+						    $(contacts).each(function (i) { //populate contact_selection options 
 						    	if(contacts[i].phoneNumbers!=null){
-						        $("#contact_selection").append("<option value=\""+contacts[i].phoneNumbers[0].value+"\">"+contacts[i].displayName+"</option>");
+						       		 $("#contact_selection").append("<option value=\""+contacts[i].phoneNumbers[0].value+"\">"+contacts[i].displayName+"</option>");
 						    	}
 						    });
-							/*for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
-								total =  total + "Contact Name: "         + contacts[i].displayName + "\n" 
-								+ "Value: " + contacts[i].phoneNumbers[j].value + "\n";
-							} */                                          
-						//}
 						    $('#contact_selection').on('change', function() {
 						    	  $("#seller_viewconnection_phonenumber").attr("value",$(this).val());
-						    	});
-						//alert("total: "+total);
+						    });
 					},
 					onError: function(error){
 						alert("Contacts Error : "+error);
