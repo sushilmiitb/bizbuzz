@@ -13,7 +13,6 @@ body {
 
 .footer .chat-toggle-btn{
 	font-size: 1.8em;
-	width: 150px;
 	margin-top: -8px;
 	height: 40px;
 	font-size: 16px;
@@ -87,7 +86,7 @@ input.error {
 }
 
 .div-loader {
-	position: relative;
+	position: absolute;
 	left: 0px;
 	top: 0px;
 	width: 100%;
@@ -139,7 +138,7 @@ input.error {
 	top:0px;
 	left:0px;
 	width:100%;
-	z-index: 4;
+	z-index: 5;
 	background-repeat: repeat-x !important;
 	background-image: linear-gradient(to bottom, #f5f5f5 0px, #c8c8c8 100%) !important;
 	border-color: #b0b0b0 !important;
@@ -203,7 +202,9 @@ input.error {
 	display: inline-block;
 	border: solid 1px #efefef;
 	clear: both;
-	z-index: 3;
+}
+.ind-chat-panel .ind-chat-body{
+	z-index:3;
 }
 .ind-chat-panel-right{
 	margin-left:40px;
@@ -217,21 +218,23 @@ input.error {
 	width: 0; 
 	height: 0;
 	position:absolute;
-	right:-10px;
+	right:-9px;
 	top:8px;
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-left: 10px solid #fcfcfc;
+	z-index:4;
 }
 .ind-chat-panel-left > .arrow {
 	width: 0; 
 	height: 0;
 	position:absolute;
-	left:-10px;
+	left:-9px;
 	top:8px;
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-right:10px solid #fcfcfc; 
+	z-index:4;
 }
 .ind-chat-body > p{
 	display: inline-block;
@@ -291,7 +294,7 @@ input.error {
 	width: 0; 
 	height: 0;
 	position:absolute;
-	right:-10px;
+	right:-9px;
 	top:8px;
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
@@ -301,14 +304,21 @@ input.error {
 	width: 0; 
 	height: 0;
 	position:absolute;
-	left:-10px;
+	left:-9px;
 	top:8px;
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-right:10px solid #f0f0f0; 
 }
-.item-chat > .chat-item-image{
-	float:left;
+.chat-item-image{
+	width: 20%;
+    border: 1px solid #CCC;
+    float: left;
+    margin: 5px;
+    position: relative;
+    left: 40%;
+    margin-top: 5px;
+    margin-bottom: 5px;
 }
 
 /**** media queries****/

@@ -1,6 +1,8 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
 <c:url var="static_base_url" value="/static" />
+<c:url var="base_image_url" value="/${rootDir}" />
+<c:url var="emptyImageUrl" value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 
 <div class="panel-heading chat-header">
 	<c:choose>
@@ -60,8 +62,24 @@
 				</c:when>
 				<c:otherwise>
 					<div class="item-chat" id="${dto.listOfChats[0].item.id}">
-						<img class="image-responsive chat-item-image"
-							src="images/images.png" alt="Image Not Uploaded" />
+
+						<c:forEach var="imageModel" items="${dto.listOfChats[0].item.imageModels}">
+							<c:if test="${imageModel.imageModelMetadata.tag=='0'}">
+								<c:set var="displayImage" value="${imageModel}" scope="page" />
+							</c:if>
+						</c:forEach>
+						<c:choose>
+							<c:when test="${not empty displayImage}">
+								<img class="image-responsive chat-item-image"
+									src="${base_image_url}/${sizeDir}/${displayImage.id}.${imageExtn}"
+									alt="Image Not Uploaded" />
+							</c:when>
+							<c:otherwise>
+								<img src="${emptyImageUrl}" class="image-responsive chat-item-image"
+									alt="Image Not Uploaded" />
+							</c:otherwise>
+						</c:choose>
+
 						<c:forEach var="itemchat" items="${dto.listOfChats}">
 							<c:choose>
 								<c:when test="${person.id == itemchat.sender.id}">

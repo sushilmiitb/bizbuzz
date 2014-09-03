@@ -1,25 +1,40 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
+
 <c:url var="static_base_url" value="/static" />
+<c:url var="base_image_url" value="/${rootDir}" />
+<c:url var="emptyImageUrl" value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 
 <div class="panel-heading chat-header">
+	<span class="pull-left">Product chat with
 	<c:choose>
 		<c:when test="${!empty secondperson}">
-			<span>
-				<c:out value="${secondperson.firstName} ${secondperson.middleName} ${secondperson.lastName}"></c:out>
-			</span>
+				<c:out value=" ${secondperson.firstName} ${secondperson.middleName} ${secondperson.lastName}"></c:out>
 		</c:when>
 		<c:otherwise>
-			<span>
-				Product Chat
-			</span>
 		</c:otherwise>
 	</c:choose>
-	<span class="pull-left">Product Chat</span>
+	</span>
 	<span class="chat-back glyphicon glyphicon-arrow-left pull-right"></span>
 </div>
 
 <div class="panel-body chat-body">
+	<c:forEach var="imageModel" items="${item.imageModels}">
+		<c:if test="${imageModel.imageModelMetadata.tag=='0'}">
+			<c:set var="displayImage" value="${imageModel}" scope="page" />
+		</c:if>
+	</c:forEach>
+	<c:choose>
+		<c:when test="${not empty displayImage}">
+			<img class="image-responsive chat-item-image"
+				src="${base_image_url}/${sizeDir}/${displayImage.id}.${imageExtn}"
+				alt="Image Not Uploaded" />
+		</c:when>
+		<c:otherwise>
+			<img src="${emptyImageUrl}" class="image-responsive chat-item-image"
+				alt="Image Not Uploaded" />
+		</c:otherwise>
+	</c:choose>
 	<c:if test="${!empty chatsOfItem}">
 		<c:forEach var="chat" items="${chatsOfItem}">
 			<c:choose>

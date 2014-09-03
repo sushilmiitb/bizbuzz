@@ -42,7 +42,8 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		$(".chat-panel").addClass("div-loader");
+		//$(".chat-panel").addClass("div-loader");
+		loadDivLoader(parentObj);
 		$.ajax({
 			url: url,
 			type: "GET",
@@ -161,7 +162,8 @@ function loadChatRoomList(){
  */
 function loadNormalChatRoom(url){
 	var parentObj = $(".chat-panel");
-	$(".chat-panel").addClass("div-loader");
+	//$(".chat-panel").addClass("div-loader");
+	loadDivLoader(parentObj);
 	$.ajax({
 		url: url,
 		type: "GET",
@@ -187,7 +189,8 @@ function loadNormalChatRoom(url){
  */
 function loadItemChatRoom(chatroomId, itemId, fromPage){
 	var parentObj = $(".chat-panel");
-	$(".chat-panel").addClass("div-loader");
+	//$(".chat-panel").addClass("div-loader");
+	loadDivLoader(parentObj);
 	var url = "/bizbuzz/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId+"/frompage/"+fromPage;
 	$.ajax({
 		url: url,
@@ -243,7 +246,8 @@ function insertChatMessage(msg, isSelf){
  * @return
  */
 function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemId){
-	var bottomOffset = 128;
+	var bottomOffset = 100;
+	var baseInputHeight = 50;
 	initializeChatPanel(bottomOffset);
 	setChatPanelResizeCallback(bottomOffset);
 	setChatPanelToggleCallback();
@@ -252,9 +256,9 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 	
 	/****Code for handling variable height for text area***/
 	var previouslines = 1;
-	var baseMessagaeFieldHeight = $("#message-field").height();
-	var baseMessagaeButtonHeight = $("#message-button").height();
-	var baseChatInputAreaHeight = $(".chat-input-area").height();
+	var baseMessageFieldHeight;
+	var baseMessageButtonHeight;
+	//var baseChatInputAreaHeight = baseInputHeight;
 	var baseBottomOffset = bottomOffset;
 	$("textarea").on("keyup", function(e) {
 	    /*if ($("textarea").attr("cols")) {
@@ -264,13 +268,17 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 	        var msg = (result < 1) ? "Cursor is on the First line!" : "Cursor is on the line #"+(result+1);
 	        console.log($("p").text(msg).text());
 	    }*/
-		if(event.keyCode == '13') {
+		if(e.keyCode == '13') {
 			sendChatCallback();
 			return;
 		}
 		var lht = parseInt($('textarea').css('lineHeight'),10);
-		var lines = Math.floor($('textarea').prop('scrollHeight') / lht);
+		var lines = Math.round($('textarea').prop('scrollHeight') / lht);
 		if(lines>previouslines){
+			if(lines==2){
+				baseMessageFieldHeight = $("#message-field").height();
+				baseMessageButtonHeight = $("#message-button").height();
+			}
 			previouslines = lines;
 			bottomOffset = bottomOffset+lht;
 			initializeChatPanel(bottomOffset);
@@ -278,7 +286,8 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 			setChatPanelResizeCallback(bottomOffset);
 			$("#message-field").height($("#message-field").height()+lht);
 			$("#message-button").height($("#message-button").height()+lht);
-			$(".chat-input-area").height($(".chat-input-area").height()+lht);
+			//$(".chat-input-area").height($(".chat-input-area").height()+lht);
+			$(".chat-body").scrollTop(1000000);
 		}
 		console.log(lines);
 	});
@@ -360,7 +369,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 			setChatPanelResizeCallback(bottomOffset);
 			$("#message-field").height(baseMessageFieldHeight);
 			$("#message-button").height(baseMessageButtonHeight);
-			$(".chat-input-area").height(baseChatInputAreaHeight);
+			//$(".chat-input-area").height(baseChatInputAreaHeight);
 			
 		}
 		$("#message-field").focus();
