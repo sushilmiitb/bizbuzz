@@ -8,18 +8,117 @@
 
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
+		var debug=false;
+		var baseStaticUrl = "/bizbuzz/static";
+		var contactAndroidObj;
 		$(document).ready(function() {
-		
-			//	Dynamically loading cordova.js              -------------------------------------------------------------
-		
+			//call the specific function on document ready
+			
+			var ua = navigator.userAgent.toLowerCase();   
+			var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+			if(isAndroid) {
+				if(debug)
+					alert("This is android platform.");
+			
+				$("#phonebookbox").show();
+				//As Per Native Code----------------------------------------------------------------
+				contactAndroidObj = {
+						// Application Constructor
+						initialize: function() {
+					if(debug)
+						alert("Inside contact initialization");
+					this.bindEvents();
+				},
+				bindEvents: function() {
+					document.addEventListener('deviceready', this.onDeviceReady(), false);
+				},
+				onDeviceReady: function() {
+					if(debug)
+						alert("OnDeviceReady: ");
+					var options = new ContactFindOptions();
+					if(debug)
+						alert("OnDeviceReady: Sending contact request");
+					options.filter = "";
+					options.multiple = true;
+					var filter = ["displayName", "phoneNumber"];
+					navigator.contacts.find(filter, this.onSuccess , this.onError , options);
+				},
+				onSuccess: function(contacts){
+					if(debug)
+						alert("contact length: " + contacts.length);
+					//for (var i = 0; i < contacts.length; i++) {
+					//alert("contact:"+contacts[i].displayName);
+					var validContacts = [];
+					$(contacts).each(function (i) { //populate contact_selection options 
+						if(contacts[i].phoneNumbers!=null){
+							validContacts.push(contacts[i]);
+						}
+					});
+					validContacts.sort(function(a, b) {
+						var aID = a.displayName;
+						var bID = b.displayName;
+						return (aID == bID) ? 0 : (aID > bID) ? 1 : -1;
+					});
+			
+					$("#contact_selection").html(""); //reset contact_selection options
+					var strVar="";
+					$(validContacts).each(function (i) { //populate contact_selection options
+						strVar += "<div class=\"row list-group-item\" onclick='contactAndroidObj.processContact(this);' >";
+						strVar += "	<div class=\"col-xs-8 col-sm-8 col-md-8 col-lg-8\">";
+						strVar += 		validContacts[i].displayName+"<\/div>";
+						strVar += "	<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\">";
+						strVar += 		validContacts[i].phoneNumbers[0].value+"<\/div>";
+						strVar += "<\/div>";
+					});
+					$("#contact_selection").append(strVar);
+				},
+				onError: function(error){
+					if(debug)
+						alert("mobileadaptation.js.loadmobileconnectionmodule.Contacts Error : "+error);
+					console.log("Contacts Error : "+error);
+				},
+				processContact: function (event){
+					var children = $(event).children();
+					if(typeof children !== 'undefined' && children.length==2){
+						var number = $(children[1]).html();
+						$("#seller_viewconnection_phonenumber").attr("value",number);
+						$('#phonebookModal').modal('toggle');
+					}
+				}
+				};
+			
+				function onCordovaLoad(){
+					if(debug)
+						alert("cordova Loaded");
+					onContactsObjectAvailable();
+				}
+			
+				function onContactsObjectAvailable() {
+					if (typeof(ContactFindOptions) !== 'undefined') {
+						contactAndroidObj.initialize();
+					} else {
+						setTimeout(function () {
+							onContactsObjectAvailable();
+						}, 500);
+					}
+				}
+				
+				loadjsfile(baseStaticUrl+"/js/cordova/cordova.js", onCordovaLoad);
+			}
+			else{
+				$("#phonebookbox").hide();
+			}
+			
 			function loadjsfile(filename, onload){	
+				if(debug)
+					alert("mobileadaptation.js/loadjsfile:filename->"+filename);
 				var script=document.createElement('script');
 				script.setAttribute("type","text/javascript");
-		
+			
 				script.setAttribute("src", filename);
 				if (typeof script!="undefined")
 					document.getElementsByTagName("head")[0].appendChild(script);
-		
+			
 				if (script.readyState){  //IE
 					script.onreadystatechange = function(){
 						if (script.readyState == "loaded" || script.readyState == "complete"){
@@ -30,68 +129,8 @@
 				} else {  //Others
 					script.onload = onload;
 				}
-		
-			}
-		
-		
-			var ua = navigator.userAgent.toLowerCase();   
-			var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
-			if(isAndroid) {
-				alert("This is android platform.");
-				$("#phonebookbox").show();
-							//As Per Native Code----------------------------------------------------------------
-				var contact = {
-					// Application Constructor
-					initialize: function() {
-						alert("Inside contact initialization");
-						this.bindEvents();
-					},
-					bindEvents: function() {
-						document.addEventListener('deviceready', this.onDeviceReady(), false);
-					},
-					onDeviceReady: function() {
-				
-						var options = new ContactFindOptions();
-						options.filter = "";
-						options.multiple = true;
-						var filter = ["displayName", "phoneNumber"];
-						navigator.contacts.find(filter, this.onSuccess , this.onError , options);
-				
-					},
-					onSuccess: function(contacts){
-						alert("contact length: " + contacts.length);	
-				
-						//for (var i = 0; i < contacts.length; i++) {
-							//alert("contact:"+contacts[i].displayName);
-							$("#contact_selection").html(""); //reset contact_selection options
-						    $(contacts).each(function (i) { //populate contact_selection options 
-						    	if(contacts[i].phoneNumbers!=null){
-						       		 $("#contact_selection").append("<option value=\""+contacts[i].phoneNumbers[0].value+"\">"+contacts[i].displayName+"</option>");
-						    	}
-						    });
-						    $('#contact_selection').on('change', function() {
-						    	  $("#seller_viewconnection_phonenumber").attr("value",$(this).val());
-						    });
-					},
-					onError: function(error){
-						alert("Contacts Error : "+error);
-					}
-				};
-				
-				function onCordovaLoad(){
-					alert("cordova Loaded");
-					$('#phonebook_button').click(function(event) {
-						event.preventDefault();
-						contact.initialize();
-					});
-				}
-				
-				loadjsfile("<c:url value='/static/js/cordova/cordova.js'/>", onCordovaLoad);
-			}
-			else{
-				$("#phonebookbox").hide();
-			}
-		
+			}			
+
 			$('#seller_viewconnection_form').submit(function(event) {
 				var json = { "userId" : $('#seller_viewconnection_phonenumber').val(),
 						"groupId" : $('#seller_viewconnection_privategroupoption').val()
@@ -164,19 +203,21 @@
 							<form method="POST" role="form" class="form-signin"
 								action="${post_url}" id="seller_viewconnection_form"
 								class="form">
-								<label for="seller_viewconnection_phonenumber">Phonenumber of the person</label>
-								<input class="form-control" id="seller_viewconnection_phonenumber" type="text"
-									placeholder="10 digit phone number" />
-									
-									<div id="phonebookbox">
-								    <input id="phonebook_button" type="button" class="btn btn-primary btn-block" 
-									value="Phonebook" />
-									<select id="contact_selection" name="contact_selection"></select>
-									</div>
-									
-									 <label for="seller_viewconnection_groupname">Group Name</label> 
-									 <select class="form-control" id="seller_viewconnection_privategroupoption">
-									
+								<label for="seller_viewconnection_phonenumber">Phonenumber
+									of the person</label> <input class="form-control"
+									id="seller_viewconnection_phonenumber" type="text" value="+91"
+									placeholder="" />
+								<div id="phonebookbox">
+									<div style="text-align:center">OR</div>
+									<br/>
+									<input id="phonebook_button" type="button" data-toggle="modal"
+										data-target="#phonebookModal" class="btn btn-primary btn-block" value="Select from Phonebook" />
+								</div>
+
+								<label for="seller_viewconnection_groupname">Group Name</label>
+								<select class="form-control"
+									id="seller_viewconnection_privategroupoption">
+
 									<c:forEach var="item" items="${privateGroupList}">
 										<option value="${item.id}"
 											<c:if test="${item.privateGroupName == 'General' }">
@@ -184,42 +225,36 @@
 										</c:if>>${item.privateGroupName}</option>
 									</c:forEach>
 								</select> <input id="seller_viewconnection_connect" type="submit"
-									class="btn btn-primary btn-block" value="Connect" />
-									<br/>
-									
+									class="btn btn-primary btn-block" value="Connect" /> <br />
+
 							</form>
 							<br />
 							<div class="list-group">
 								<a href="#" class="list-group-item active">
-							      <h4 class="list-group-item-heading">
-							         Existing Connections
-							      </h4>
-							   </a>
-							   <a href="#" class="list-group-item heading">
-										<div class="row">
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												<h4 class="list-group-item-heading">Name</h4>
-											</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												<h4 class="list-group-item-heading">Phone Number</h4>
-											</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												<h4 class="list-group-item-heading">Group</h4>
-											</div>
+									<h4 class="list-group-item-heading">Existing Connections</h4>
+								</a> <a href="#" class="list-group-item heading">
+									<div class="row">
+										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<h4 class="list-group-item-heading">Name</h4>
 										</div>
+										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<h4 class="list-group-item-heading">Phone Number</h4>
+										</div>
+										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<h4 class="list-group-item-heading">Group</h4>
+										</div>
+									</div>
 								</a>
-								<c:forEach items="${connectionList}" var="item" >
+								<c:forEach items="${connectionList}" var="item">
 									<a href="${base_url}${item.toParty.id}" class="list-group-item">
 										<div class="row">
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.toParty.firstName} ${item.toParty.middleName} ${item.toParty.lastName}
-											</div>
+												${item.toParty.firstName} ${item.toParty.middleName}
+												${item.toParty.lastName}</div>
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.toParty.userId.id}
-											</div>
+												${item.toParty.userId.id}</div>
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.fromParty.privateGroupName }
-											</div>
+												${item.fromParty.privateGroupName }</div>
 										</div>
 									</a>
 								</c:forEach>
@@ -229,6 +264,24 @@
 				</div>
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
 			</div>
+		</div>
+		<div class="modal fade" id="phonebookModal" tabindex="-1" role="dialog"
+			aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal"
+							aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="myModalLabel">Select Contact</h4>
+					</div>
+					<div class="modal-body">
+						<div id="contact_selection">
+						</div>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal -->
 		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>
