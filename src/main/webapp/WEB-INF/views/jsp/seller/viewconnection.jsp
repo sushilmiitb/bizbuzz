@@ -14,6 +14,9 @@
 		$(document).ready(function() {
 			//call the specific function on document ready
 			
+			/***************************************************************************************
+			* code for mobile devices
+			***************************************************************************************/
 			var ua = navigator.userAgent.toLowerCase();   
 			var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
 			if(isAndroid) {
@@ -130,6 +133,10 @@
 					script.onload = onload;
 				}
 			}			
+
+			/***************************************************************************************
+			* code for mobile devices ends
+			***************************************************************************************/
 
 			$('#seller_viewconnection_form').submit(function(event) {
 				var json = { "userId" : $('#seller_viewconnection_phonenumber').val(),
