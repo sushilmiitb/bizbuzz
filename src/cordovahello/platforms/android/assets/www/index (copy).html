@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+<script src="js/jquery-1.11.1.min.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			alert("Document.ready");
+
+			//	----------------------------------------------------------------
+		
+			//	Dynamically loading cordova.js              -------------------------------------------------------------
+		
+			function loadjsfile(filename, onload){	
+				var script=document.createElement('script');
+				script.setAttribute("type","text/javascript");
+		
+				script.setAttribute("src", filename);
+				if (typeof script!="undefined")
+					document.getElementsByTagName("head")[0].appendChild(script);
+		
+				if (script.readyState){  //IE
+					script.onreadystatechange = function(){
+						if (script.readyState == "loaded" || script.readyState == "complete"){
+							script.onreadystatechange = null;
+							alert("successfully loaded.");
+						}
+					};
+				} else {  //Others
+					script.onload = onload;
+				}
+		
+			}
+		
+			function allContactJs(){
+		
+		
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/Contact.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactAddress.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactError.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactField.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactFieldType.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactFindOptions.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactName.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/ContactOrganization.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/plugins/org.apache.cordova.contacts/www/contacts.js'/>",function(){});
+				loadjsfile("<c:url value='/static/js/cordova/cordova_plugins.js'/>",function(){
+						loadjsfile("<c:url value='/static/js/cordova/cordova.js'/>", function(){});});
+			}
+		
+			var ua = navigator.userAgent.toLowerCase();   
+			var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+			if(isAndroid) {
+				alert("This is android platform.");
+							//As Per Native Code----------------------------------------------------------------
+				var contact = {
+					// Application Constructor
+					initialize: function() {
+						alert("Inside contact initialization");
+						this.bindEvents();
+					},
+					// Bind Event Listeners
+					//
+					// Bind any events that are required on startup. Common events are:
+					// 'load', 'deviceready', 'offline', and 'online'.
+					bindEvents: function() {
+						document.addEventListener('deviceready', this.onDeviceReady(), false);
+					},
+					onDeviceReady: function() {
+				
+						var options = new ContactFindOptions();
+						options.filter = "";
+						options.multiple = true;
+						var filter = ["displayName", "phoneNumber"];
+						navigator.contacts.find(filter, this.onSuccess , this.onError , options);
+				
+					},
+					onSuccess: function(contacts){
+						alert(contacts.length);	
+						var total ="";
+						for (var i = 0; i < contacts.length; i++) {
+							for (var j = 0; j < contacts[i].phoneNumbers.length; j++) {
+								total =  total + "Contact Name: "         + contacts[i].displayName + "\n" 
+								+ "Value: " + contacts[i].phoneNumbers[j].value + "\n";
+							}                                           
+						}
+				
+						alert(total);
+					},
+					onError: function(error){
+						console.log("Contacts Error : "+error);
+					}
+				};
+				
+				function onCordovaLoad(){
+					$('#select_phonebook_button').click(function(event) {
+						event.preventDefault();
+						contact.initialize();
+					});
+				}
+				
+				loadjsfile("cordova.js", onCordovaLoad);
+			}
+		});
+		</script>
+    </head>
+    <body>
+    	<input id="select_phonebook_button" type="submit"
+									class="btn btn-primary btn-block" value="Phonebook" />
+		<a href="http://10.1.20.236:8080/bizbuzz/login">LINK</a>
+    </body>
+</html>

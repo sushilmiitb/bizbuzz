@@ -1,0 +1,21 @@
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes.dex : \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/camera/FileHelper.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/camera/ExifHelper.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/camera/CameraLauncher.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactAccessorSdk5.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactAccessor$WhereOptions.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactInfoDTO.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactManager$1.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactAccessor.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactManager.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactManager$4.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactManager$3.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/org/apache/cordova/contacts/ContactManager$2.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/R$drawable.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/CordovaHello.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/R$attr.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/BuildConfig.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/R$xml.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/R.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/classes/com/example/cordova/hello/R$string.class \
+/home/sushil/workspace/bizbuzz/src/cordovahello/platforms/android/ant-build/dexedLibs/classes-12a492e60a775eaced23cd9f7511ff03.jar \
