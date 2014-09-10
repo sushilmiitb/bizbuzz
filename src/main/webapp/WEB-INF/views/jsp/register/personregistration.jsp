@@ -135,6 +135,7 @@
 					nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
 					emptyErrorDisplay($('#register_personregistration_password'), "Password cannot be empty");
 					emptyErrorDisplay($('#register_personregistration_firstname'), "Name cannot be empty");
+					emptyErrorDisplay($('#register_personregistration_companyname'), "Company name cannot be empty");
 					//emptyErrorDisplay($('#register_personregistration_contactnumber'), "Contact number cannot be empty");
 					noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
 					//invalidEmailErrorDisplay($('#register_personregistration_email'), "Please enter a valid email address");
@@ -193,7 +194,7 @@
 <%-- 							<form:errors path="person.email" class="error" /> --%>
 							
 							<form:label path="company.companyName" for="register_personregistration_companyname">Company/Shop Name</form:label>
-							<form:input path="company.companyName" class="form-control"	placeholder="Company name(optional)" id="register_personregistration_companyname" type="text" />
+							<form:input path="company.companyName" class="form-control"	placeholder="Company name" id="register_personregistration_companyname" type="text" />
 							<form:errors path="company.companyName" class="error" />
 							
 		<%-- 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label> --%>

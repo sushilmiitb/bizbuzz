@@ -99,6 +99,20 @@ public class SellerController {
     return "jsp/seller/home";
   }
   
+  @RequestMapping(value="/seller/viewcontacts", method = RequestMethod.GET)
+  public String viewContact(Model m){
+    Person seller = getSeller();
+    List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupsByGroupOnwer(seller);
+    m.addAttribute("privateGroups", privateGroupList);
+    PrivateGroup privateGroup = new PrivateGroup();
+    m.addAttribute("privateGroupForm", privateGroup);
+    
+    List<Connection> allConnections = connectionService.getAllSellerConnectionsUsingPrivateGroup(seller);
+    m.addAttribute("connectionList", allConnections);
+    m.addAttribute("privateGroupList", privateGroupList);
+    return "jsp/seller/viewcontacts";
+  }
+  
   @RequestMapping(value="/seller/viewgroup", method = RequestMethod.GET)
   public String viewAllGroup(Model m){
     Person person = getSeller();
