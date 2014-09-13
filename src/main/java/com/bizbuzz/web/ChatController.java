@@ -271,7 +271,7 @@ public class ChatController {
     if(action.equals("itemchatroom")){
       String itemId = allRequestParams.get("itemId");
       String secondPersonId = allRequestParams.get("secondPersonId");
-      return "redirect:/chat/showitemchatroom/secondpersonid/"+secondPersonId+"/itemid/"+itemId;
+      return "forward:/chat/showitemchatroom/secondpersonid/"+secondPersonId+"/itemid/"+itemId;
     }
     
     //Determine the existing state and redirect to correct state
@@ -279,14 +279,14 @@ public class ChatController {
       String chatPage = (String)session.getAttribute("chatpage");
       //first time
       if(chatPage==null){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       else if(chatPage.equals("listofchatrooms")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       else if(chatPage.equals("singlechatroom")){
         Long chatroomId = (Long)session.getAttribute("chatroomid");
-        return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+        return "forward:/chat/showchatroom/chatroomid/"+chatroomId;
       }
       //last state was singleitmechatroom
       else if(chatPage.equals("singleitemchatroom")){
@@ -297,29 +297,29 @@ public class ChatController {
 //        }
         //right now which chat mode are we should be in? This is set at footer.
         if(session.getAttribute("chatmode").equals("normal")){
-          return "redirect:/chat/showchatrooms";
+          return "forward:/chat/showchatrooms";
         }
         else{
-          return "redirect:/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId;
+          return "forward:/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId;
         }
       }
     }
     
     //redirect to list of chat rooms
     else if(action.equals("listofchatrooms")){
-      return "redirect:/chat/showchatrooms";
+      return "forward:/chat/showchatrooms";
     }
     
     //redirect to single chat room
     else if(action.equals("singlechatroom")){
       String chatroomId = allRequestParams.get("chatroomid");
-      return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+      return "forward:/chat/showchatroom/chatroomid/"+chatroomId;
     }
     
     //redirect to item chat room list
     else if(action.equals("itemchatroomlist")){
       String itemId = allRequestParams.get("itemId");
-      return "redirect:/chat/showchatrooms/itemid/"+itemId;
+      return "forward:/chat/showchatrooms/itemid/"+itemId;
     }
     
     //implementing back button logic
@@ -327,26 +327,26 @@ public class ChatController {
       String chatPage = (String)session.getAttribute("chatpage");
       //if chatpage has not been set in previous load. Means first page in session.
       if(chatPage==null){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       //pushing back button while on list of chatrooms. no action.
       else if(chatPage.equals("listofchatrooms")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       //last state is on sngle chat room. Now move to list of chat rooms
       else if(chatPage.equals("singlechatroom")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       //last state was single item chat room
       else if(chatPage.equals("singleitemchatroom")){
         String fromPage = (String)session.getAttribute("frompage");
         //last state of singleitemchatroom was entered from itemchatroomlist. Hence now move to itehmchatroomlist
         if(fromPage.equals("itemchatroomlist")){
-          return "redirect:/chat/showchatrooms/itemid/"+session.getAttribute("itemid");
+          return "forward:/chat/showchatrooms/itemid/"+session.getAttribute("itemid");
         }
         //last state of singleitemchatroom was entered from normal chat room. Hence now move to normal chat room
         else if(fromPage.equals("normalchatroom")){
-          return "redirect:/chat/showchatroom/chatroomid/"+session.getAttribute("chatroomid");
+          return "forward:/chat/showchatroom/chatroomid/"+session.getAttribute("chatroomid");
         }
       }
     }
