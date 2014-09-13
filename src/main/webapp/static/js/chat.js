@@ -274,6 +274,9 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		}
 		var lht = parseInt($('textarea').css('lineHeight'),10);
 		var lines = Math.round($('textarea').prop('scrollHeight') / lht);
+		if(!!window.chrome){
+			lines = Math.round(($('textarea').prop('scrollHeight') - 26) / lht);
+		}
 		if(lines>previouslines){
 			if(lines==2){
 				baseMessageFieldHeight = $("#message-field").height();
