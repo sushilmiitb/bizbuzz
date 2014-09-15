@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.ui.Model;
 
+import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Party;
@@ -20,6 +21,7 @@ public interface PartyManagementService {
   public void saveCompany(Company company);
   public List<String> getListOfPersonRole();
   public List<String> getListOfCompanyRole();
+  public List<CountryCodeDTO> getListOfCountryCodes(); 
   public void savePrivateGroup(PrivateGroup privateGroup);
   public Person getPersonFromUsername(String username);
   public void updatePrivateGroup(PrivateGroup oldPrivateGroup, PrivateGroup updatedPrivateGroup);
@@ -29,4 +31,6 @@ public interface PartyManagementService {
   public PrivateGroup getPrivateGroup(Long id);
   public void deletePerson(Person person);
   public Person getPerson(Long id);
+  
+  
 }

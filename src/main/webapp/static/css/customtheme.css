@@ -95,6 +95,11 @@ input.error {
 	background: url('images/icons/loader.gif') 50% 50% no-repeat
 		rgba(0, 0, 0, 0.1);
 }
+
+ul.subnav-top-horizontal{
+	padding: 10px;
+}
+
 /* .no-image-preview{ */
 /* 	color:#999999; */
 /*     font-size:2em; */
@@ -321,6 +326,13 @@ input.error {
     margin-bottom: 5px;
 }
 
+.user-type-radiobutton{
+	display:inline-block;
+
+	background-color:#ddd;
+	width:100px;
+	
+}
 /**** media queries****/
 @media(max-width:767px){
 	.chat-content{

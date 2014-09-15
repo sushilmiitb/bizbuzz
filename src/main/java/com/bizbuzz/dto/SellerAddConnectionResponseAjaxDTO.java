@@ -12,13 +12,6 @@ public class SellerAddConnectionResponseAjaxDTO {
   private Long id;
   private String phoneNumber;
   private String response;
-  public String getResponse() {
-    return response;
-  }
-
-  public void setResponse(String response) {
-    this.response = response;
-  }
   private Map<String, String> errors;
   private String groupName;
   private Long groupId;
@@ -103,6 +96,13 @@ public class SellerAddConnectionResponseAjaxDTO {
 
   public void setGroupId(Long groupId) {
     this.groupId = groupId;
+  }
+  public String getResponse() {
+    return response;
+  }
+
+  public void setResponse(String response) {
+    this.response = response;
   }
 
 }

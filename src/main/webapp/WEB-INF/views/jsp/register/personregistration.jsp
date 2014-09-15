@@ -125,18 +125,29 @@
 						pass.toggleClass("error");
 					}
 				}
-				
-				$("#register_personregistration_submit").click(function(event){
+ // Uncomment below code if you want to Show the Numeric code of the country in the text field of user name (phone number)
+/*				$('#register_personregistration_countrycode').change(function(){
+					   $('#register_personregistration_username').val($(this).val()); 
+				});
+				$('#register_personregistration_username').val($('select[id=register_personregistration_countrycode]').val());
+*/				$('#register_personregistration_username').val("");
+				 $("#register_personregistration_submit").click(function(event){
 					event.preventDefault();
+//combine countryCode and PhoneNumber Before Submit the form	
+					var phonenumber = $('#register_personregistration_username').val();
+					$('#register_personregistration_username').val($('select[id=register_personregistration_countrycode]').val()+phonenumber);
+				
 					$("span.error").remove();
 					$(".error").toggleClass("error");
 					emptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
-					invalidPhoneErrorDisplay($('#register_personregistration_username'), "Please enter a valid phone number");
-					nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
+					invalidPhoneErrorDisplay($('#register_personregistration_username'), "Please enter a valid phone number");       
+//                  nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
 					emptyErrorDisplay($('#register_personregistration_password'), "Password cannot be empty");
 					emptyErrorDisplay($('#register_personregistration_firstname'), "Name cannot be empty");
+					emptyErrorDisplay($('#register_personregistration_companyname'), "Company name cannot be empty");
 					//emptyErrorDisplay($('#register_personregistration_contactnumber'), "Contact number cannot be empty");
-					noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
+					//noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
+					noneSelectErrorDisplay($('#register_personregistration_countrycode'), "Please select a country code");
 					//invalidEmailErrorDisplay($('#register_personregistration_email'), "Please enter a valid email address");
 					passwordMisMatchErrorDisplay($('#register_personregistration_repassword'), $('#register_personregistration_password'), "Password mismatch");
 					//invalidPhoneErrorDisplay($('#register_personregistration_contactnumber'), "Please enter a valid phone number");
@@ -162,6 +173,19 @@
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
 							<form:label path="userLogin.id" for="register_personregistration_username">Phone Number</form:label>
+						    <form:select path="countryCodeDTO.numericCode" class="form-control" id="register_personregistration_countrycode" >
+								<c:forEach var="item" items="${countryCodeList}">
+									<c:choose>
+						 				<c:when test="${item.numericCode == '+91'}">
+											<form:option value="${item.numericCode}" selected="selected">${item.countryName} ${item.numericCode}</form:option>
+										</c:when>
+    									<c:otherwise>
+    										<form:option value="${item.numericCode}">${item.countryName} ${item.numericCode}</form:option>
+    									</c:otherwise>
+    								</c:choose>
+								</c:forEach>
+							</form:select>
+							
 							<form:input path="userLogin.id" class="form-control" id="register_personregistration_username" placeholder="10 digit number" type="text" />
 							<form:errors path="userLogin.id" class="error"/>
 							<form:label path="userLogin.passwordHash" for="register_personregistration_password">Password</form:label>
@@ -172,6 +196,27 @@
 							
 							<h3>Details</h3>
 							
+							<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
+								 <c:forEach var="item" items="${companyRoleList}" varStatus="loop">
+						 		<c:choose>
+						 			<c:when test="${loop.index==0}">
+    									<form:radiobutton path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/>
+    									${item}
+    								</c:when>
+    								<c:otherwise>
+    									<form:radiobutton path="company.companyRole" value="${item}" class="user-type-radiobutton" />
+    									${item}
+    								</c:otherwise>
+    							</c:choose>
+						</c:forEach>
+						</br>
+				<!--  		<form:select path="company.companyRole" class="form-control" id="register_personregistration_companyrole" >
+								<form:option value="None">None</form:option>
+								<c:forEach var="item" items="${companyRoleList}">
+									<form:option value="${item}">${item}</form:option>
+								</c:forEach>
+							</form:select>
+				-->			
 							<form:label path="person.firstName" for="register_personregistration_firstname">Name</form:label>
 							<form:input path="person.firstName" class="form-control" placeholder="Enter your name" id="register_personregistration_firstname" type="text" />
 							<form:errors path="person.firstName" class="error" />
@@ -193,7 +238,7 @@
 <%-- 							<form:errors path="person.email" class="error" /> --%>
 							
 							<form:label path="company.companyName" for="register_personregistration_companyname">Company/Shop Name</form:label>
-							<form:input path="company.companyName" class="form-control"	placeholder="Company name(optional)" id="register_personregistration_companyname" type="text" />
+							<form:input path="company.companyName" class="form-control"	placeholder="Company name" id="register_personregistration_companyname" type="text" />
 							<form:errors path="company.companyName" class="error" />
 							
 		<%-- 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label> --%>
@@ -204,13 +249,7 @@
 		<%-- 						</c:forEach> --%>
 		<%-- 					</form:select> --%>
 							
-							<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
-							<form:select path="company.companyRole" class="form-control" id="register_personregistration_companyrole" >
-								<form:option value="None">None</form:option>
-								<c:forEach var="item" items="${companyRoleList}">
-									<form:option value="${item}">${item}</form:option>
-								</c:forEach>
-							</form:select>
+							
 							<br/>
 							<input type="submit" class="btn btn-md btn-primary btn-block" id="register_personregistration_submit"value="Register" />
 						</form:form>

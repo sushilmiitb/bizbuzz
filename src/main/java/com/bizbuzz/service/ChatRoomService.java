@@ -10,7 +10,7 @@ import com.bizbuzz.model.Person;
 
 public interface ChatRoomService {
   public void saveChatRoom(ChatRoom chatRoom);
-  public ChatRoom getChatRoomByMembers(Long toPartyId,Long fromPartyId);
+  public ChatRoom getChatRoomByMembers(Long fromPartyId,Long topartyId);
   public ChatRoom getChatRoomByChatRoomId(Long Id);
   
   public List<Person> getAllMembersOfChatRoomByChatRoomId(Long chatRoomId);

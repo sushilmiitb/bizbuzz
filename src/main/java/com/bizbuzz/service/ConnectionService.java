@@ -20,9 +20,11 @@ public interface ConnectionService {
   public PrivateGroup getPrivateGroupByPersonAndPrivateGroupId(Person person, Long groupId);
   public void deletePrivateGroupGroupMembersConnection(PrivateGroup privateGroup);
   public List<Person> getAllSellersConnections(Person seller);
+  public List<Connection> getAllBuyersConnection(Person buyer);
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMember(Party groupOwner, Party groupMember);
   public List<Person> getGroupMembersByPrivateGroup(PrivateGroup privateGroup);
   public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId);
+  public Person getSellerByBuyerAndSellerId(Person buyer,Long sellerId);
   public List<Connection> getAllSellerConnectionsUsingPrivateGroup(Person seller);
   public void flush();
   public Map<Long, PrivateGroup> convertToMap(List<PrivateGroup> list);

@@ -23,6 +23,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
+import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
 
@@ -34,6 +35,50 @@ public class HelperFunctions {
    * @param tagName: tagName of the nodes of which list is sought
    * @return List of string which contains the elements with tagName
    */
+ 
+  public static List<CountryCodeDTO> retrieveResourcesCountryCodes(InputStream inputStream, String tagName){
+    List<CountryCodeDTO> countryCodelist = new ArrayList<CountryCodeDTO>();
+    try {
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      Document doc = docBuilder.parse(inputStream);
+      doc.getDocumentElement ().normalize ();  
+      NodeList nodeList = doc.getElementsByTagName(tagName);
+      for(int i=0; i<nodeList.getLength(); i++){
+            countryCodelist.add(getCountryCodeDTO(nodeList.item(i)));
+      }
+      
+    }catch (SAXParseException err) {
+      System.out.println ("** Parsing error" + ", line " 
+           + err.getLineNumber () + ", uri " + err.getSystemId ());
+      System.out.println(" " + err.getMessage ());
+
+    }catch (SAXException e) {
+      Exception x = e.getException ();
+      ((x == null) ? e : x).printStackTrace ();
+    }catch (Throwable t) {
+      t.printStackTrace ();
+    }
+    return countryCodelist;
+  }
+  
+  private static CountryCodeDTO getCountryCodeDTO(Node node) {
+    CountryCodeDTO countryCodeDto = new CountryCodeDTO();
+    if (node.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) node;
+//      countryCodeDto.setAlphaNumericCode(getTagValue("alphaNumericCode", element));       If you want alpha numeric code then uncomment it
+        countryCodeDto.setCountryName(getTagValue("countryName", element));
+        countryCodeDto.setNumericCode(getTagValue("numericCode", element));
+    }
+    return countryCodeDto;
+  }
+
+  private static String getTagValue(String tag, Element element) {
+    NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
+    Node node = (Node) nodeList.item(0);
+    return node.getNodeValue();
+  }
+
   public static List<String> retrieveResourcesAppConatants(InputStream inputStream, String tagName){
     List<String> list = new ArrayList<String>();
     try {

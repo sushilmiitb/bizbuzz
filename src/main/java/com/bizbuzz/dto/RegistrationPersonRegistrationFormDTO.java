@@ -6,10 +6,12 @@ import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.UserLogin;
 
 public class RegistrationPersonRegistrationFormDTO {
+
   private Company company;
   private Person person;
   private UserLogin userLogin;
   private PhoneNumber phoneNumber;
+  private CountryCodeDTO countryCodeDTO;
   
   public Company getCompany() {
     return company;
@@ -36,5 +38,11 @@ public class RegistrationPersonRegistrationFormDTO {
     this.phoneNumber = phoneNumber;
   }
   
+  public CountryCodeDTO getCountryCodeDTO() {
+    return countryCodeDTO;
+  }
+  public void setCountryCodeDTO(CountryCodeDTO countryCodeDTO) {
+    this.countryCodeDTO = countryCodeDTO;
+  }
   
 }
