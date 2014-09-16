@@ -393,7 +393,8 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
+    return "redirect:/seller/viewproduct/category/"+categoryId;
+    //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
@@ -487,6 +488,7 @@ public class SellerController {
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
     m.addAttribute("items", items);
+    m.addAttribute("categoryId",categoryId);
     return "jsp/seller/viewproduct";
   }
   

@@ -294,7 +294,8 @@
 							<div class="list-group">
 								<a href="#" class="list-group-item active">
 									<h4 class="list-group-item-heading">Existing Connections</h4>
-								</a> <a href="#" class="list-group-item heading">            <!--  change active=heading -->
+
+								</a> <a href="#" class="list-group-item heading">
 									<div class="row">
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>

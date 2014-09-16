@@ -80,21 +80,26 @@
 						<div class="panel-body">
 							<form class="form-signin" role="form" id="login_form" action="<c:url value='/j_spring_security_check' />" method="post" accept-charset="UTF-8">
 								<b>Phone number</b>
-                                <select name="numericCode" id="register_login_countrycode" class="form-control" >
-                                	 
-								<c:forEach var="item" items="${countryCodeList}">
-									<c:choose>
-						 				<c:when test="${item.numericCode == '+91'}">
-											<option value="${item.numericCode}"  selected="selected">${item.countryName} ${item.numericCode}</option>
-										</c:when>
-    									<c:otherwise>
-    										<option value="${item.numericCode}" >${item.countryName} ${item.numericCode}</option>
-    									</c:otherwise>
-    								</c:choose>
-								</c:forEach>
-						     	
-                                </select>							
-								<input class="form-control" id="j_username" type="text" name="j_username" placeholder="Phone number" required autofocus />
+                                <div class="row">
+                                  <div class="col-xs-5 col-sm-4 col-md-4 col-lg-4">
+                                  	<select name="numericCode" id="register_login_countrycode" class="form-control" > 
+								     <c:forEach var="item" items="${countryCodeList}">
+									   <c:choose>
+						 			 	<c:when test="${item.numericCode == '+91'}">
+									 		<option value="${item.numericCode}"  selected="selected">${item.countryName} ${item.numericCode}</option>
+										 </c:when>
+    									 <c:otherwise>
+    									 	<option value="${item.numericCode}" >${item.countryName} ${item.numericCode}</option>
+    									 </c:otherwise>
+    								   </c:choose>
+								     </c:forEach>
+                                   </select>
+                                  </div>
+                                  <div class="col-xs-7 col-sm-8 col-md-8 col-lg-8">
+                                  	<input class="form-control" id="j_username" type="text" name="j_username" placeholder="Phone number" required autofocus />
+                                  </div>
+                                </div>
+                                	
 								<b>Password</b> 
 								<input class="form-control" id="j_password" type="password" name="j_password" placeholder="Password" required />
 								<c:if test="${not empty error}">
