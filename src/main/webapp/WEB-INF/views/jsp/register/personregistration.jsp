@@ -125,18 +125,13 @@
 						pass.toggleClass("error");
 					}
 				}
- // Uncomment below code if you want to Show the Numeric code of the country in the text field of user name (phone number)
-/*				$('#register_personregistration_countrycode').change(function(){
-					   $('#register_personregistration_username').val($(this).val()); 
-				});
-				$('#register_personregistration_username').val($('select[id=register_personregistration_countrycode]').val());
-*/				$('#register_personregistration_username').val("");
+ 
+				$("#register_personregistration_username").intlTelInput();
+				
+//			$('#register_personregistration_username').val("");
 				 $("#register_personregistration_submit").click(function(event){
 					event.preventDefault();
-//combine countryCode and PhoneNumber Before Submit the form	
-					var phonenumber = $('#register_personregistration_username').val();
-					$('#register_personregistration_username').val($('select[id=register_personregistration_countrycode]').val()+phonenumber);
-				
+			
 					$("span.error").remove();
 					$(".error").toggleClass("error");
 					emptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
@@ -167,12 +162,41 @@
 	</div>
 	<div class="container" role="main">
 		<div class="row" id="maincontent">
-			<div class="col-xs-12 col-md-12 col">
+			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">Register</div>
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
+								
+							<div class="row">
+								<div class="col-xs-6 col-sm-4 col-md-4 col-lg-4">
+										<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
+								</div>
+								<div class=" hidden-md hidden-lg"></div>									
+								     <c:forEach var="item" items="${companyRoleList}" varStatus="loop">
+						 		        <c:choose>
+						 			     <c:when test="${loop.index==0}">
+						 			      <div class="col-sm-3 col-md-3 col-lg-3">
+    									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/>
+    											${item}
+    									  </div>		
+    								     </c:when>
+    								     <c:otherwise>
+    								     	<div class="col-sm-4 col-md-4 col-lg-3">
+    									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" />
+    											${item}
+    										</div>
+    							         </c:otherwise>
+    							   		</c:choose>
+							    	</c:forEach>	
+									
+								<div class=" hidden-md hidden-lg"></div>
+							</div>
+							<br/>
+								 
 							<form:label path="userLogin.id" for="register_personregistration_username">Phone Number</form:label>
+						    <form:input path="userLogin.id" type="tel" class="form-control" id="register_personregistration_username" placeholder="Phone number" /> 
+				     	<!--  	   
 						    <form:select path="countryCodeDTO.numericCode" class="form-control" id="register_personregistration_countrycode" >
 								<c:forEach var="item" items="${countryCodeList}">
 									<c:choose>
@@ -184,9 +208,9 @@
     									</c:otherwise>
     								</c:choose>
 								</c:forEach>
-							</form:select>
-							
+							</form:select>	
 							<form:input path="userLogin.id" class="form-control" id="register_personregistration_username" placeholder="10 digit number" type="text" />
+					-->			
 							<form:errors path="userLogin.id" class="error"/>
 							<form:label path="userLogin.passwordHash" for="register_personregistration_password">Password</form:label>
 							<form:input path="userLogin.passwordHash" class="form-control" placeholder="Type Password" id="register_personregistration_password" autocomplete="off" type="password" />
@@ -196,20 +220,6 @@
 							
 							<h3>Details</h3>
 							
-							<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
-								 <c:forEach var="item" items="${companyRoleList}" varStatus="loop">
-						 		<c:choose>
-						 			<c:when test="${loop.index==0}">
-    									<form:radiobutton path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/>
-    									${item}
-    								</c:when>
-    								<c:otherwise>
-    									<form:radiobutton path="company.companyRole" value="${item}" class="user-type-radiobutton" />
-    									${item}
-    								</c:otherwise>
-    							</c:choose>
-						</c:forEach>
-						</br>
 				<!--  		<form:select path="company.companyRole" class="form-control" id="register_personregistration_companyrole" >
 								<form:option value="None">None</form:option>
 								<c:forEach var="item" items="${companyRoleList}">

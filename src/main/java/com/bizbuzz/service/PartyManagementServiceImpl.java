@@ -120,10 +120,10 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     return personRepository.findOne(id);
   }
 
-  @Override
+/*  @Override
   public List<CountryCodeDTO> getListOfCountryCodes() {
     List<CountryCodeDTO> countryCodeList = HelperFunctions.retrieveResourcesCountryCodes(getClass().getResourceAsStream("/application/CountryCodes.xml"), "countryCode");
     return countryCodeList;
   }
-
+*/
 }

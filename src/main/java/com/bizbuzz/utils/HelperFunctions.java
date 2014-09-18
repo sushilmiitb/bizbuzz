@@ -35,7 +35,8 @@ public class HelperFunctions {
    * @param tagName: tagName of the nodes of which list is sought
    * @return List of string which contains the elements with tagName
    */
- 
+/* ============================================         below commented code for getting country code from xml file  ===========
+ *  
   public static List<CountryCodeDTO> retrieveResourcesCountryCodes(InputStream inputStream, String tagName){
     List<CountryCodeDTO> countryCodelist = new ArrayList<CountryCodeDTO>();
     try {
@@ -78,7 +79,7 @@ public class HelperFunctions {
     Node node = (Node) nodeList.item(0);
     return node.getNodeValue();
   }
-
+*/
   public static List<String> retrieveResourcesAppConatants(InputStream inputStream, String tagName){
     List<String> list = new ArrayList<String>();
     try {

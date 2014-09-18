@@ -85,7 +85,7 @@ public class RegistrationController {
     personRegistration.setCountryCodeDTO(countryCodeDTO); 
     m.addAttribute("personRegistration", personRegistration);
     m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
-    m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
+   // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/personregistration";
   }
 
@@ -124,16 +124,14 @@ public class RegistrationController {
   @RequestMapping(value="/login/{error}", method = RequestMethod.GET)
   public String errorInLogin(Model model ,@PathVariable final String error){
     model.addAttribute("error", error);
-    model.addAttribute("countryCodeList",partyManagementService.getListOfCountryCodes());
+   // model.addAttribute("countryCodeList",partyManagementService.getListOfCountryCodes());
     return "jsp/register/login";
   }
 
   @RequestMapping(value="/login", method = RequestMethod.GET)
   public String login(Model m){
-    //CountryCodeDTO countryCodeDTO = new CountryCodeDTO();
-    List<CountryCodeDTO> countryCodeList = partyManagementService.getListOfCountryCodes();
-  //  m.addAttribute("countryCodeDTO",countryCodeDTO);
-    m.addAttribute("countryCodeList", countryCodeList);
+    
+   // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/login";
   }
 

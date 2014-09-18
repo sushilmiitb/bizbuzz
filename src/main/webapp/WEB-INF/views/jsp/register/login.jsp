@@ -48,6 +48,7 @@
 				       	}*/
 				    }
 				}
+				
 			/*
 				$("#register_login_submit").click(function(event){
 					event.preventDefault();
@@ -58,31 +59,41 @@
 					}
 				});
 			*/
-				$('#login_form').submit(function(){
-					var phonenumber = $('#j_username').val();
-					$('#j_username').val($('select[id=register_login_countrycode]').val()+phonenumber);
+//  get ten digits from the user input in the phone number field               =====================================
+/*				$('#login_form').submit(function(){
+					var phonenumber = getTenDigitPhoneNumber($('#j_username').val());
+					if(phonenumber==false) alert("Require ten digit number..");
+					else alert("Ten Digit Number:" +phonenumber);
+					
+				//$('input[type=submit]', this).attr('disabled', 'disabled');	
+			    //$('#j_username').val($('select[id=register_login_countrycode]').val()+phonenumber);
 				});
-//   Uncomment below code if you want to add country code before phone number textField on select PH No. from the dropdown 			
-	/*		    $('#register_login_countrycode').change(function(){
+*/			
+//   Uncomment below code if you want to add country code before phone number textField on select PH No. from the dropdown
+/* 			
+			    $('#register_login_countrycode').change(function(){
 					   $('#j_username').val($(this).val()); 
 				});
 				$('#j_username').val($('select[id=register_login_countrycode]').val());
-	*/			
+			
+		*/		
+				   $("#j_username").intlTelInput();		   
+				   
 			});
 		</script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-md-12 col">
+				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
 					<div class="panel panel-primary">
 						<div class="panel-heading">Sign In</div>
 						<div class="panel-body">
 							<form class="form-signin" role="form" id="login_form" action="<c:url value='/j_spring_security_check' />" method="post" accept-charset="UTF-8">
-								<b>Phone number</b>
-                                <div class="row">
-                                  <div class="col-xs-5 col-sm-4 col-md-4 col-lg-4">
-                                  	<select name="numericCode" id="register_login_countrycode" class="form-control" > 
+						  <label for="phonenumber">Phone number</label>	
+                                <br/>
+                                   <input class="form-control" id="j_username" name="j_username" placeholder="Phone number" type="tel" required autofocus />     
+                          <!--       <select name="numericCode" id="register_login_countrycode" class="form-control" > 
 								     <c:forEach var="item" items="${countryCodeList}">
 									   <c:choose>
 						 			 	<c:when test="${item.numericCode == '+91'}">
@@ -94,13 +105,12 @@
     								   </c:choose>
 								     </c:forEach>
                                    </select>
-                                  </div>
-                                  <div class="col-xs-7 col-sm-8 col-md-8 col-lg-8">
+                                 
                                   	<input class="form-control" id="j_username" type="text" name="j_username" placeholder="Phone number" required autofocus />
-                                  </div>
-                                </div>
-                                	
-								<b>Password</b> 
+                               -->
+                               <br/>
+                               	
+								 <label for="password">Password</label> 
 								<input class="form-control" id="j_password" type="password" name="j_password" placeholder="Password" required />
 								<c:if test="${not empty error}">
 									<span class="error">Username or password doesn't match the records</span>
