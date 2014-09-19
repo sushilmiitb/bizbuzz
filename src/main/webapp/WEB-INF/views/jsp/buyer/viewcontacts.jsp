@@ -1,7 +1,7 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles"%>
 <%@ include file="/WEB-INF/views/includes/taglibs.jsp"%>
 
-<tiles:insertDefinition name="seller">
+<tiles:insertDefinition name="buyer">
 	<tiles:putAttribute name="title">
 		BizBuzz-Groups
 	</tiles:putAttribute>
@@ -85,7 +85,7 @@
 					var children = $(event).children();
 					if(typeof children !== 'undefined' && children.length==2){
 						var number = $(children[1]).html();
-						$("#seller_viewconnection_phonenumber").attr("value",number);
+						$("#buyer_viewconnection_phonenumber").attr("value",number);
 						$('#phonebookModal').modal('toggle');
 					}
 				}
@@ -139,14 +139,14 @@
 			* code for mobile devices ends
 			***************************************************************************************/
 
-			$('#seller_viewconnection_form').submit(function(event) {
-				$('#addConnectionModal').modal('toggle');
-				var json = { "userId" : $('#seller_viewconnection_phonenumber').val(),
-						"groupId" : $('#seller_viewconnection_privategroupoption').val()
+			$('#buyer_viewconnection_form').submit(function(event) {
+      			$('#addConnectionModal').modal('toggle');
+				var json = { "userId" : $('#buyer_viewconnection_phonenumber').val(),
+						"groupId" : $('#buyer_viewconnection_privategroupoption').val()
 				};
 				console.log("test", JSON.stringify(json));
 				$.ajax({
-					url: $("#seller_viewconnection_form").attr( "action"),
+					url: $("#buyer_viewconnection_form").attr( "action"),
 					data: JSON.stringify(json),
 					type: "POST",
 		
@@ -198,14 +198,14 @@
 		<script>
 			$(document).ready(function() {
 				$(".alert").fadeOut(4000);
-				$('#seller_viewgroup_form').submit(function(event) {
+				$('#buyer_viewgroup_form').submit(function(event) {
 					$('#groupAddModal').modal('toggle');
-					var json = { "privateGroupName" : $('#seller_viewgroup_groupname').val(),
+					var json = { "privateGroupName" : $('#buyer_viewgroup_groupname').val(),
 								 "errors" : {}	
 								};
 				  console.log("test", JSON.stringify(json));
 				  $.ajax({
-				      url: $("#seller_viewgroup_form").attr( "action"),
+				      url: $("#buyer_viewgroup_form").attr( "action"),
 				      data: JSON.stringify(json),
 				      type: "POST",
 				       
@@ -219,7 +219,7 @@
 			          		var spanElement = document.createElement('span');
 			          		$(spanElement).addClass('error');
 			          		$(spanElement).html(data.errors.duplicate_name);
-				          	$(spanElement).insertAfter($("#seller_viewgroup_groupname"));
+				          	$(spanElement).insertAfter($("#buyer_viewgroup_groupname"));
 				          	$(spanElement).before("<br/><br/>");
 				          	return;
 				          }
@@ -231,7 +231,7 @@
 				          var divInner = document.createElement('div');
 				          $(divInner).addClass('col-xs-12 col-sm-12 col-md-12 col-lg-12');
 				          
-				          var innerhtml = '<span class="glyphicon glyphicon-user"></span> '+data.privateGroupName;
+				          var innerhtml = '<span class="glyphicon glyphicon-user"></span> '+data.id; //privateGroupName
 				          $(divInner).append(innerhtml);
 				          $(divOut).append(divInner);
 				          $(linkElement).append(divOut);
@@ -267,11 +267,11 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-		<c:url var="post_url_contacts" value="/seller/addconnection" />
+		<c:url var="post_url_contacts" value="#" />   <!-- To add connection in future use this url :-  /buyer/addconnection  -->
 		<c:url var="base_delete_url" value="/seller/deleteconnection/" />
-		<c:url var="base_url" value="/seller/viewconnection/" />
-		<c:url var="base_group_url" value="/seller/viewgroup/" />
-		<c:url var="post_url_groups" value="/seller/addgroup" />
+		<c:url var="base_url" value="/buyer/viewconnection/" />
+		<c:url var="base_group_url" value="/buyer/viewgroup/" />
+		<c:url var="post_url_groups" value="#"/>                         <!--    To create group in future use this url :-  /buyer/addgroup  -->
 		
 		<div class="container" role="main">
 <!------------------------------------------ 	 Contacts Module -------------------------------------------->
@@ -294,8 +294,8 @@
 							<div class="list-group">
 								<a href="#" class="list-group-item active">
 									<h4 class="list-group-item-heading">Existing Connections</h4>
-
-								</a> <a href="#" class="list-group-item heading">
+								</a> 
+						<a href="#" class="list-group-item heading">   
 									<div class="row">
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>
@@ -308,19 +308,20 @@
 										</div>
 									</div>
 								</a>
-								<c:forEach items="${connectionList}" var="item">
-									<a href="${base_url}${item.toParty.id}" class="list-group-item">
+  		  	  				<c:forEach items="${connectionList}" var="item">
+									<a href="${base_url}${item.fromParty.id}" class="list-group-item">
 										<div class="row">
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.toParty.firstName} ${item.toParty.middleName}
-												${item.toParty.lastName}</div>
+												${item.fromParty.firstName} ${item.fromParty.middleName}
+												${item.fromParty.lastName}</div>
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.toParty.userId.id}</div>
+												${item.fromParty.userId.id}</div>
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-												${item.fromParty.privateGroupName }</div>
+											  </div>
 										</div>
 									</a>
 								</c:forEach>
+							
 							</div>
 							<div class="modal fade" id="phonebookModal" tabindex="-1" role="dialog"
 								aria-labelledby="myModalLabel" aria-hidden="true">
@@ -352,22 +353,21 @@
 										</div>
 										<div class="modal-body">
 											<form method="POST" role="form" class="form-signin"
-												action="${post_url_contacts}" id="seller_viewconnection_form"
+												action="${post_url_contacts}" id="buyer_viewconnection_form"
 												class="form">
-												<label for="seller_viewconnection_phonenumber">Phonenumber
-													of the person</label> <input class="form-control"
-													id="seller_viewconnection_phonenumber" type="text" value="+91"
-													placeholder="" />
+												<label for="buyer_viewconnection_phonenumber">Phonenumber of the person</label>
+												<input class="form-control" id="buyer_viewconnection_phonenumber"
+												     	 type="text" value="+91" placeholder="" />
 												<div id="phonebookbox">
 													<div style="text-align:center">OR</div>
 													<br/>
 													<input id="phonebook_button" type="button" data-toggle="modal"
 														data-target="#phonebookModal" class="btn btn-primary btn-block" value="Select from Phonebook" />
 												</div>
-				
-												<label for="seller_viewconnection_groupname">Group Name</label>
-												<select class="form-control"
-													id="seller_viewconnection_privategroupoption">
+			  
+												<label for="buyer_viewconnection_groupname">Group Name</label>
+					<!--  			     		<select class="form-control"
+													id="buyer_viewconnection_privategroupoption">
 				
 													<c:forEach var="item" items="${privateGroupList}">
 														<option value="${item.id}"
@@ -375,7 +375,9 @@
 															selected="true" 
 														</c:if>>${item.privateGroupName}</option>
 													</c:forEach>
-												</select> <input id="seller_viewconnection_connect" type="submit"
+												</select>
+					-->							 
+												<input id="buyer_viewconnection_connect" type="submit"
 													class="btn btn-primary btn-block" value="Connect" /> <br />
 				
 											</form>
@@ -392,7 +394,8 @@
 								<a href="#" class="list-group-item active">
 									<h4 class="list-group-item-heading">Your Groups</h4>
 								</a>
-								<c:forEach items="${privateGroups}" var="item">
+			<!--  		    
+						  		<c:forEach items="${privateGroups}" var="item">
 									<a href="${base_group_url}${item.id}" class="list-group-item">
 										<div class="row">
 											<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
@@ -402,6 +405,7 @@
 										</div>
 									</a>
 								</c:forEach>
+			-->				
 							</div>
 							
 							<button class="btn btn-primary btn-block" data-toggle="modal" data-target="#groupAddModal"> Create Group </button>
@@ -416,17 +420,18 @@
 											<h4 class="modal-title" id="myModalLabel">Create New Group</h4>
 										</div>
 										<div class="modal-body">
-											<form:form method="POST" action="${post_url_groups}"
-												id="seller_viewgroup_form" class="form"
+	  			  	  				<form:form method="POST" action="${post_url_groups}"
+												id="buyer_viewgroup_form" class="form"
 												modelAttribute="privateGroupForm">
 												<form:label path="privateGroupName"
-													for="seller_viewgroup_groupname">Group Name</form:label>
+													for="buyer_viewgroup_groupname">Group Name</form:label>
 												<form:input path="privateGroupName" class="form-control"
-													id="seller_viewgroup_groupname" type="text" />
-												<input id="seller_viewgroup_create"
+													id="buyer_viewgroup_groupname" type="text" />
+												<input id="buyer_viewgroup_create"
 													class="btn btn-md btn-primary btn-block" type="submit"
 													value="Create Group" />
-											</form:form>
+										</form:form>
+	             
 										</div>
 									</div>
 									<!-- /.modal-content -->

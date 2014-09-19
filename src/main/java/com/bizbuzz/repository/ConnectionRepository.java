@@ -57,6 +57,13 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "order by p.firstName asc")
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
   
+  @Query("select c from "
+      + "Connection c inner join c.fromParty p "
+      + "where c.toPartyId=?1 and "
+      + "c.connectionType=?2 "
+      + "order by p.firstName asc")
+  List<Connection> findPersonByToPartyIdAndConnectionTypeOrderByFirstName(Long toPartyId, ConnectionType connectionType);
+ 
 //  @Query("select t from "
 //      + "PrivateGroup p inner join p.fromParties f inner join p.toParties t inner join Person t.toParty b "
 //      + "where f.fromPartyId=?1 and "
@@ -72,11 +79,23 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
   List<Connection> findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(Long fromPartyId, ConnectionType connectionType);
  
   @Query("select p from "
+      + "Person p inner join p.toParties c inner join c.toParty pg inner join pg.toParties f "
+      + "where f.toPartyId=?1 and "
+      + "f.connectionType=?2 "
+      + "order by p.firstName asc ")
+  List<Person> findConnectionsByToPartyIdAndConnectionTypeOrderByFromoPartyFirstName(Long toPartyId, ConnectionType connectionType);
+  
+  @Query("select p from "
       + "Connection c inner join c.toParty p "
       + "where c.fromPartyId=?1 and "
       + "p.id=?2")
   Person findPersonByFromPartyIdAndId(Long fromPartyId, Long id);
   
+  @Query("select p from "
+      + "Connection c inner join c.fromParty p "
+      + "where c.toPartyId=?1 and "
+      + "p.id=?2")
+  Person findPersonByToPartyIdAndId(Long toPartyId, Long id);
   
   /**
    * This function returns Private Group which connects group owner with group member

@@ -3,6 +3,13 @@ body {
 	padding-bottom: 30px;
 }
 
+label {
+	display: inline-block;
+	margin-bottom: 5px;
+	margin-top: 5px;
+	font-weight: 700
+}
+
 .footer{
 	position:fixed;
 	bottom:0px;
@@ -64,10 +71,6 @@ span.error {
 input.error {
 	border: solid red;
 	border-width: 1px;
-}
-
-.form-control {
-	margin-bottom: 1em;
 }
 
 .center-align-text {
@@ -324,6 +327,14 @@ ul.subnav-top-horizontal{
     left: 40%;
     margin-top: 5px;
     margin-bottom: 5px;
+}
+
+
+.user-type-radiobutton{
+	display:inline-block;
+	background-color:#ddd;
+	width:30px;
+	
 }
 
 /**** media queries****/

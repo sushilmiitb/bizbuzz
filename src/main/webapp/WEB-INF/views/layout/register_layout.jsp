@@ -23,6 +23,10 @@
 <!-- Custom styles for this template -->
 <link href="${static_base_url}/css/customtheme.css" rel="stylesheet">
 
+<!-- Css for making phonenumber international... -->
+<link href="${static_base_url}/css/countrycode/intlTelInput.css"
+     rel="stylesheet" >
+
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 
@@ -41,6 +45,10 @@
 	<script src="${static_base_url}/js/bootstrap/bootstrap.min.js"></script>
 	<script src="${static_base_url}/assets/js/docs.min.js"></script>
 	<script src="${static_base_url}/js/customjs.js"></script>
+	
+	<!-- Js files for making phonenumber international... -->
+	<script src="${static_base_url}/js/countrycode/intlTelInput.js"></script>
+	
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 </body>

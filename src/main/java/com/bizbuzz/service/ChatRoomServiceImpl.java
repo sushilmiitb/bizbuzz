@@ -26,8 +26,8 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
 
   @Override
-  public ChatRoom getChatRoomByMembers(Long topartyId,Long fromPartyId) {
-    List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomByMembers(topartyId,fromPartyId);
+  public ChatRoom getChatRoomByMembers(Long fromPartyId,Long topartyId) {
+    List<ChatRoom> chatRooms = chatRoomRepository.findChatRoomByMembers(fromPartyId,topartyId);
     if(chatRooms==null || chatRooms.size()==0)
       return null;
     return chatRooms.get(0);

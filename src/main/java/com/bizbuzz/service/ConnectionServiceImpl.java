@@ -84,6 +84,10 @@ public class ConnectionServiceImpl implements ConnectionService {
     return connectionRepository.findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(seller.getId(), ConnectionType.SELLER_BUYER);
   }
   
+  public List<Connection> getAllBuyersConnection(Person buyer) {
+    return connectionRepository.findPersonByToPartyIdAndConnectionTypeOrderByFirstName(buyer.getId(), ConnectionType.SELLER_BUYER);
+  }
+  
   public List<Connection> getAllSellerConnectionsUsingPrivateGroup(Person seller){
     return connectionRepository.findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(seller.getId(), ConnectionType.GROUPOWNER_GROUP);
   }
@@ -98,6 +102,10 @@ public class ConnectionServiceImpl implements ConnectionService {
   
   public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId){
     return connectionRepository.findPersonByFromPartyIdAndId(seller.getId(), buyerId);
+  }
+  
+  public Person getSellerByBuyerAndSellerId(Person buyer, Long sellerId) {
+    return connectionRepository.findPersonByToPartyIdAndId(buyer.getId(), sellerId);
   }
   
   public void flush(){

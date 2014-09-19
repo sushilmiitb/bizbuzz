@@ -22,14 +22,6 @@ import org.hibernate.annotations.FetchMode;
 @Entity
 public class ChatRoom implements Serializable{
 
-  public Date getCreatedAt() {
-    return createdAt;
-  }
-
-  public Long getId() {
-    return id;
-  }
-
   /**
    * 
    */
@@ -78,6 +70,15 @@ public class ChatRoom implements Serializable{
     this.updatedAt = updatedAt;
   }
 
+
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  public Long getId() {
+    return id;
+  }
+  
   @PrePersist
   protected void onCreate() {
     createdAt = new Date();

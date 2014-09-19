@@ -266,7 +266,7 @@
 			value="/seller/uploadproduct/category/${categoryId}" />
 		<c:if test="${not empty itemId }">
 			<c:url var="form_upload_url"
-				value="/seller/uploadproduct/category/${categoryId}/item/${itemId }" />
+				value="/seller/uploadproduct/category/${categoryId}/item/${itemId}" />
 		</c:if>
 		<c:url var="newProductUpload"
 			value="/seller/uploadproduct/category/${categoryId}" />

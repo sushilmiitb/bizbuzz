@@ -202,7 +202,7 @@ public class SellerController {
     Person seller = getSeller();
     Person buyer = connectionService.getBuyerBySellerAndBuyerId(seller, buyerId);
     if(buyer==null){
-      return "redirect:/seller/viewconnection";
+      return "redirect:/seller/viewcontacts";
     }
     PrivateGroup privateGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(seller, buyer);
     m.addAttribute("buyer", buyer);
@@ -212,8 +212,6 @@ public class SellerController {
     return "jsp/seller/viewsingleconnection";
   }
   
-  
- 
   /*
   @RequestMapping(value="/seller/sendinvitation", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
@@ -236,17 +234,6 @@ public class SellerController {
       SmsSender.sendSms(request.getUserId(),"Hello");   
       return ajaxReply;
     }
-
-    
- // below code for add members into chatroom   
-    List<Party> members = new ArrayList<Party>();
-    members.add(seller);
-    members.add(toPerson);
-    ChatRoom chatRoom = new ChatRoom();
-    chatRoom.setMembers(members);
-    chatRoomService.saveChatRoom(chatRoom);
- // Above  code for add members into chatroom
-    
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
     if(errors.size()>0){
@@ -263,6 +250,19 @@ public class SellerController {
       privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
       connectionService.createConnection(privateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
+    
+ // below code for add members into chatroom   
+    ChatRoom chatRoomFromDB = chatRoomService.getChatRoomByMembers(seller.getId(),toPerson.getId());
+    if(chatRoomFromDB==null){
+      List<Party> members = new ArrayList<Party>();
+      members.add(seller);
+      members.add(toPerson);
+      ChatRoom chatRoom = new ChatRoom();
+      chatRoom.setMembers(members);
+      chatRoomService.saveChatRoom(chatRoom);
+    }
+ // Above  code for add members into chatroom 
+    
     ajaxReply.addDetails(toPerson, privateGroup);
     return ajaxReply;
   }
@@ -276,7 +276,7 @@ public class SellerController {
       /**
        * Person has not registered. Add code to ask him to register.
        */
-      return "redirect:/seller/viewconnection";
+      return "redirect:/seller/viewcontacts";
     }
     connectionService.deleteConnection(seller, toPerson);
     
@@ -284,13 +284,12 @@ public class SellerController {
     if(privateGroup != null){
       connectionService.deleteConnection(privateGroup, toPerson);
     }
-    
+// =================================================================== Delete Chatroom of the connection members    
    // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
    // chatService.deleteAllChatByChatRoomId(chatroom.getId());
     //chatRoomService.deleteChatRoom(chatroom.getId());
     
-    
-    return "redirect:/seller/viewconnection";
+    return "redirect:/seller/viewcontacts";
   }
   
   @RequestMapping(value="/seller/editconnection/changegroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -394,7 +393,8 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
+    return "redirect:/seller/viewproduct/category/"+categoryId;
+    //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
@@ -488,6 +488,7 @@ public class SellerController {
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
     m.addAttribute("items", items);
+    m.addAttribute("categoryId",categoryId);
     return "jsp/seller/viewproduct";
   }
   
