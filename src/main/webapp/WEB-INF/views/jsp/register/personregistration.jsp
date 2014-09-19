@@ -85,9 +85,6 @@
 				***************************************************************************************/
 				
 				function emptyErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
 						elem.toggleClass("error");
@@ -95,9 +92,6 @@
 				}
 				
 				function noneSelectErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(elem.val()=="None"){
 						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
 					}
@@ -114,9 +108,6 @@
 				}
 				
 				function invalidEmailErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
@@ -127,22 +118,23 @@
 				}
 				
 				function invalidPhoneErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
 					if(!isValidPhoneNumber(elem.val())){
-						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
+						$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
+						elem.toggleClass("error");
+					}
+				}
+				
+				function phoneEmptyErrorDisplay(elem, errorMsg){
+					if(!elem.val()){
+						$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
 						elem.toggleClass("error");
 					}
 				}
 				
 				function nonTenDigitPhoneErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
@@ -169,7 +161,7 @@
 			
 					$("span.error").remove();
 					$(".error").toggleClass("error");
-					emptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
+					phoneEmptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
 					invalidPhoneErrorDisplay($('#register_personregistration_username'), "Please enter a valid phone number");       
 //                  nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
 					emptyErrorDisplay($('#register_personregistration_password'), "Password cannot be empty");
@@ -206,31 +198,44 @@
 					<div class="panel-heading">Register</div>
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
-								
 							<div class="row">
-								<div class="col-xs-6 col-sm-4 col-md-4 col-lg-4">
-										<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
+								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+									<form:radiobutton  path="company.companyRole" value="Buyer" class="user-type-radiobutton" checked="checked"/>
+    									Buyer
 								</div>
-								<div class=" hidden-md hidden-lg"></div>									
-								     <c:forEach var="item" items="${companyRoleList}" varStatus="loop">
-						 		        <c:choose>
-						 			     <c:when test="${loop.index==0}">
-						 			      <div class="col-sm-3 col-md-3 col-lg-3">
-    									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/>
-    											${item}
-    									  </div>		
-    								     </c:when>
-    								     <c:otherwise>
-    								     	<div class="col-sm-4 col-md-4 col-lg-3">
-    									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" />
-    											${item}
-    										</div>
-    							         </c:otherwise>
-    							   		</c:choose>
-							    	</c:forEach>	
+								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+									<form:radiobutton  path="company.companyRole" value="Seller" class="user-type-radiobutton" checked="checked"/>
+    									Seller
+								</div>
+								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+							</div>	
+							
+<!-- 							<div class="row"> -->
+<!-- 								<div class="col-xs-6 col-sm-4 col-md-4 col-lg-4"> -->
+<%-- 										<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label> --%>
+<!-- 								</div> -->
+<!-- 								<div class=" hidden-md hidden-lg"></div>									 -->
+<%-- 								     <c:forEach var="item" items="${companyRoleList}" varStatus="loop"> --%>
+<%-- 						 		        <c:choose> --%>
+<%-- 						 			     <c:when test="${loop.index==0}"> --%>
+<!-- 						 			      <div class="col-sm-3 col-md-3 col-lg-3"> -->
+<%--     									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/> --%>
+<%--     											${item} --%>
+<!--     									  </div>		 -->
+<%--     								     </c:when> --%>
+<%--     								     <c:otherwise> --%>
+<!--     								     	<div class="col-sm-4 col-md-4 col-lg-3"> -->
+<%--     									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" /> --%>
+<%--     											${item} --%>
+<!--     										</div> -->
+<%--     							         </c:otherwise> --%>
+<%--     							   		</c:choose> --%>
+<%-- 							    	</c:forEach>	 --%>
 									
-								<div class=" hidden-md hidden-lg"></div>
-							</div>
+<!-- 								<div class=" hidden-md hidden-lg"></div> -->
+<!-- 							</div> -->
+
 							<br/>
 								 
 							<form:label path="userLogin.id" for="register_personregistration_username">Phone Number</form:label>
