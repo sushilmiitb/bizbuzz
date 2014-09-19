@@ -1,30 +1,45 @@
 package com.bizbuzz.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
+import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
+import com.bizbuzz.form.validator.SellerValidator;
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Company;
+import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
+import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.service.CategoryService;
+import com.bizbuzz.service.ChatRoomService;
+import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.utils.SmsSender;
 
 @Controller
 public class BuyerController {
@@ -38,12 +53,120 @@ public class BuyerController {
   PropertyService propertyService;
   @Autowired
   ItemService itemService;
+  @Autowired
+  ConnectionService connectionService;
+  @Autowired
+  ChatRoomService chatRoomService;
+  @Autowired
+  SellerValidator sellerValidator;
   
   @RequestMapping(value={"/buyer", "/buyer/home"}, method = RequestMethod.GET)
   public String buyerHome(){
     return "jsp/buyer/home";
   }
   
+  @RequestMapping(value="/buyer/viewcontacts", method = RequestMethod.GET)
+  public String viewBuyerContacts(Model m){
+    Person buyer = getBuyer();
+   // List<PrivateGroup> privateGroupList = connectionService.getPrivateGroupsByGroupOnwer(buyer);
+   // m.addAttribute("privateGroups", privateGroupList);
+    PrivateGroup privateGroup = new PrivateGroup();
+    m.addAttribute("privateGroupForm", privateGroup);
+    
+    List<Connection> allConnections = connectionService.getAllBuyersConnection(buyer);
+    m.addAttribute("connectionList", allConnections);
+ //   m.addAttribute("privateGroupList", privateGroupList);
+ 
+    return "jsp/buyer/viewcontacts";
+  }
+  
+  @RequestMapping(value="/buyer/addconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+  @ResponseBody
+  public SellerAddConnectionResponseAjaxDTO addConnection(@RequestBody SellerAddConnectionRequestAjaxDTO request){
+    Map<String, String> errors;
+    SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
+    Person buyer = getBuyer();
+    Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
+    
+    if(toPerson == null){
+      SmsSender.sendSms(request.getUserId(),"Hello");   
+      return ajaxReply;
+    }
+    
+    errors = sellerValidator.validateAddConnection(toPerson,buyer);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      return ajaxReply;
+    }
+    
+    /**
+     * change other functions also to use generic createconnection
+     */
+    connectionService.createConnection(toPerson,buyer, ConnectionType.SELLER_BUYER);
+/*   
+    PrivateGroup privateGroup = null;
+    if(request.getGroupId()!=-1){
+      privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
+      connectionService.createConnection(privateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
+    }
+*/    
+ // below code for add members into chatroom
+    ChatRoom chatRoomFromDB = chatRoomService.getChatRoomByMembers(toPerson.getId(),buyer.getId());
+    if(chatRoomFromDB==null){
+      List<Party> members = new ArrayList<Party>();
+      members.add(buyer);
+      members.add(toPerson);
+      ChatRoom chatRoom = new ChatRoom();
+      chatRoom.setMembers(members);
+      chatRoomService.saveChatRoom(chatRoom);
+    }
+ // Above  code for add members into chatroom
+    
+ //   ajaxReply.addDetails(toPerson, privateGroup);
+    return ajaxReply;
+  }
+ 
+  @RequestMapping(value="/buyer/viewconnection/{sellerId}", method = RequestMethod.GET)
+  public String getSingleBuyerConnection(@PathVariable Long sellerId, Model m){
+    Person buyer = getBuyer();
+    Person seller = connectionService.getSellerByBuyerAndSellerId(buyer, sellerId);
+    if(seller==null){
+      return "redirect:/buyer/viewcontacts";
+    }
+    
+//    PrivateGroup privateGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(buyer, seller);
+    m.addAttribute("seller", seller);
+   // m.addAttribute("privateGroup", privateGroup);
+  //  List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
+   // m.addAttribute("privateGroupList", privateGroups);
+    return "jsp/buyer/viewsingleconnection";
+  }
+  
+  @RequestMapping(value="/buyer/deleteconnection/{personId}")
+  public String deleteConnection(@PathVariable Long personId){
+//    List<String> errors = new ArrayList<String>();
+    Person buyer = getBuyer();
+    Person toPerson = partyManagementService.getPerson(personId);
+    if(toPerson == null){
+      /**
+       * Person has not registered. Add code to ask him to register.
+       */
+      return "redirect:/buyer/viewcontacts";
+    }
+    connectionService.deleteConnection(buyer, toPerson);
+    
+    PrivateGroup privateGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(buyer, toPerson);
+    if(privateGroup != null){
+      connectionService.deleteConnection(privateGroup, toPerson);
+    }
+//=====================================================                         Delete ChatRoom of the connection also    
+   // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
+   // chatService.deleteAllChatByChatRoomId(chatroom.getId());
+    //chatRoomService.deleteChatRoom(chatroom.getId());
+    
+    return "redirect:/buyer/viewcontacts";
+  }
+ 
   @RequestMapping(value="/buyer/viewcategory/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategory(Model m, @PathVariable Long categoryId){
     CategoryTree categoryTree = null;

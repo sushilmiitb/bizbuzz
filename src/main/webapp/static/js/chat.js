@@ -13,7 +13,7 @@ function initializeChatPanel(bodyBottomOffset){
 }
 
 function setChatPanelToggleCallback(){
-	$( ".glyphicon-comment" ).click(function() {
+	$( ".chat-toggle-btn" ).click(function() {
 		$( ".chat-content" ).animate({
 			height: "toggle"
 		}, 200, function() {
@@ -42,12 +42,14 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		$(".chat-body").addClass("div-loader");
+		//$(".chat-panel").addClass("div-loader");
+		loadDivLoader(parentObj);
 		$.ajax({
 			url: url,
 			type: "GET",
 			data: {chatpage: "back"},
 			success: function(data) {
+			$(".chat-panel").removeClass("div-loader");
 			removeChatPanelToggleCallback();
 			removeChatBackButtonCallback();
 			$(parentObj).children().remove();
@@ -60,13 +62,17 @@ function setChatBackButtonCallback(){
 }
 
 function removeChatPanelToggleCallback(){
-	$( ".glyphicon-comment").unbind("click");
+	$( ".chat-toggle-btn").unbind("click");
 }
 
 function removeChatBackButtonCallback(){
 	$(".chat-back").unbind("click");
 }
 
+/**
+ * This function sets ui changes on chat-panel when window is resized
+ * @return
+ */
 function setChatPanelResizeCallback(){
 	$(window).resize(function(){
 		$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -76,6 +82,12 @@ function setChatPanelResizeCallback(){
 	});
 }
 
+/**
+ * This function sets ui changes on chat-panel when window is resized when there is a bottom margin for 
+ * chat body. This function is used when there is chat-input-area.
+ * @param bodyBottomOffset: How much margin from chat-panel bottom does chat-body ends
+ * @return
+ */
 function setChatPanelResizeCallback(bodyBottomOffset){
 	$(window).resize(function(){
 		$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -89,21 +101,44 @@ function removeChatPanelResizeCallback(){
 	$(window).unbind("resize");
 }
 
-function loadCurrentChatRoomState(){
+/**
+ * 
+ * @param isShow: Do we have to make chat-panel visible after loading the current state.
+ * @param itemId: If it is item-chat then this parameter contains itemid else undefined.
+ * @param secondPersonId: In relevant cases this parameter contains id of the other person in chatroom.
+ * @return
+ */
+function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 	var url = "/bizbuzz/chat/controller";
+	var data;
+	if(itemId===undefined){//that means it is in normal chat mode and chatcontroller has to determine the state using session state variables
+		data = {chatpage:"determine"};
+	}else if(secondPersonId===undefined){//we have to load all chat rooms of that particular item
+		data = {chatpage:"itemchatroomlist", itemId:itemId};
+	}
+	else{//we have to load individual item chat room
+		data = {chatpage:"itemchatroom", itemId:itemId, secondPersonId:secondPersonId};
+	}
 	var parentObj = $(".chat-panel");
 	$.ajax({
 		url: url,
 		type: "GET",
-		data: {chatpage: "determine"},
+		data: data,
 		success: function(data) {
 			$(parentObj).append(data);
+			if(isShow){
+				$(".chat-content").show();
+			}
 		},
 		error: function(){
 		}
 	});
 }
 
+/**
+ * Load all chat rooms of the person.
+ * @return
+ */
 function loadChatRoomList(){
 	var url = "/bizbuzz/chat/controller";
 	var parentObj = $(".chat-panel");
@@ -120,23 +155,67 @@ function loadChatRoomList(){
 	});
 }
 
+/**
+ * Load particular chatroom
+ * @param url
+ * @return
+ */
 function loadNormalChatRoom(url){
 	var parentObj = $(".chat-panel");
-	$(".chat-body").addClass("div-loader");
+	//$(".chat-panel").addClass("div-loader");
+	loadDivLoader(parentObj);
 	$.ajax({
 		url: url,
 		type: "GET",
 		success: function(data) {
+		$(".chat-panel").removeClass("div-loader");
 		removeChatPanelToggleCallback();
 		removeChatBackButtonCallback();
+		removeChatPanelResizeCallback();
 		$(parentObj).children().remove();
 		$(parentObj).append(data);
+		$(".chat-body").scrollTop(1000000);
 	},
 	error: function(){
 	}
 	});
 }
 
+/**
+ * Load particular item chat room
+ * @param chatroomId
+ * @param itemId
+ * @param fromPage
+ * @return
+ */
+function loadItemChatRoom(chatroomId, itemId, fromPage){
+	var parentObj = $(".chat-panel");
+	//$(".chat-panel").addClass("div-loader");
+	loadDivLoader(parentObj);
+	var url = "/bizbuzz/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId+"/frompage/"+fromPage;
+	$.ajax({
+		url: url,
+		type: "GET",
+		success: function(data) {
+		$(".chat-panel").removeClass("div-loader");
+		removeChatPanelToggleCallback();
+		removeChatBackButtonCallback();
+		removeChatPanelResizeCallback();
+		$(parentObj).children().remove();
+		$(parentObj).append(data);
+		$(".chat-body").scrollTop(1000000);
+	},
+	error: function(){
+	}
+	});
+}
+
+/**
+ * Insert chat message after person enters chat or when chat is received from other person.
+ * @param msg
+ * @param isSelf
+ * @return
+ */
 function insertChatMessage(msg, isSelf){
 	var lines = msg.split("\n");
 	var str = "";
@@ -159,13 +238,65 @@ function insertChatMessage(msg, isSelf){
 	$(".chat-body").scrollTop(1000000);
 }
 
-function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
-	removeChatPanelResizeCallback();
-	initializeChatPanel(128);
-	setChatPanelResizeCallback(128);
+/**
+ * Initialize the chat room. It can be used for both normal chat room and item chatroom. It initializes the socket.
+ * @param socketUrl
+ * @param userId
+ * @param senderId
+ * @param chatroomId
+ * @param itemId
+ * @return
+ */
+function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemId){
+	var bottomOffset = 100;
+	var baseInputHeight = 50;
+	initializeChatPanel(bottomOffset);
+	setChatPanelResizeCallback(bottomOffset);
 	setChatPanelToggleCallback();
 	setChatBackButtonCallback();
 	$(".chat-body").scrollTop(1000000);
+	
+	/****Code for handling variable height for text area***/
+	var previouslines = 1;
+	var baseMessageFieldHeight;
+	var baseMessageButtonHeight;
+	//var baseChatInputAreaHeight = baseInputHeight;
+	var baseBottomOffset = bottomOffset;
+	$("textarea").on("keyup", function(e) {
+	    /*if ($("textarea").attr("cols")) {
+	        var cols = parseInt($("textarea").attr("cols")),
+	            curPos = $('textarea').prop("selectionStart"),
+	            result = Math.floor(curPos/cols);
+	        var msg = (result < 1) ? "Cursor is on the First line!" : "Cursor is on the line #"+(result+1);
+	        console.log($("p").text(msg).text());
+	    }*/
+		if(e.keyCode == '13') {
+			sendChatCallback();
+			return;
+		}
+		var lht = parseInt($('textarea').css('lineHeight'),10);
+		var lines = Math.round($('textarea').prop('scrollHeight') / lht);
+		if(!!window.chrome){
+			lines = Math.round(($('textarea').prop('scrollHeight') - 26) / lht);
+		}
+		if(lines>previouslines){
+			if(lines==2){
+				baseMessageFieldHeight = $("#message-field").height();
+				baseMessageButtonHeight = $("#message-button").height();
+			}
+			previouslines = lines;
+			bottomOffset = bottomOffset+lht;
+			initializeChatPanel(bottomOffset);
+			removeChatPanelResizeCallback();
+			setChatPanelResizeCallback(bottomOffset);
+			$("#message-field").height($("#message-field").height()+lht);
+			$("#message-button").height($("#message-button").height()+lht);
+			//$(".chat-input-area").height($(".chat-input-area").height()+lht);
+			$(".chat-body").scrollTop(1000000);
+		}
+		console.log(lines);
+	});
+	
 	/****websocket code starts***/
 	if (!window.console) {
 		console = {log: function() {}};
@@ -181,9 +312,12 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
 	request.transport = 'websocket';
 	request.fallbackTransport = 'long-polling';
 
+	/**
+	 * When the connection opens for the first time.
+	 */
 	request.onOpen = function(response){
 		console.log('onOpen: connection opened using transport:' + response.transport);
-		subSocket.push(JSON.stringify({"message":"0Open0","userId": userId,"chatroomId":chatroomId,"itemId":0}));
+		subSocket.push(JSON.stringify({"message":"0Open0","userId": userId,"chatroomId":chatroomId,"itemId":itemId}));
 	}
 
 	request.onReconnect = function(request, response){
@@ -191,6 +325,9 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
 		socket.info("Reconnecting");
 	}
 
+	/**
+	 * On receiving message from other person
+	 */
 	request.onMessage = function(response){
 		var message = response.responseBody;
 		var result;
@@ -208,14 +345,16 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
 	}
 
 	request.onError = function(response){
-		content.html($('<p>', { text: 'Sorry, but '
-			+ 'there some problem with your '
-			+ 'socket or the server is down' }));
+		console.log("An error ocurred in web socket: " + response.responseBody);
+		return;
 	}
 
 	var subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
 
-	$('#message-button').click(function() {
+	/**
+	 * Send the chat.
+	 */
+	function sendChatCallback(){
 		var message = $('#message-field').val();
 		var strippedStr = message.trim();
 		if(strippedStr == ""){
@@ -226,8 +365,24 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId){
 		console.log('SentMessage:'+message);
 		$('#message-field').val("");
 		insertChatMessage(message, true);
-		subSocket.push(JSON.stringify({"message":message,"userId": userId,"chatroomId":chatroomId,"itemId":0}));
+		
+		if(previouslines>1){
+			previouslines =1;
+			bottomOffset = baseBottomOffset;
+			initializeChatPanel(bottomOffset);
+			removeChatPanelResizeCallback();
+			setChatPanelResizeCallback(bottomOffset);
+			$("#message-field").height(baseMessageFieldHeight);
+			$("#message-button").height(baseMessageButtonHeight);
+			//$(".chat-input-area").height(baseChatInputAreaHeight);
+			
+		}
+		$("#message-field").focus();
+		subSocket.push(JSON.stringify({"message":message,"userId": userId,"chatroomId":chatroomId,"itemId":itemId}));
+	}
+	$('#message-button').click(function(){
+		sendChatCallback();
 	});
-
+	//sendChatCallback on pressing enterkey is handled in onkeyup
 	/****web socket code ends***/
 }

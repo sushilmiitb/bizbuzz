@@ -7,52 +7,84 @@
 		BizBuzz-Registration
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
+		<script src="<c:url value='/static/js/cordova/MobileFileSystem.js'/>"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				var debug = true;
-				var androiddebug = true;
-				function customizeForDevice(){
-				    var ua = navigator.userAgent;
-				    var checker = {
-						iphone: ua.match(/(iPhone|iPod|iPad)/),
-						blackberry: ua.match(/BlackBerry/),
-						android: ua.match(/Android/)
-				    };
-				    if (checker.android){
-				    	/*if(androiddebug){
-				       		$("#debuglist").append("<li>Device is android</li>");
-				       	}
-				       	var cordovajsurl = "<c:url value='/static/js/cordova/cordova.js' />";
-				       	$.getScript(cordovajsurl, function(){
-				       		if(androiddebug){
-				       			$("#debuglist").append("<li>Loaded cordova.js</li>");
-				       		}
-				       		var telephoneurl = "<c:url value='/static/js/cordova/plugins/telephonenumber.js' />";
-				       		$.getScript(telephoneurl, function(){
-					       		if(androiddebug){
-					       			$("#debuglist").append("<li>Loaded telephonenumber.js</li>");
-					       		}
-					       	});	
-				       	});*/
-				    }
-				    else if (checker.iphone){
-				       	// $('.idevice-only').show();
-				    }
-				    else if (checker.blackberry){
-				       	// $('.berry-only').show();
-				    }
-				    else {
-				       	// $('.unknown-device').show();
-				       	/*console.log("Device is unknown.");
-				       	if(androiddebug){
-				       		$("#debuglist").append("<li>Device is unknown</li>");
-				       	}*/
-				    }
-				}
-				function emptyErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
+				var debug = false;
+			    /***************************************************************************************
+				* code for mobile devices
+				***************************************************************************************/
+				var ua = navigator.userAgent.toLowerCase();
+				var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+				var processAndroidSubmitForm;
+				var isCordovaLoaded;
+				var baseStaticUrl = "/bizbuzz/static";
+				if(isAndroid) {
+					if(debug)
+						alert("This is android platform.");
+				
+					function onCordovaLoad(){
+						if(debug)
+							alert("cordova Loaded");
+						 document.addEventListener("deviceready", onDeviceReady, false);
+					    // device APIs are available
+					    //
+					    function onDeviceReady() {
+					        navigator.splashscreen.hide();
+					        isCordovaLoaded = true;
+					    }
 					}
+					loadjsfile(baseStaticUrl+"/js/cordova/cordova.js", onCordovaLoad);
+				}
+				/*** otherwise ***/
+				else{
+				}
+				
+				//called from form submit checker
+				processAndroidSubmitForm = function(username, password){
+					function fail(){
+					}
+					function onwriteend(){
+						$("#register_personregistration_form").submit();
+					}
+					function onDataRead(args){
+						var data = args.data;
+						var obj = JSON.parse(data);
+						obj.username = username;
+						obj.password = password;
+						var objString = JSON.stringify(obj);
+						MobileFileSystem.writeInAFileShortcut({path: ["config"], fileName: "properties.txt", fail:fail, data: objString, onwriteend: onwriteend});
+					}
+					MobileFileSystem.readAFileAsTextShortcut({path: ["config"], fileName: "properties.txt", success: onDataRead, fail:fail});
+				};
+				
+				function loadjsfile(filename, onload){	
+					if(debug)
+						alert("mobileadaptation.js/loadjsfile:filename->"+filename);
+					var script=document.createElement('script');
+					script.setAttribute("type","text/javascript");
+				
+					script.setAttribute("src", filename);
+					if (typeof script!="undefined")
+						document.getElementsByTagName("head")[0].appendChild(script);
+				
+					if (script.readyState){  //IE
+						script.onreadystatechange = function(){
+							if (script.readyState == "loaded" || script.readyState == "complete"){
+								script.onreadystatechange = null;
+								//do your stuff
+							}
+						};
+					} else {  //Others
+						script.onload = onload;
+					}
+				}			
+	
+				/***************************************************************************************
+				* code for mobile devices ends
+				***************************************************************************************/
+				
+				function emptyErrorDisplay(elem, errorMsg){
 					if(!elem.val()){
 						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
 						elem.toggleClass("error");
@@ -60,9 +92,6 @@
 				}
 				
 				function noneSelectErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(elem.val()=="None"){
 						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
 					}
@@ -79,9 +108,6 @@
 				}
 				
 				function invalidEmailErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
@@ -92,22 +118,23 @@
 				}
 				
 				function invalidPhoneErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
 					if(!isValidPhoneNumber(elem.val())){
-						$("<span>"+errorMsg+"</span>").insertAfter(elem).toggleClass("error");
+						$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
+						elem.toggleClass("error");
+					}
+				}
+				
+				function phoneEmptyErrorDisplay(elem, errorMsg){
+					if(!elem.val()){
+						$("<span>"+errorMsg+"</span>").insertAfter(elem.parent()).toggleClass("error");
 						elem.toggleClass("error");
 					}
 				}
 				
 				function nonTenDigitPhoneErrorDisplay(elem, errorMsg){
-					if(debug){
-						console.log ("Element Value", elem.val());
-					}
 					if(!elem.val()){
 						return;
 					}
@@ -125,26 +152,36 @@
 						pass.toggleClass("error");
 					}
 				}
+ 
+				$("#register_personregistration_username").intlTelInput();
 				
-				$("#register_personregistration_submit").click(function(event){
+//			$('#register_personregistration_username').val("");
+				 $("#register_personregistration_submit").click(function(event){
 					event.preventDefault();
+			
 					$("span.error").remove();
 					$(".error").toggleClass("error");
-					emptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
-					invalidPhoneErrorDisplay($('#register_personregistration_username'), "Please enter a valid phone number");
-					nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
+					phoneEmptyErrorDisplay($('#register_personregistration_username'), "Phone number cannot be empty");
+					invalidPhoneErrorDisplay($('#register_personregistration_username'), "Please enter a valid phone number");       
+//                  nonTenDigitPhoneErrorDisplay($('#register_personregistration_username'), "Phone number should be of 10 digits");
 					emptyErrorDisplay($('#register_personregistration_password'), "Password cannot be empty");
 					emptyErrorDisplay($('#register_personregistration_firstname'), "Name cannot be empty");
+					emptyErrorDisplay($('#register_personregistration_companyname'), "Company name cannot be empty");
 					//emptyErrorDisplay($('#register_personregistration_contactnumber'), "Contact number cannot be empty");
-					noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
+					//noneSelectErrorDisplay($('#register_personregistration_companyrole'), "Please select a user type");
+					noneSelectErrorDisplay($('#register_personregistration_countrycode'), "Please select a country code");
 					//invalidEmailErrorDisplay($('#register_personregistration_email'), "Please enter a valid email address");
 					passwordMisMatchErrorDisplay($('#register_personregistration_repassword'), $('#register_personregistration_password'), "Password mismatch");
 					//invalidPhoneErrorDisplay($('#register_personregistration_contactnumber'), "Please enter a valid phone number");
 					if($(".error").length == 0){
-						$("#register_personregistration_form").submit();
+						if(isAndroid && isCordovaLoaded){
+							processAndroidSubmitForm($('#register_personregistration_username').val(), $('#register_personregistration_password').val());
+						}
+						else{
+							$("#register_personregistration_form").submit();
+						}
 					}
 				});
-				customizeForDevice();
 			});
 		</script>
 	</tiles:putAttribute>
@@ -156,13 +193,68 @@
 	</div>
 	<div class="container" role="main">
 		<div class="row" id="maincontent">
-			<div class="col-xs-12 col-md-12 col">
+			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
 				<div class="panel panel-primary">
 					<div class="panel-heading">Register</div>
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
+							<div class="row">
+								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+									<form:radiobutton  path="company.companyRole" value="Buyer" class="user-type-radiobutton" checked="checked"/>
+    									Buyer
+								</div>
+								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
+									<form:radiobutton  path="company.companyRole" value="Seller" class="user-type-radiobutton" checked="checked"/>
+    									Seller
+								</div>
+								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+							</div>	
+							
+<!-- 							<div class="row"> -->
+<!-- 								<div class="col-xs-6 col-sm-4 col-md-4 col-lg-4"> -->
+<%-- 										<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label> --%>
+<!-- 								</div> -->
+<!-- 								<div class=" hidden-md hidden-lg"></div>									 -->
+<%-- 								     <c:forEach var="item" items="${companyRoleList}" varStatus="loop"> --%>
+<%-- 						 		        <c:choose> --%>
+<%-- 						 			     <c:when test="${loop.index==0}"> --%>
+<!-- 						 			      <div class="col-sm-3 col-md-3 col-lg-3"> -->
+<%--     									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" checked="checked"/> --%>
+<%--     											${item} --%>
+<!--     									  </div>		 -->
+<%--     								     </c:when> --%>
+<%--     								     <c:otherwise> --%>
+<!--     								     	<div class="col-sm-4 col-md-4 col-lg-3"> -->
+<%--     									  <form:radiobutton  path="company.companyRole" value="${item}" class="user-type-radiobutton" /> --%>
+<%--     											${item} --%>
+<!--     										</div> -->
+<%--     							         </c:otherwise> --%>
+<%--     							   		</c:choose> --%>
+<%-- 							    	</c:forEach>	 --%>
+									
+<!-- 								<div class=" hidden-md hidden-lg"></div> -->
+<!-- 							</div> -->
+
+							<br/>
+								 
 							<form:label path="userLogin.id" for="register_personregistration_username">Phone Number</form:label>
+						    <form:input path="userLogin.id" type="tel" class="form-control" id="register_personregistration_username" placeholder="Phone number" /> 
+				     	<!--  	   
+						    <form:select path="countryCodeDTO.numericCode" class="form-control" id="register_personregistration_countrycode" >
+								<c:forEach var="item" items="${countryCodeList}">
+									<c:choose>
+						 				<c:when test="${item.numericCode == '+91'}">
+											<form:option value="${item.numericCode}" selected="selected">${item.countryName} ${item.numericCode}</form:option>
+										</c:when>
+    									<c:otherwise>
+    										<form:option value="${item.numericCode}">${item.countryName} ${item.numericCode}</form:option>
+    									</c:otherwise>
+    								</c:choose>
+								</c:forEach>
+							</form:select>	
 							<form:input path="userLogin.id" class="form-control" id="register_personregistration_username" placeholder="10 digit number" type="text" />
+					-->			
 							<form:errors path="userLogin.id" class="error"/>
 							<form:label path="userLogin.passwordHash" for="register_personregistration_password">Password</form:label>
 							<form:input path="userLogin.passwordHash" class="form-control" placeholder="Type Password" id="register_personregistration_password" autocomplete="off" type="password" />
@@ -172,6 +264,13 @@
 							
 							<h3>Details</h3>
 							
+				<!--  		<form:select path="company.companyRole" class="form-control" id="register_personregistration_companyrole" >
+								<form:option value="None">None</form:option>
+								<c:forEach var="item" items="${companyRoleList}">
+									<form:option value="${item}">${item}</form:option>
+								</c:forEach>
+							</form:select>
+				-->			
 							<form:label path="person.firstName" for="register_personregistration_firstname">Name</form:label>
 							<form:input path="person.firstName" class="form-control" placeholder="Enter your name" id="register_personregistration_firstname" type="text" />
 							<form:errors path="person.firstName" class="error" />
@@ -193,7 +292,7 @@
 <%-- 							<form:errors path="person.email" class="error" /> --%>
 							
 							<form:label path="company.companyName" for="register_personregistration_companyname">Company/Shop Name</form:label>
-							<form:input path="company.companyName" class="form-control"	placeholder="Company name(optional)" id="register_personregistration_companyname" type="text" />
+							<form:input path="company.companyName" class="form-control"	placeholder="Company name" id="register_personregistration_companyname" type="text" />
 							<form:errors path="company.companyName" class="error" />
 							
 		<%-- 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label> --%>
@@ -204,13 +303,7 @@
 		<%-- 						</c:forEach> --%>
 		<%-- 					</form:select> --%>
 							
-							<form:label path="company.companyRole" for="register_personregistration_companyrole" class="select">User Type</form:label>
-							<form:select path="company.companyRole" class="form-control" id="register_personregistration_companyrole" >
-								<form:option value="None">None</form:option>
-								<c:forEach var="item" items="${companyRoleList}">
-									<form:option value="${item}">${item}</form:option>
-								</c:forEach>
-							</form:select>
+							
 							<br/>
 							<input type="submit" class="btn btn-md btn-primary btn-block" id="register_personregistration_submit"value="Register" />
 						</form:form>

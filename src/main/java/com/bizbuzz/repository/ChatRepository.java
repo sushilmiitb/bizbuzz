@@ -45,5 +45,4 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
       +"where cr.id=?1 and i.id is not null order by c.createdAt desc")
   List<Chat> findChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId);
   
-  
 }  

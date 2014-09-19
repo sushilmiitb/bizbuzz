@@ -56,6 +56,7 @@ public class SellerValidator {
     if(connection!=null){
       errors.put("duplicate_connection", messageSource.getMessage("sellervalidator.validateaddConnection.duplicateconnection", null, "", null));
     }
+    
     return errors;
   }
   

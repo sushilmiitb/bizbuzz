@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.form.validator.Phone;
 import com.bizbuzz.model.CategoryTree;
@@ -70,6 +71,7 @@ public class RegistrationController {
 
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
+    
     RegistrationPersonRegistrationFormDTO personRegistration = new RegistrationPersonRegistrationFormDTO();
     UserLogin userLogin = new UserLogin();
     personRegistration.setUserLogin(userLogin);
@@ -79,8 +81,11 @@ public class RegistrationController {
     personRegistration.setCompany(company);
     PhoneNumber phoneNumber = new PhoneNumber();
     personRegistration.setPhoneNumber(phoneNumber);
+    CountryCodeDTO countryCodeDTO = new CountryCodeDTO();
+    personRegistration.setCountryCodeDTO(countryCodeDTO); 
     m.addAttribute("personRegistration", personRegistration);
     m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
+   // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/personregistration";
   }
 
@@ -92,6 +97,9 @@ public class RegistrationController {
       model.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
       return "jsp/register/personregistration";
     }
+  //  String phoneNumberWithCountryCode = personRegistration.getCountryCodeDTO().getNumericCode()+personRegistration.getUserLogin().getId();
+  //  personRegistration.getUserLogin().setId(phoneNumberWithCountryCode);
+    
     partyManagementService.savePhoneNumber(personRegistration.getPhoneNumber());
     partyManagementService.saveUserLogin(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
     personRegistration.getPerson().setUserId(personRegistration.getUserLogin());
@@ -114,13 +122,16 @@ public class RegistrationController {
   }
 
   @RequestMapping(value="/login/{error}", method = RequestMethod.GET)
-  public String errorInLogin(Model model, @PathVariable final String error){
+  public String errorInLogin(Model model ,@PathVariable final String error){
     model.addAttribute("error", error);
+   // model.addAttribute("countryCodeList",partyManagementService.getListOfCountryCodes());
     return "jsp/register/login";
   }
 
   @RequestMapping(value="/login", method = RequestMethod.GET)
-  public String login(){
+  public String login(Model m){
+    
+   // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/login";
   }
 

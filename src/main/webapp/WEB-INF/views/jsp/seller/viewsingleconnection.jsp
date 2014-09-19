@@ -41,8 +41,7 @@
 	<tiles:putAttribute name="body">
 		<c:url var="base_delete_url" value="/seller/deleteconnection/" />
 		<c:url var="base_group_url" value="/seller/viewgroup/" />
-		<c:url var="edit_group_url"
-				value="/seller/editconnection/changegroup" />
+		<c:url var="edit_group_url" value="/seller/editconnection/changegroup" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
@@ -53,10 +52,13 @@
 						<div class="panel-body">
 							<div class="table-responsive">
 								<table class="table table-striped">
-									<caption><strong>Connection Details</strong></caption>
+									<caption>
+										<strong>Connection Details</strong>
+									</caption>
 									<tr>
 										<td>Name</td>
-										<td>${buyer.firstName} ${buyer.middleName} ${buyer.lastName}</td>
+										<td>${buyer.firstName}${buyer.middleName}
+											${buyer.lastName}</td>
 									</tr>
 									<tr>
 										<td>Group</td>
@@ -89,28 +91,27 @@
 					</div>
 					<div class="modal-body">
 						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							</div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">
-							</div>
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
 						</div>
 						<div class="row">
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								
+
 								<a href="${base_delete_url}${buyer.id}">
 									<button class="btn btn-primary btn-block" id="deleteConnection">
-										Delete Connection
-									</button>
+										Delete Connection</button>
 								</a>
 							</div>
 						</div>
-						<br/>
+						<br />
 						<div class="row">
 							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 								<legend>Edit Group</legend>
-								<form role="form" method="POST" class="form-signin" action="${edit_group_url}"
+								<form role="form" method="POST" class="form-signin"
+									action="${edit_group_url}"
 									id="seller_viewsingleconnection_editgroupform" class="form">
-									<select class="form-control" id="seller_viewsingleconnection_changegroupoption">
+									<select class="form-control"
+										id="seller_viewsingleconnection_changegroupoption">
 										<c:forEach var="item" items="${privateGroupList}">
 											<option value="${item.id}"
 												<c:if test="${item.privateGroupName == 'General' }">
@@ -128,6 +129,6 @@
 				<!-- /.modal-content -->
 			</div>
 			<!-- /.modal -->
-
+		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

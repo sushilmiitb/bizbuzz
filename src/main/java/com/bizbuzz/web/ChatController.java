@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +15,19 @@
  * limitations under the License.
  */
 package com.bizbuzz.web;
+
+/**
+ * This contains logic about chat. It is a bit complex and not very well written. The files that handle
+ * its view side are buyer/footer.jsp, seller/footer.jsp, chat.js and files specific to chat under folder
+ * jsp/chat.Css is written in customtheme.css. Chat portion is kept as separate from main portion as possible.
+ * Chat module is loaded through ajax requests. Whenever a new page is loaded, corresponding footer loads bare
+ * minimum chat structure. It contains ajax call logic to load relevant chat data further. On document ready of
+ * any page, a function to load current state of chat module is fired from the footer.jsp of the corresponding page.
+ * The state of chat is stored in session variable. Variables that define state primarily are chatpage and chatmode
+ * and frompage while other session variables store the information like itemid and chatroomid etc.
+ * 
+ * 
+ */
 
 import java.io.IOException;
 import java.net.Socket;
@@ -43,6 +57,7 @@ import org.atmosphere.websocket.WebSocket;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +78,7 @@ import com.bizbuzz.service.ChatService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
+import com.bizbuzz.service.PropertyService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
@@ -112,6 +128,9 @@ public class ChatController {
 
   @Autowired
   ItemService itemService;
+  
+  @Autowired
+  PropertyService propertyService;
 
 
 
@@ -226,9 +245,18 @@ public class ChatController {
 
   }
 
+  /**
+   * This function writes the logic for chat sate transitions. It tries to find using session variables and 
+   * Request parameters what should be the module that needs to be returned.
+   * @param session
+   * @param allRequestParams
+   * @return
+   */
   @RequestMapping(value="/chat/controller", method = RequestMethod.GET)
   public String chatController(HttpSession session, @RequestParam Map<String, String> allRequestParams){
     String action = allRequestParams.get("chatpage");
+    
+    //Toggle visibility state variable
     if(action.equals("savevisibilitystate")){
       String isChatPanelVisible = allRequestParams.get("ischatpanelvisible");
       if(isChatPanelVisible.equals("true")){
@@ -238,36 +266,88 @@ public class ChatController {
         session.removeAttribute("ischatpanelvisible");
       }
     }
+    
+    //Load item chat room
+    if(action.equals("itemchatroom")){
+      String itemId = allRequestParams.get("itemId");
+      String secondPersonId = allRequestParams.get("secondPersonId");
+      return "forward:/chat/showitemchatroom/secondpersonid/"+secondPersonId+"/itemid/"+itemId;
+    }
+    
+    //Determine the existing state and redirect to correct state
     else if(action.equals("determine")){
       String chatPage = (String)session.getAttribute("chatpage");
+      //first time
       if(chatPage==null){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       else if(chatPage.equals("listofchatrooms")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
       else if(chatPage.equals("singlechatroom")){
         Long chatroomId = (Long)session.getAttribute("chatroomid");
-        return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+        return "forward:/chat/showchatroom/chatroomid/"+chatroomId;
+      }
+      //last state was singleitmechatroom
+      else if(chatPage.equals("singleitemchatroom")){
+        Long chatroomId = (Long)session.getAttribute("chatroomid");
+        Long itemId = (Long)session.getAttribute("itemid");
+//        if(session.getAttribute("frompage").equals("itemchatroomlist")){
+//          return "redirect:/chat/showchatrooms";
+//        }
+        //right now which chat mode are we should be in? This is set at footer.
+        if(session.getAttribute("chatmode").equals("normal")){
+          return "forward:/chat/showchatrooms";
+        }
+        else{
+          return "forward:/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId;
+        }
       }
     }
+    
+    //redirect to list of chat rooms
     else if(action.equals("listofchatrooms")){
-      return "redirect:/chat/showchatrooms";
+      return "forward:/chat/showchatrooms";
     }
+    
+    //redirect to single chat room
     else if(action.equals("singlechatroom")){
       String chatroomId = allRequestParams.get("chatroomid");
-      return "redirect:/chat/showchatroom/chatroomid/"+chatroomId;
+      return "forward:/chat/showchatroom/chatroomid/"+chatroomId;
     }
+    
+    //redirect to item chat room list
+    else if(action.equals("itemchatroomlist")){
+      String itemId = allRequestParams.get("itemId");
+      return "forward:/chat/showchatrooms/itemid/"+itemId;
+    }
+    
+    //implementing back button logic
     else if(action.equals("back")){
       String chatPage = (String)session.getAttribute("chatpage");
+      //if chatpage has not been set in previous load. Means first page in session.
       if(chatPage==null){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
+      //pushing back button while on list of chatrooms. no action.
       else if(chatPage.equals("listofchatrooms")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
       }
+      //last state is on sngle chat room. Now move to list of chat rooms
       else if(chatPage.equals("singlechatroom")){
-        return "redirect:/chat/showchatrooms";
+        return "forward:/chat/showchatrooms";
+      }
+      //last state was single item chat room
+      else if(chatPage.equals("singleitemchatroom")){
+        String fromPage = (String)session.getAttribute("frompage");
+        //last state of singleitemchatroom was entered from itemchatroomlist. Hence now move to itehmchatroomlist
+        if(fromPage.equals("itemchatroomlist")){
+          return "forward:/chat/showchatrooms/itemid/"+session.getAttribute("itemid");
+        }
+        //last state of singleitemchatroom was entered from normal chat room. Hence now move to normal chat room
+        else if(fromPage.equals("normalchatroom")){
+          return "forward:/chat/showchatroom/chatroomid/"+session.getAttribute("chatroomid");
+        }
       }
     }
     return "";
@@ -361,8 +441,11 @@ public class ChatController {
     }
     m.addAttribute("allChatsOfChatroomDTOList",sortedMixedChatsOfChatRoomDTOList);
     m.addAttribute("person", person);
-    session.setAttribute("userId",user.getId());
-    session.setAttribute("chatroomId", chatroomid);
+    m.addAttribute("userId", user.getId());
+    m.addAttribute("chatroomId", chatroomid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     return "jsp/chat/chatroom";
   }
 
@@ -387,9 +470,14 @@ public class ChatController {
   //  ~~~~~~~~~~~~~~~~~~~~~~~~~~~    ITEM CENTRIC CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMWORK    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   //                                 --------------------------------------------------------
 
-  @RequestMapping(value = "/chat/showitemchatroom/chatroomid/{chatroomid}/itemid/{itemid}", method = RequestMethod.GET)
-  public String chatByAtmosphere(Model m,HttpSession session,@PathVariable Long chatroomid,@PathVariable Long itemid) {
-
+  @RequestMapping(value = "/chat/showitemchatroom/chatroomid/{chatroomid}/itemid/{itemid}/frompage/{frompage}", method = RequestMethod.GET)
+  public String chatByAtmosphere(Model m,HttpSession session,@PathVariable Long chatroomid,@PathVariable Long itemid, @PathVariable String frompage) {
+    /***Saving chat state***/
+    session.setAttribute("chatpage", "singleitemchatroom");
+    session.setAttribute("chatroomid", chatroomid);
+    session.setAttribute("itemid", itemid);
+    session.setAttribute("frompage", frompage);
+    
     Person person = getPerson();
     UserLogin user = person.getUserId(); 
 
@@ -411,15 +499,74 @@ public class ChatController {
       return "jsp/error/usernotfound";
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+    
+    Item item = itemService.getItemByItemId(itemid);
+    m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
+    m.addAttribute("person", person);
+    m.addAttribute("userId", user.getId());
+    m.addAttribute("chatroomId", chatroomid);
+    m.addAttribute("itemId", itemid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
+    return "jsp/chat/itemchatroom";
+  }
+  
+  @RequestMapping(value = "/chat/showitemchatroom/secondpersonid/{secondPersonId}/itemid/{itemid}", method = RequestMethod.GET)
+  public String itemChatByItemIdAndSecondPersonId(Model m,HttpSession session,@PathVariable Long secondPersonId,@PathVariable Long itemid) {
+    Person person = getPerson();
+    UserLogin user = person.getUserId(); 
+    
+    ChatRoom chatRoom = chatRoomService.getChatRoomByMembers(person.getId(), secondPersonId);
+    Long chatroomid = chatRoom.getId();
+    
+    List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
+    if(members==null) return "jsp/error/usernotfound";
 
-    session.setAttribute("userId",user.getId());
-    session.setAttribute("chatroomId",chatroomid);
-    session.setAttribute("itemId",itemid);
+    boolean flag=false;
+    for(Person member : members){
+      if(person.getId().longValue() == member.getId().longValue()) flag=true;
+    }
+
+    if(flag){
+      for(Person member : members){
+        if(person.getId().longValue() != member.getId().longValue()) 
+          m.addAttribute("secondperson", member);
+      }  
+    }
+    else
+      return "jsp/error/usernotfound";
+
+    List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+    Item item = itemService.getItemByItemId(itemid);
+    m.addAttribute("item",item);
+    m.addAttribute("chatsOfItem", itemChatsFromDatabase);
+    m.addAttribute("person", person);
+    m.addAttribute("userId", user.getId());
+    m.addAttribute("chatroomId", chatroomid);
+    m.addAttribute("itemId", itemid);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
     return "jsp/chat/itemchatroom";
   }
 
-
+  @RequestMapping(value = "/chat/showchatrooms/itemid/{itemid}", method = RequestMethod.GET)
+  public String showItemChatRooms(Model m, @PathVariable("itemid") Long itemId, HttpSession session){
+    /***Saving chat state***/
+    session.setAttribute("itemid", itemId);
+    
+    Person person = getPerson();
+    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
+    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+    m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
+    m.addAttribute("sortedChatrooms",sortedNewchatRooms);
+    m.addAttribute("userid", person.getId());
+    m.addAttribute("itemId", itemId);
+    return "jsp/chat/itemchatroomlist";
+  }
+  
   public Person getPerson() {
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     String username = user.getUsername();

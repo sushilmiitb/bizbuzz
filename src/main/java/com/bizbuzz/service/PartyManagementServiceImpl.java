@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection;
@@ -119,4 +120,10 @@ public class PartyManagementServiceImpl implements PartyManagementService {
     return personRepository.findOne(id);
   }
 
+/*  @Override
+  public List<CountryCodeDTO> getListOfCountryCodes() {
+    List<CountryCodeDTO> countryCodeList = HelperFunctions.retrieveResourcesCountryCodes(getClass().getResourceAsStream("/application/CountryCodes.xml"), "countryCode");
+    return countryCodeList;
+  }
+*/
 }
