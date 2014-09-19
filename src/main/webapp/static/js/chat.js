@@ -174,6 +174,7 @@ function loadNormalChatRoom(url){
 		removeChatPanelResizeCallback();
 		$(parentObj).children().remove();
 		$(parentObj).append(data);
+		$(".chat-body").scrollTop(1000000);
 	},
 	error: function(){
 	}
@@ -202,6 +203,7 @@ function loadItemChatRoom(chatroomId, itemId, fromPage){
 		removeChatPanelResizeCallback();
 		$(parentObj).children().remove();
 		$(parentObj).append(data);
+		$(".chat-body").scrollTop(1000000);
 	},
 	error: function(){
 	}

@@ -9,44 +9,11 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 			$(document).ready(function(){
-				var debug = true;
-				var androiddebug = false;
+				var debug = true;			
+				
 				initialize();
 				function initialize(){
 					$("#user_remember_me").attr("checked", true);
-				}
-				function customizeForDevice(){
-				    var ua = navigator.userAgent;
-				    var checker = {
-						iphone: ua.match(/(iPhone|iPod|iPad)/),
-						blackberry: ua.match(/BlackBerry/),
-						android: ua.match(/Android/)
-				    };
-				    if (checker.android){
-				    	if(androiddebug){
-				       		$("#debuglist").append("<li>Device is android</li>");
-				       	}
-				       	/*var cordovajsurl = "<c:url value='/static/js/cordova/cordova.js' />";
-				       	$.getScript(cordovajsurl, function(){
-				       		if(androiddebug){
-				       			$("#debuglist").append("<li>Loaded cordova.js</li>");
-				       		}
-				       		
-				       	});*/
-				    }
-				    else if (checker.iphone){
-				       	// $('.idevice-only').show();
-				    }
-				    else if (checker.blackberry){
-				       	// $('.berry-only').show();
-				    }
-				    else {
-				       	// $('.unknown-device').show();
-				       	/*console.log("Device is unknown.");
-				       	if(androiddebug){
-				       		$("#debuglist").append("<li>Device is unknown</li>");
-				       	}*/
-				    }
 				}
 			
 				$("#register_login_submit").click(function(event){

@@ -7,48 +7,83 @@
 		BizBuzz-Registration
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
+		<script src="<c:url value='/static/js/cordova/MobileFileSystem.js'/>"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				var debug = true;
-				var androiddebug = true;
-				function customizeForDevice(){
-				    var ua = navigator.userAgent;
-				    var checker = {
-						iphone: ua.match(/(iPhone|iPod|iPad)/),
-						blackberry: ua.match(/BlackBerry/),
-						android: ua.match(/Android/)
-				    };
-				    if (checker.android){
-				    	/*if(androiddebug){
-				       		$("#debuglist").append("<li>Device is android</li>");
-				       	}
-				       	var cordovajsurl = "<c:url value='/static/js/cordova/cordova.js' />";
-				       	$.getScript(cordovajsurl, function(){
-				       		if(androiddebug){
-				       			$("#debuglist").append("<li>Loaded cordova.js</li>");
-				       		}
-				       		var telephoneurl = "<c:url value='/static/js/cordova/plugins/telephonenumber.js' />";
-				       		$.getScript(telephoneurl, function(){
-					       		if(androiddebug){
-					       			$("#debuglist").append("<li>Loaded telephonenumber.js</li>");
-					       		}
-					       	});	
-				       	});*/
-				    }
-				    else if (checker.iphone){
-				       	// $('.idevice-only').show();
-				    }
-				    else if (checker.blackberry){
-				       	// $('.berry-only').show();
-				    }
-				    else {
-				       	// $('.unknown-device').show();
-				       	/*console.log("Device is unknown.");
-				       	if(androiddebug){
-				       		$("#debuglist").append("<li>Device is unknown</li>");
-				       	}*/
-				    }
+				var debug = false;
+			    /***************************************************************************************
+				* code for mobile devices
+				***************************************************************************************/
+				var ua = navigator.userAgent.toLowerCase();
+				var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+				var processAndroidSubmitForm;
+				var isCordovaLoaded;
+				var baseStaticUrl = "/bizbuzz/static";
+				if(isAndroid) {
+					if(debug)
+						alert("This is android platform.");
+				
+					function onCordovaLoad(){
+						if(debug)
+							alert("cordova Loaded");
+						 document.addEventListener("deviceready", onDeviceReady, false);
+					    // device APIs are available
+					    //
+					    function onDeviceReady() {
+					        navigator.splashscreen.hide();
+					        isCordovaLoaded = true;
+					    }
+					}
+					loadjsfile(baseStaticUrl+"/js/cordova/cordova.js", onCordovaLoad);
 				}
+				/*** otherwise ***/
+				else{
+				}
+				
+				//called from form submit checker
+				processAndroidSubmitForm = function(username, password){
+					function fail(){
+					}
+					function onwriteend(){
+						$("#register_personregistration_form").submit();
+					}
+					function onDataRead(args){
+						var data = args.data;
+						var obj = JSON.parse(data);
+						obj.username = username;
+						obj.password = password;
+						var objString = JSON.stringify(obj);
+						MobileFileSystem.writeInAFileShortcut({path: ["config"], fileName: "properties.txt", fail:fail, data: objString, onwriteend: onwriteend});
+					}
+					MobileFileSystem.readAFileAsTextShortcut({path: ["config"], fileName: "properties.txt", success: onDataRead, fail:fail});
+				};
+				
+				function loadjsfile(filename, onload){	
+					if(debug)
+						alert("mobileadaptation.js/loadjsfile:filename->"+filename);
+					var script=document.createElement('script');
+					script.setAttribute("type","text/javascript");
+				
+					script.setAttribute("src", filename);
+					if (typeof script!="undefined")
+						document.getElementsByTagName("head")[0].appendChild(script);
+				
+					if (script.readyState){  //IE
+						script.onreadystatechange = function(){
+							if (script.readyState == "loaded" || script.readyState == "complete"){
+								script.onreadystatechange = null;
+								//do your stuff
+							}
+						};
+					} else {  //Others
+						script.onload = onload;
+					}
+				}			
+	
+				/***************************************************************************************
+				* code for mobile devices ends
+				***************************************************************************************/
+				
 				function emptyErrorDisplay(elem, errorMsg){
 					if(debug){
 						console.log ("Element Value", elem.val());
@@ -142,10 +177,14 @@
 					passwordMisMatchErrorDisplay($('#register_personregistration_repassword'), $('#register_personregistration_password'), "Password mismatch");
 					//invalidPhoneErrorDisplay($('#register_personregistration_contactnumber'), "Please enter a valid phone number");
 					if($(".error").length == 0){
-						$("#register_personregistration_form").submit();
+						if(isAndroid && isCordovaLoaded){
+							processAndroidSubmitForm($('#register_personregistration_username').val(), $('#register_personregistration_password').val());
+						}
+						else{
+							$("#register_personregistration_form").submit();
+						}
 					}
 				});
-				customizeForDevice();
 			});
 		</script>
 	</tiles:putAttribute>
