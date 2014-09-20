@@ -134,7 +134,7 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		initializeNormalChatRoom('<c:url value="/websockets" />', ${userId}, ${person.id}, ${chatroomId}, 0);
+		initializeNormalChatRoom('<c:url value="/websockets" />', '${userId}', ${person.id}, ${chatroomId}, 0);
 		$(".item-chat").click(function(){
 			loadItemChatRoom(${chatroomId}, $(this).attr("id"), "normalchatroom");
 		});
