@@ -26,7 +26,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
         // display only these countries
         onlyCountries: [],
         // the countries at the top of the list. defaults to united states and united kingdom
-        preferredCountries: [ "us", "gb" ],
+        preferredCountries: [ "in", "np" ,"bt"],
         // make the dropdown the same width as the input
         responsiveDropdown: false,
         // specify the path to the libphonenumber script to enable validation/formatting

@@ -25,7 +25,7 @@
 					}
 				});
 			*/
-//  get ten digits from the user input in the phone number field               =====================================
+//  get ten digits from the user input of the phone number field               =====================================
 /*				$('#login_form').submit(function(){
 					var phonenumber = getTenDigitPhoneNumber($('#j_username').val());
 					if(phonenumber==false) alert("Require ten digit number..");
@@ -35,7 +35,7 @@
 			    //$('#j_username').val($('select[id=register_login_countrycode]').val()+phonenumber);
 				});
 */			
-//   Uncomment below code if you want to add country code before phone number textField on select PH No. from the dropdown
+//   Uncomment below code if you want to add country code in the phone number textField on select PH No. from the dropdown
 /* 			
 			    $('#register_login_countrycode').change(function(){
 					   $('#j_username').val($(this).val()); 
