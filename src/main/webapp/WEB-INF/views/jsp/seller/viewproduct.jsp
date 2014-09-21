@@ -16,7 +16,7 @@
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 		<c:url var="uploadImageUrl"
-			value="/${rootDir}/${sizeDir}/uploadimage1.${imageExtn}" />
+			value="/${rootDir}/${sizeDir}/uploadimage.${imageExtn}" />
 		<c:set var="totalItems" value="${fn:length(items)}"/>
 		
 		<div class="container" role="main">

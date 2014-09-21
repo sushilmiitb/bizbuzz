@@ -1,3 +1,7 @@
+var socket;
+
+var pageStat;
+
 function initializeChatPanel(){
 	$(".chat-content").height(Math.floor($(window).height()*0.8));
 	$(".chat-panel").height(Math.floor($(".chat-content").height()));
@@ -42,6 +46,14 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
+		if(pageStat=="listofchatrooms")
+		{
+			socket.unsubscribe();
+		}
+		else{
+			alert(pageStat);
+		}
+			
 		//$(".chat-panel").addClass("div-loader");
 		loadDivLoader(parentObj);
 		$.ajax({
@@ -238,6 +250,11 @@ function insertChatMessage(msg, isSelf){
 	$(".chat-body").scrollTop(1000000);
 }
 
+function changeState(stateOfPage){
+
+	pageStat=stateOfPage;
+}
+
 /**
  * Initialize the chat room. It can be used for both normal chat room and item chatroom. It initializes the socket.
  * @param socketUrl
@@ -305,7 +322,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		console.log("Refreshing data tables...");
 	}
 
-	var socket = $.atmosphere;
+	socket = $.atmosphere; //global variable
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
@@ -349,7 +366,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		return;
 	}
 
-	var subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
+  var subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
 
 	/**
 	 * Send the chat.

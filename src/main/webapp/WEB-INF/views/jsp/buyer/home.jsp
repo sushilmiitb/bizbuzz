@@ -9,6 +9,7 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
+	<script type="text/javascript">
 		$(document).ready(function(){
 			/***************************************************************************************
 			* code for mobile devices
@@ -55,6 +56,7 @@
 			* code for mobile devices ends
 			***************************************************************************************/
 		});
+		</script>
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">

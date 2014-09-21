@@ -24,9 +24,10 @@ accordingly makes the chat module hidden or visible.
 			<c:if test="${not empty seller}">
 				sellerId = ${seller.id};
 			</c:if>
-			
+			changeState(<%= session.getAttribute("chatpage") %>);
 			<%@ page import = "com.bizbuzz.model.Item" %>
 			<%
+			
 			//If item variable is present that means this is itemchat and accordingly update session variable
 				Item item = (Item) pageContext.findAttribute("item");
 				if(item == null){
