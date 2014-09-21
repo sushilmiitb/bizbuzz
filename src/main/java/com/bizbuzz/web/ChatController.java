@@ -209,7 +209,6 @@ public class ChatController {
           BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
         }  
       }
-
       logger.info("Received message to broadcast: {}"+ userId +" : " +message +"           " +dateOfBroadcast);         
     }
 
@@ -333,7 +332,7 @@ public class ChatController {
       else if(chatPage.equals("listofchatrooms")){
         return "forward:/chat/showchatrooms";
       }
-      //last state is on sngle chat room. Now move to list of chat rooms
+      //last state is on single chat room. Now move to list of chat rooms
       else if(chatPage.equals("singlechatroom")){
         return "forward:/chat/showchatrooms";
       }
