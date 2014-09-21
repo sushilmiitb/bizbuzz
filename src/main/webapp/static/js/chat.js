@@ -1,4 +1,4 @@
-var socket = $.atmosphere;
+var socket;
 
 var pageStat;
 
@@ -322,7 +322,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		console.log("Refreshing data tables...");
 	}
 
-	
+	socket = $.atmosphere; //global variable
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
