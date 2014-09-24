@@ -27,6 +27,8 @@
 <link href="${static_base_url}/css/countrycode/intlTelInput.css"
      rel="stylesheet" >
 
+<link href="${static_base_url}/css/slidermenu.css"
+	rel="stylesheet">
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 
@@ -35,7 +37,10 @@
 
 <body role="document">
 	<tiles:insertAttribute name="header" ignore="true" />
-	<tiles:insertAttribute name="body" />
+	<div id="page-content">
+		<tiles:insertAttribute name="body" />
+	</div>
+	
 	<tiles:insertAttribute name="footer" ignore="true" />
 
 	<!-- Bootstrap core JavaScript
@@ -49,6 +54,8 @@
 	<!-- Js files for making phonenumber international... -->
 	<script src="${static_base_url}/js/countrycode/intlTelInput.js"></script>
 	
+	<!-- Sliding menu -->
+	<script src="${static_base_url}/js/slidermenu.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 </body>

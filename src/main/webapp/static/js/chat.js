@@ -46,14 +46,13 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		if(pageStat=="listofchatrooms")
+		if(pageStat==='listofchatrooms')
 		{
-			socket.unsubscribe();
+			if(socket!=null){
+				socket.unsubscribe();
+			}
 		}
-		else{
-			alert(pageStat);
-		}
-			
+					
 		//$(".chat-panel").addClass("div-loader");
 		loadDivLoader(parentObj);
 		$.ajax({
@@ -251,7 +250,6 @@ function insertChatMessage(msg, isSelf){
 }
 
 function changeState(stateOfPage){
-
 	pageStat=stateOfPage;
 }
 
@@ -322,7 +320,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		console.log("Refreshing data tables...");
 	}
 
-	socket = $.atmosphere; //global variable
+    socket = $.atmosphere; //global variable
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";

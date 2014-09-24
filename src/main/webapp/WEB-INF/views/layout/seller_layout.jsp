@@ -23,6 +23,9 @@
 <!-- Custom styles for this template -->
 <link href="${static_base_url}/css/customtheme.css" rel="stylesheet">
 
+<link href="${static_base_url}/css/slidermenu.css"
+	rel="stylesheet">
+
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 
@@ -31,7 +34,9 @@
 
 <body role="document">
 	<tiles:insertAttribute name="header" ignore="true" />
-	<tiles:insertAttribute name="body" />
+	<div id="page-content">
+		<tiles:insertAttribute name="body" />
+	</div>
 
 	<!-- Bootstrap core JavaScript
     ================================================== -->
@@ -42,6 +47,9 @@
 	<script src="${static_base_url}/js/customjs.js"></script>
 	<script src="${static_base_url}/js/chat.js"></script>
 	<script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
+	
+	<script src="${static_base_url}/js/slidermenu.js"></script>
+	
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 

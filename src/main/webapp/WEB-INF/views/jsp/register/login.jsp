@@ -49,6 +49,7 @@
 		</script>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="body">
+
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
@@ -97,5 +98,6 @@
 				</div>
 			</div>
 		</div>
+	
 	</tiles:putAttribute>
 </tiles:insertDefinition>

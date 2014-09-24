@@ -9,7 +9,7 @@ module. Subsequent requests and responses are handled through ajax modules which
 page load, It determines whether current state of chat is item chat or normal chat and stores corresponding value
 in the session variable chatmode. This value is then used in chat controller to return correct chat module when
 ajax request is made from chat.js. It then determines whether current state of chat is visible or hidden and 
-accordingly makes the chat module hidden or visible.
+accordingly makes the chat module hidden or visible.var 	
 ---------------------------------------------------------------------------------------------------------------->
 
 	<div class="panel panel-default chat-panel"></div>
@@ -18,10 +18,13 @@ accordingly makes the chat module hidden or visible.
 			initializeChatPanel();
 			$(".chat-content").hide();
 			var itemId = undefined;
+			
+			 pageState = '<%= session.getAttribute("chatpage") %>';
+			 changeState(pageState);
 			<c:if test="${not empty item}">
 				itemId = ${item.id};
 			</c:if>
-			changeState(<%= session.getAttribute("chatpage") %>);
+			
 			<%@ page import = "com.bizbuzz.model.Item" %>
 			<%
 //If item variable is present that means this is itemchat and accordingly update session variable
