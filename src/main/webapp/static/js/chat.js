@@ -300,12 +300,14 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 				baseMessageButtonHeight = $("#message-button").height();
 			}
 			previouslines = lines;
-			bottomOffset = bottomOffset+lht;
+		//	bottomOffset = bottomOffset+lht;          // .. comment this to avoid scrolling ...
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
-			$("#message-field").height($("#message-field").height()+lht);
+	/*  Uncomment below to line if some changes occur in message-field and message-button 		
+			$("#message-field").height($("#message-field").height()+lht);          //do not add lht
 			$("#message-button").height($("#message-button").height()+lht);
+	*/
 			//$(".chat-input-area").height($(".chat-input-area").height()+lht);
 			$(".chat-body").scrollTop(1000000);
 		}
@@ -387,8 +389,11 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
-			$("#message-field").height(baseMessageFieldHeight);
-			$("#message-button").height(baseMessageButtonHeight);
+			
+			/*    Uncomment below two line if some changes occur in mesage field and message buton 
+			 $("#message-field").height(baseMessageFieldHeight);         
+			 $("#message-button").height(baseMessageButtonHeight);   
+			 */
 			//$(".chat-input-area").height(baseChatInputAreaHeight);
 			
 		}
