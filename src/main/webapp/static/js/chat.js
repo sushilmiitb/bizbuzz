@@ -46,14 +46,13 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		if(pageStat=="listofchatrooms")
+		if(pageStat==='listofchatrooms')
 		{
-			socket.unsubscribe();
+			if(socket!=null){
+				socket.unsubscribe();
+			}
 		}
-		else{
-			alert(pageStat);
-		}
-			
+					
 		//$(".chat-panel").addClass("div-loader");
 		loadDivLoader(parentObj);
 		$.ajax({
@@ -251,7 +250,6 @@ function insertChatMessage(msg, isSelf){
 }
 
 function changeState(stateOfPage){
-
 	pageStat=stateOfPage;
 }
 
@@ -274,12 +272,12 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 	$(".chat-body").scrollTop(1000000);
 	
 	/****Code for handling variable height for text area***/
-	var previouslines = 1;
+	var previouslines = 2;
 	var baseMessageFieldHeight;
 	var baseMessageButtonHeight;
 	//var baseChatInputAreaHeight = baseInputHeight;
 	var baseBottomOffset = bottomOffset;
-	$("textarea").on("keyup", function(e) {
+	$("textarea").on("keydown", function(e) {
 	    /*if ($("textarea").attr("cols")) {
 	        var cols = parseInt($("textarea").attr("cols")),
 	            curPos = $('textarea').prop("selectionStart"),
@@ -291,23 +289,27 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 			sendChatCallback();
 			return;
 		}
-		var lht = parseInt($('textarea').css('lineHeight'),10);
-		var lines = Math.round($('textarea').prop('scrollHeight') / lht);
+		
+		var lht = parseInt($('textarea').css('lineHeight'),10);		
+		var lines = Math.round($('textarea').prop('scrollHeight') / lht);		
 		if(!!window.chrome){
 			lines = Math.round(($('textarea').prop('scrollHeight') - 26) / lht);
 		}
+		if(lines==2){
+			baseMessageFieldHeight = $("#message-field").height();
+			baseMessageButtonHeight = $("#message-button").height();
+		}
+		if(lines>5){
+			lines=2;
+		}
 		if(lines>previouslines){
-			if(lines==2){
-				baseMessageFieldHeight = $("#message-field").height();
-				baseMessageButtonHeight = $("#message-button").height();
-			}
 			previouslines = lines;
-			bottomOffset = bottomOffset+lht;
+			bottomOffset = bottomOffset+lht;          // .. comment this to avoid scrolling ...
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
-			$("#message-field").height($("#message-field").height()+lht);
-			$("#message-button").height($("#message-button").height()+lht);
+			$("#message-field").height($("#message-field").height()+lht);         
+	  		$("#message-button").height($("#message-button").height()+lht);
 			//$(".chat-input-area").height($(".chat-input-area").height()+lht);
 			$(".chat-body").scrollTop(1000000);
 		}
@@ -322,7 +324,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		console.log("Refreshing data tables...");
 	}
 
-	socket = $.atmosphere; //global variable
+    socket = $.atmosphere; //global variable
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
@@ -383,14 +385,15 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		$('#message-field').val("");
 		insertChatMessage(message, true);
 		
-		if(previouslines>1){
-			previouslines =1;
+		if(previouslines>2){
+			previouslines =2;
 			bottomOffset = baseBottomOffset;
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
-			$("#message-field").height(baseMessageFieldHeight);
-			$("#message-button").height(baseMessageButtonHeight);
+			 $("#message-field").height(baseMessageFieldHeight);         
+			 $("#message-button").height(baseMessageButtonHeight);   
+			 
 			//$(".chat-input-area").height(baseChatInputAreaHeight);
 			
 		}

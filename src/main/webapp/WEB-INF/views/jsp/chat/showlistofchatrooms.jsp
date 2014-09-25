@@ -56,6 +56,8 @@
 	</c:if>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			 pageState = '<%= session.getAttribute("chatpage") %>';
+			 changeState(pageState);
 			setChatPanelToggleCallback();
 			setChatBackButtonCallback();
 			setChatPanelResizeCallback();

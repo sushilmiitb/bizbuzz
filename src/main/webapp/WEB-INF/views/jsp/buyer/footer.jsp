@@ -16,15 +16,20 @@ accordingly makes the chat module hidden or visible.
 		$(document).ready(function(){
 			initializeChatPanel();
 			$(".chat-content").hide();
+			
+			pageState = '<%= session.getAttribute("chatpage") %>';
+			changeState(pageState);
+			
 			var itemId = undefined;
 			<c:if test="${not empty item}">
 				itemId = ${item.id};
 			</c:if>
+			
 			var sellerId = undefined;
 			<c:if test="${not empty seller}">
 				sellerId = ${seller.id};
 			</c:if>
-			changeState(<%= session.getAttribute("chatpage") %>);
+			
 			<%@ page import = "com.bizbuzz.model.Item" %>
 			<%
 			
@@ -45,6 +50,7 @@ accordingly makes the chat module hidden or visible.
 					loadCurrentChatRoomState(false, itemId, sellerId);
 				</c:otherwise>
 			</c:choose>
+
 			
 		});
 	</script>
