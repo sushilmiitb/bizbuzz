@@ -52,6 +52,8 @@
 
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
+				<div class="hidden-xs hidden-sm col-md-2 col-lg-3" >
+				</div>
 				<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
 					<div class="panel panel-primary">
 						<div class="panel-heading">Sign In</div>
