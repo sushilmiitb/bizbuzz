@@ -5,11 +5,13 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.jws.WebParam.Mode;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -60,6 +63,9 @@ public class RegistrationController {
   @Autowired
   CategoryService categoryService;
   
+  @Autowired
+  AuthenticationManager authenticationManager;
+  
 //  @Autowired
 //  private UserDetailsManager manager;
   
@@ -101,7 +107,7 @@ public class RegistrationController {
   }
 
   @RequestMapping(value="/register/personregistration", method = RequestMethod.POST)
-  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated RegistrationPersonRegistrationFormDTO personRegistration, BindingResult bindingResult, Model model){
+  public String savePersonRegistrationForm(@ModelAttribute("personRegistration") @Validated RegistrationPersonRegistrationFormDTO personRegistration, BindingResult bindingResult, Model model, HttpServletRequest request){
     if (bindingResult.hasErrors()) {
       logger.info("Form validation Error.");
       //model.addAttribute("personRoleList", partyManagementService.getListOfPersonRole());
@@ -129,10 +135,26 @@ public class RegistrationController {
       partyManagementService.savePrivateGroup(privateGroup);
       connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
     }
+
+    UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
+    UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
+
+    // generate session if one doesn't exist
+    request.getSession();
+
+    token.setDetails(new WebAuthenticationDetails(request));
     
+    try{
+      Authentication authenticatedUser = authenticationManager.authenticate(token);
+      SecurityContextHolder.getContext().setAuthentication(authenticatedUser);
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    
+/*
     UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
     Authentication auth = new UsernamePasswordAuthenticationToken (userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
-    SecurityContextHolder.getContext().setAuthentication(auth);
+    SecurityContextHolder.getContext().setAuthentication(auth);*/
     //return "jsp/register/registrationsuccess";
     return "redirect:/rolehome";
   }
