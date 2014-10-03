@@ -10,28 +10,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="shortcut icon"
-	href="${static_base_url}/assets/ico/favicon.ico">
+<!-- <link rel="shortcut icon" -->
+<%-- 	href="${static_base_url}/assets/ico/favicon.ico"> --%>
 
 <!-- Bootstrap core CSS -->
-<link href="${static_base_url}/css/bootstrap/bootstrap.min.css"
-	rel="stylesheet">
-<!-- Bootstrap theme -->
-<link href="${static_base_url}/css/bootstrap/bootstrap-theme.min.css"
-	rel="stylesheet">
-
-<!-- Custom styles for this template -->
-<link href="${static_base_url}/css/customtheme.css" rel="stylesheet">
-
-<!-- Css for making phonenumber international... -->
-<link href="${static_base_url}/css/countrycode/intlTelInput.css"
-     rel="stylesheet" >
-
-<link href="${static_base_url}/css/slidermenu.css"
-	rel="stylesheet">
+<link href="${static_base_url}/css/register-combined-min.css"
+	rel="stylesheet">	rel="stylesheet">
 
 <tiles:insertAttribute name="includecss" ignore="true" />
-
+<link rel="shortcut icon"
+	href="${static_base_url}/assets/ico/favicon.ico">
 <title><tiles:insertAttribute name="title" /></title>
 </head>
 
@@ -46,16 +34,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="${static_base_url}/js/jquery/jquery-1.11.1.min.js"></script>
-	<script src="${static_base_url}/js/bootstrap/bootstrap.min.js"></script>
-	<script src="${static_base_url}/assets/js/docs.min.js"></script>
-	<script src="${static_base_url}/js/customjs.js"></script>
-	
-	<!-- Js files for making phonenumber international... -->
-	<script src="${static_base_url}/js/countrycode/intlTelInput.js"></script>
-	
-	<!-- Sliding menu -->
-	<script src="${static_base_url}/js/slidermenu.js"></script>
+	<script src="${static_base_url }/js/register-combined-min.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 </body>

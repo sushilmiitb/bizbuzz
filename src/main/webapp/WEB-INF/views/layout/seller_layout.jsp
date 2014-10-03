@@ -14,18 +14,8 @@
 	href="${static_base_url}/assets/ico/favicon.ico">
 
 <!-- Bootstrap core CSS -->
-<link href="${static_base_url}/css/bootstrap/bootstrap.min.css"
+<link href="${static_base_url}/css/seller-buyer-combined-min.css"
 	rel="stylesheet">
-<!-- Bootstrap theme -->
-<link href="${static_base_url}/css/bootstrap/bootstrap-theme.min.css"
-	rel="stylesheet">
-
-<!-- Custom styles for this template -->
-<link href="${static_base_url}/css/customtheme.css" rel="stylesheet">
-
-<link href="${static_base_url}/css/slidermenu.css"
-	rel="stylesheet">
-
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 
@@ -41,15 +31,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="${static_base_url}/js/jquery/jquery-1.11.1.min.js"></script>
-	<script src="${static_base_url}/js/bootstrap/bootstrap.min.js"></script>
-	<script src="${static_base_url}/assets/js/docs.min.js"></script>
-	<script src="${static_base_url}/js/customjs.js"></script>
-	<script src="${static_base_url}/js/chat.js"></script>
-	<script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
-	
-	<script src="${static_base_url}/js/slidermenu.js"></script>
-	
+	<script src="${static_base_url}/js/seller-buyer-combined-min.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 

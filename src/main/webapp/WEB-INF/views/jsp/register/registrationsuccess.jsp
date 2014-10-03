@@ -7,7 +7,6 @@
 		BizBuzz-Registration
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
-		<script src="<c:url value='/static/js/cordova/MobileFileSystem.js'/>"></script>
 		<script>
 			$(document).ready(function(){
 				/***************************************************************************************
@@ -64,7 +63,7 @@
 					        autoLogin();
 					    }	
 					}
-					loadjsfile(baseStaticUrl+"/js/cordova/cordova.js", onCordovaLoad);
+					loadjsfile(baseStaticUrl+"/js/cordova/cordova-combined-min.js", onCordovaLoad);
 				}
 				/*** otherwise ***/
 				else{

@@ -1,7 +1,7 @@
 .intl-tel-input .flag {
 	width: 16px;
 	height: 11px;
-	background: url("../images/flags.png")
+	background: url("/bizbuzz/static/css/images/flags.png")
 }
 
 .intl-tel-input .ad {
