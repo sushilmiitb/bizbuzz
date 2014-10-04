@@ -300,7 +300,7 @@
 <%-- 							<form:errors path="person.email" class="error" /> --%>
 							
 							<form:label path="company.companyName" for="register_personregistration_companyname">Company/Shop Name</form:label>
-							<form:input path="company.companyName" class="form-control"	placeholder="Company name" id="register_personregistration_companyname" type="text" />
+							<form:input path="company.companyName" class="form-control"	placeholder="Company/Shop name" id="register_personregistration_companyname" type="text" />
 							<form:errors path="company.companyName" class="error" />
 							
 		<%-- 					<form:label path="person.personRole" for="register.personregistration.personrole" class="select">User Type</form:label> --%>

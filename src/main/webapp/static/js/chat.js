@@ -1,6 +1,26 @@
 var socket;
-
 var pageStat;
+var subSocket;
+var chatroomid;
+var broadcasterIncrement=0;
+var newChats;
+
+
+/*
+	$('#totalnewchats').bind('DOMSubtreeModified', function() {
+		alert("In change event..");
+		if(Number($("#totalnewchats").text())>0){
+			$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
+		}
+	});
+
+	$("#totalnewchats").change(function(){
+		if(Number($("#totalnewchats").text())>0){
+			$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
+		}
+	});
+*/	
+
 
 function initializeChatPanel(){
 	$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -18,6 +38,9 @@ function initializeChatPanel(bodyBottomOffset){
 
 function setChatPanelToggleCallback(){
 	$( ".chat-toggle-btn" ).click(function() {
+		if(pageStat!='singlechatroom' || pageStat!='singleitemchatroom'){
+			$(".chat-back").click();   // Manually update no. of chats for listOfChatrooms,if new chats are arrive
+		} 
 		$( ".chat-content" ).animate({
 			height: "toggle"
 		}, 200, function() {
@@ -46,13 +69,7 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/bizbuzz/chat/controller";
 		var parentObj = $(".chat-panel");
-		if(pageStat==='listofchatrooms')
-		{
-			if(socket!=null){
-				socket.unsubscribe();
-			}
-		}
-					
+		
 		//$(".chat-panel").addClass("div-loader");
 		loadDivLoader(parentObj);
 		$.ajax({
@@ -69,7 +86,16 @@ function setChatBackButtonCallback(){
 		error: function(){
 		}
 		});
+		
 	});
+	newChats=Number($("#totalnewchats").text());
+	if(newChats>0){
+		$(".badge1").attr("data-badge",newChats);
+	}
+	else{
+		$(".badge1").removeAttr("data-badge");
+	}
+	
 }
 
 function removeChatPanelToggleCallback(){
@@ -140,6 +166,14 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
+			newChats=Number($("#totalnewchats").text());
+			if(newChats>0){
+				$(".badge1").attr("data-badge",newChats);
+			}
+			else{
+				$(".badge1").removeAttr("data-badge");
+			}
+			
 		},
 		error: function(){
 		}
@@ -179,17 +213,24 @@ function loadNormalChatRoom(url){
 		url: url,
 		type: "GET",
 		success: function(data) {
-		$(".chat-panel").removeClass("div-loader");
-		removeChatPanelToggleCallback();
-		removeChatBackButtonCallback();
-		removeChatPanelResizeCallback();
-		$(parentObj).children().remove();
-		$(parentObj).append(data);
-		$(".chat-body").scrollTop(1000000);
+			$(".chat-panel").removeClass("div-loader");
+			removeChatPanelToggleCallback();
+			removeChatBackButtonCallback();
+			removeChatPanelResizeCallback();
+			$(parentObj).children().remove();
+			$(parentObj).append(data);
+			$(".chat-body").scrollTop(1000000);
 	},
 	error: function(){
 	}
 	});
+	if(newChats>0){
+		$(".badge1").attr("data-badge",newChats);
+	}
+	else{
+		$(".badge1").removeAttr("data-badge");
+	}
+	//$(".badge1").attr("data-badge",newChats);
 }
 
 /**
@@ -249,9 +290,20 @@ function insertChatMessage(msg, isSelf){
 	$(".chat-body").scrollTop(1000000);
 }
 
-function changeState(stateOfPage){
+function changeState(stateOfPage,idOfChatroom){
 	pageStat=stateOfPage;
+	chatroomid=idOfChatroom;
 }
+function changeNoOfNewChats(totalNoOfNewMessages){
+
+	newChats=totalNoOfNewMessages;
+	if(newChats>0){
+		$(".badge1").attr("data-badge",newChats);
+	}
+	else{
+		$(".badge1").removeAttr("data-badge");
+	}
+} 
 
 /**
  * Initialize the chat room. It can be used for both normal chat room and item chatroom. It initializes the socket.
@@ -262,7 +314,108 @@ function changeState(stateOfPage){
  * @param itemId
  * @return
  */
-function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemId){
+
+function initializeSocket(socketUrl,senderId){
+	socket = $.atmosphere; //global variable
+	var request = new $.atmosphere.AtmosphereRequest();        
+	request.url = socketUrl;
+	request.contentType = "application/json";
+	request.transport = 'websocket';
+	request.fallbackTransport = 'long-polling';
+
+	console.log("socketUrl : " +socketUrl +"<>senderId : " +senderId);
+	/**
+	 * When the connection opens for the first time.
+	 */
+	request.onOpen = function(response){
+		console.log('onOpen: connection opened using transport:' + response.transport);	
+		if(broadcasterIncrement==0){
+			console.log('To Create the broadcaster...');
+			subSocket.push(JSON.stringify({"message":"0Open0","personId": senderId,"chatroomId":0,"itemId":0}));
+			broadcasterIncrement=broadcasterIncrement+1;
+		}
+	}
+
+	request.onReconnect = function(request, response){
+		console.log('onReconnect:');
+		socket.info("Reconnecting");
+	}
+
+	request.onClose = function(response) {               
+	    console.log('onClose ' + response);
+	}
+	/**
+	 * On receiving message from other person
+	 */
+	request.onMessage = function(response){
+		var message = response.responseBody;
+		console.log("Message : " +message);
+		var result;
+		try {
+			result =  $.parseJSON(message);
+		} catch (e) {
+			console.log("An error ocurred while parsing the JSON Data: " + message.data + "; Error: " + e);
+			return;
+		}
+		if(result.senderId==senderId){
+		}
+		else{
+			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
+			{	
+				newChats=newChats+1;
+				$(".badge1").attr("data-badge",newChats);
+				$("[id="+result.chatRoomId+"]").find()
+		//	$(".chat-back").click();	 
+/*				if(Number($("#totalnewchats").text())>0){
+					alert("Total chats value: " +Number($("#totalnewchats").text()));
+					$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
+				}        */       
+			}
+			else if(chatroomid!=result.chatRoomId){
+				newChats=newChats+1;
+				$(".badge1").attr("data-badge",newChats);
+			}
+			else{
+				$.ajax({
+					url: '/bizbuzz/chat/updatechatroommember',
+					type: "GET",
+					data: { "chatRoomId" :result.chatRoomId ,
+					     "receiverId" : result.receiverId,
+					     "year" :result.year ,
+					     "month" : result.month,
+					     "day" : result.day,
+					     "hour" : result.hour,
+					     "minute" :result.minute ,
+					     "seconds" : result.seconds	     
+			        },
+					success: function(data) {	
+						console.log(data);
+					}, 
+					error: function(){
+					}
+				});
+				insertChatMessage(result.message, false);
+			}
+		}
+	}
+	request.onError = function(response){
+		console.log("An error ocurred in web socket: " + response.responseBody);
+		return;
+	}
+   subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
+   
+}
+
+
+function initializeNormalChatRoom(senderId, chatroomId, itemId){
+/*
+	if($("#newchats").length>0){		
+		if(newChats>=Number($("#newchats").text())){
+			newChats=newChats-Number($("#newchats").text());
+			alert("After subtract new chats: " +newChats);
+		}
+	}                          */
+	console.log("After starting the socket , OR creating broadcaster");
 	var bottomOffset = 100;
 	var baseInputHeight = 50;
 	initializeChatPanel(bottomOffset);
@@ -323,54 +476,8 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 	function refresh() {
 		console.log("Refreshing data tables...");
 	}
-
-    socket = $.atmosphere; //global variable
-	var request = new $.atmosphere.AtmosphereRequest();        
-	request.url = socketUrl;
-	request.contentType = "application/json";
-	request.transport = 'websocket';
-	request.fallbackTransport = 'long-polling';
-
-	/**
-	 * When the connection opens for the first time.
-	 */
-	request.onOpen = function(response){
-		console.log('onOpen: connection opened using transport:' + response.transport);
-		subSocket.push(JSON.stringify({"message":"0Open0","userId": userId,"chatroomId":chatroomId,"itemId":itemId}));
-	}
-
-	request.onReconnect = function(request, response){
-		console.log('onReconnect:');
-		socket.info("Reconnecting");
-	}
-
-	/**
-	 * On receiving message from other person
-	 */
-	request.onMessage = function(response){
-		var message = response.responseBody;
-		var result;
-		try {
-			result =  $.parseJSON(message);
-		} catch (e) {
-			console.log("An error ocurred while parsing the JSON Data: " + message.data + "; Error: " + e);
-			return;
-		}
-		if(result.senderId==senderId){
-		}
-		else{
-			insertChatMessage(result.message, false);
-		}
-	}
-
-	request.onError = function(response){
-		console.log("An error ocurred in web socket: " + response.responseBody);
-		return;
-	}
-
-  var subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
-
-	/**
+// Put the socket initialzing code here ---------------------------------//
+    	/**
 	 * Send the chat.
 	 */
 	function sendChatCallback(){
@@ -386,7 +493,7 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 		insertChatMessage(message, true);
 		
 		if(previouslines>2){
-			previouslines =2;
+			previouslines = 2;
 			bottomOffset = baseBottomOffset;
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
@@ -394,11 +501,10 @@ function initializeNormalChatRoom(socketUrl, userId, senderId, chatroomId, itemI
 			 $("#message-field").height(baseMessageFieldHeight);         
 			 $("#message-button").height(baseMessageButtonHeight);   
 			 
-			//$(".chat-input-area").height(baseChatInputAreaHeight);
-			
+			//$(".chat-input-area").height(baseChatInputAreaHeight);			
 		}
 		$("#message-field").focus();
-		subSocket.push(JSON.stringify({"message":message,"userId": userId,"chatroomId":chatroomId,"itemId":itemId}));
+		subSocket.push(JSON.stringify({"message":message,"personId": senderId,"chatroomId":chatroomId,"itemId":itemId}));
 	}
 	$('#message-button').click(function(){
 		sendChatCallback();

@@ -1,11 +1,13 @@
 package com.bizbuzz.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
 
+import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Item;
@@ -53,8 +55,26 @@ public class ChatServiceImpl implements ChatService{
 
   @Override
   public List<Chat> getChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId) {
-    
     return chatRepository.findChatsByChatRoomIdAndItemIdNotNull(chatRoomId);
+  }
+  
+  public Long getCountOfNewIncomingChats(Long chatRoomId, Long senderId) {
+    return chatRepository.findCountOfNewIncomingChats(chatRoomId, senderId);
+  }
+
+  public List<NoOfNewMessagesWithPersonIdDTO> getCountOfNewIncomingChatsOfPersonForAllChatroom(Long senderId) {
+    List<Object[]> objectList = chatRepository.findCountOfNewIncomingChatsOfPersonForAllChatroom(senderId);
+    if(objectList==null) return null;
+    else{
+      List<NoOfNewMessagesWithPersonIdDTO> noOfNewMessageslist = new ArrayList<NoOfNewMessagesWithPersonIdDTO>();
+      for(Object[] arr : objectList) {
+        NoOfNewMessagesWithPersonIdDTO noOfNewMessagesWithPersonIdDTO = new NoOfNewMessagesWithPersonIdDTO();
+        noOfNewMessagesWithPersonIdDTO.setPersonId((Long)arr[0]);
+        noOfNewMessagesWithPersonIdDTO.setNoOfNewMessages((Long)arr[1]);
+        noOfNewMessageslist.add(noOfNewMessagesWithPersonIdDTO);
+      }
+      return noOfNewMessageslist;
+   }
   }
 
 /*

@@ -18,7 +18,7 @@ label {
 	z-index:100;
 }
 
-.footer .chat-toggle-btn{
+.footer .chat-toggle-btn{listofchatroomslistofchatrooms
 	font-size: 1.8em;
 	margin-top: -8px;
 	height: 40px;
@@ -188,6 +188,31 @@ ul.subnav-top-horizontal{
 	height: 3em;
 	overflow: hidden;
 }
+/* chat Notification------------*/
+.chat-room-message-notification{
+/*	line-height: 1.5em; 
+	height: 3em;  */
+	font-weight: bold;
+	color: red;
+	margin-left:150px;
+}
+.badge1 {
+   position:relative;
+}
+.badge1[data-badge]:after {
+   content:attr(data-badge);
+   position:absolute;
+   top:-12px;     /*Default values -10*/      
+   right:-12px;    /* -10 */
+   font-size:.77em; /*0.7*/
+   background:red;  
+   color:white;
+   width:21px;height:21px;       /*18,18*/
+   text-align:center;
+   line-height:22px;             /*18*/
+   border-radius:50%;
+   box-shadow:0 0 1px #333;
+}
 
 /******************ChatRoom style********************/
 .ind-chat-panel{
@@ -236,7 +261,7 @@ ul.subnav-top-horizontal{
 	height: 0;
 	position:absolute;
 	right:-9px;
-	top:8px;
+	top:8px; 
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-left: 10px solid #dbedfe;
@@ -247,7 +272,7 @@ ul.subnav-top-horizontal{
 	height: 0;
 	position:absolute;
 	left:-9px;
-	top:8px;
+	top:8px;   
 	border-top: 10px solid transparent;
 	border-bottom: 10px solid transparent;
 	border-right:10px solid #ffffff; 

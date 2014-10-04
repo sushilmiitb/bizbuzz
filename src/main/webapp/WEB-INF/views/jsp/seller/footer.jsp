@@ -17,10 +17,12 @@ accordingly makes the chat module hidden or visible.var
 		$(document).ready(function(){
 			initializeChatPanel();
 			$(".chat-content").hide();
-			var itemId = undefined;
 			
-			 pageState = '<%= session.getAttribute("chatpage") %>';
-			 changeState(pageState);
+			//Initialize Socket ----------------
+			initializeSocket('<c:url value="/websockets" />',<%= session.getAttribute("senderId") %>);  
+			changeState('<%= session.getAttribute("chatpage") %>',0);
+			
+			var itemId = undefined; 
 			<c:if test="${not empty item}">
 				itemId = ${item.id};
 			</c:if>
@@ -57,7 +59,8 @@ accordingly makes the chat module hidden or visible.var
 		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="left">
 		</div>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2" align="center">
-			<button class="btn btn-primary btn-block chat-toggle-btn">Chat</button>
+		   
+			<button class="badge1 btn btn-primary btn-block chat-toggle-btn" >Chat</button>
 		</div>
 		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="right">
 		</div>

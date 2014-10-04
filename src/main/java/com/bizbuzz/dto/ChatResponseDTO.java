@@ -2,6 +2,7 @@ package com.bizbuzz.dto;
 
 public class ChatResponseDTO {
   private Long senderId;
+  private Long receiverId;
   private Long chatId;
   private Long chatRoomId;
   private String message;
@@ -12,13 +13,16 @@ public class ChatResponseDTO {
   private int day;
   private int hour;
   private int minute;
+  private int seconds;
   
-  public void setDate(int year, int month, int day, int hour, int minute){
+
+  public void setDate(int year, int month, int day, int hour, int minute, int seconds){
     this.year = year;
     this.month = month;
     this.day = day;
     this.hour = hour;
     this.minute = minute;
+    this.seconds = seconds;
   }
   
   public Long getSenderId() {
@@ -26,6 +30,12 @@ public class ChatResponseDTO {
   }
   public void setSenderId(Long senderId) {
     this.senderId = senderId;
+  }
+  public Long getReceiverId() {
+    return receiverId;
+  }
+  public void setReceiverId(Long receiverId) {
+    this.receiverId = receiverId;
   }
   public Long getChatId() {
     return chatId;
@@ -80,6 +90,13 @@ public class ChatResponseDTO {
   }
   public void setMinute(int minute) {
     this.minute = minute;
+  }
+  public int getSeconds() {
+    return seconds;
+  }
+
+  public void setSeconds(int seconds) {
+    this.seconds = seconds;
   }
   public Long getChatRoomId() {
     return chatRoomId;
