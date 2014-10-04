@@ -18,6 +18,12 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>uglifyjs-maven-plugin</id>
+			<url>https://raw.github.com/tqh/uglifyjs-maven-plugin/master/repo</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.2.RELEASE</spring.version>
@@ -249,18 +255,35 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>tomcat-maven-plugin</artifactId>
-				<version>1.0-beta-1</version>
+				<groupId>net.tqh.plugins</groupId>
+				<artifactId>uglifyjs-maven-plugin</artifactId>
+				<version>1.0</version>
+				<executions>
+					<execution>
+						<id>uglify-js</id>
+						<goals>
+							<goal>uglify</goal>
+						</goals>
+						<configuration>
+							<skip>false</skip>
+							<sources>
+								<directory>${project.build.directory}/${project.build.finalName}/static/js</directory>
+								<excludes>
+									<exclude>org/foo</exclude>
+									<exclude>org/bar</exclude>
+									<exclude>**/*.min.js</exclude>
+								</excludes>
+								<includes>
+									<include>org/foo/lib</include>
+								</includes>
+							</sources>
+							<sourceDirectory>${project.build.directory}/${project.build.finalName}/static/js</sourceDirectory>
+							<outputDirectory>${project.build.directory}/${project.build.finalName}/static/js</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.12.4</version>
-				<configuration>
-					<skipTests>true</skipTests>
-				</configuration>
-			</plugin>
+
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin</artifactId>
@@ -284,18 +307,18 @@
 							<!--inputDir>base directory for non absolute includes, default to 
 								parent dir of output</inputDir -->
 							<includes>
-							    <include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery-1.11.1.min.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery-1.11.1.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/bootstrap/bootstrap.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/customjs.js</include>
 								<!-- Js files for making phonenumber international... -->
 								<include>${project.build.directory}/${project.build.finalName}/static/js/countrycode/intlTelInput.js</include>
 								<!-- Sliding menu -->
-								<include>${project.build.directory}/${project.build.finalName}/static/js/slidermenu.js</include>						
+								<include>${project.build.directory}/${project.build.finalName}/static/js/slidermenu.js</include>
 							</includes>
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
 						</aggregation>
-						
+
 						<aggregation>
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
@@ -316,7 +339,7 @@
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
 						</aggregation>
-						
+
 						<aggregation>
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
@@ -327,7 +350,7 @@
 							<!--inputDir>base directory for non absolute includes, default to 
 								parent dir of output</inputDir -->
 							<includes>
-							    <include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery-1.11.1.min.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery-1.11.1.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/bootstrap/bootstrap.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/customjs.js</include>
 								<!-- Sliding menu -->
@@ -338,7 +361,7 @@
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
 						</aggregation>
-						
+
 						<aggregation>
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
@@ -359,7 +382,7 @@
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
 						</aggregation>
-						
+
 						<aggregation>
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
@@ -370,14 +393,27 @@
 							<!--inputDir>base directory for non absolute includes, default to 
 								parent dir of output</inputDir -->
 							<includes>
-							    <include>${project.build.directory}/${project.build.finalName}/static/js/cordova/cordova.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/cordova/cordova.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/cordova/MobileFileSystem.js</include>
 							</includes>
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
 						</aggregation>
-						
+
 					</aggregations>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>tomcat-maven-plugin</artifactId>
+				<version>1.0-beta-1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.12.4</version>
+				<configuration>
+					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
 			<plugin>
