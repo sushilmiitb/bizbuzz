@@ -106,7 +106,7 @@
 					}
 				}
 				
-				loadjsfile(baseStaticUrl+"/js/cordova/cordova.js", onCordovaLoad);
+				loadjsfile(baseStaticUrl+"/js/cordova/cordova-combined-<spring:message code="git_hash" />.min.js", onCordovaLoad);
 			}
 			else{
 				$("#phonebookbox").hide();

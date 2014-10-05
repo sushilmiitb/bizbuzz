@@ -33,7 +33,7 @@
 					        isCordovaLoaded = true;
 					    }
 					}
-					loadjsfile(baseStaticUrl+"/js/cordova/cordova-combined-min.js", onCordovaLoad);
+					loadjsfile(baseStaticUrl+"/js/cordova/cordova-combined-<spring:message code="git_hash" />.min.js", onCordovaLoad);
 				}
 				/*** otherwise ***/
 				else{

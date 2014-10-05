@@ -14,7 +14,7 @@
 	href="${static_base_url}/assets/ico/favicon.ico">
 
 <!-- Bootstrap core CSS -->
-<link href="${static_base_url}/css/seller-buyer-combined-min.css"
+<link href="${static_base_url}/css/seller-buyer-combined-<spring:message code="git_hash" />.min.css"
 	rel="stylesheet">
 	
 <tiles:insertAttribute name="includecss" ignore="true" />
@@ -31,7 +31,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="${static_base_url}/js/seller-buyer-combined-min.js"></script>
+	<script src="${static_base_url}/js/seller-buyer-combined-<spring:message code="git_hash" />.min.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 	

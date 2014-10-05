@@ -14,7 +14,7 @@
 <%-- 	href="${static_base_url}/assets/ico/favicon.ico"> --%>
 
 <!-- Bootstrap core CSS -->
-<link href="${static_base_url}/css/register-combined-min.css"
+<link href="${static_base_url}/css/register-combined-<spring:message code="git_hash" />.min.css"
 	rel="stylesheet">	rel="stylesheet">
 
 <tiles:insertAttribute name="includecss" ignore="true" />
@@ -34,7 +34,7 @@
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script src="${static_base_url }/js/register-combined-min.js"></script>
+	<script src="${static_base_url }/js/register-combined-<spring:message code="git_hash" />.min.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 </body>

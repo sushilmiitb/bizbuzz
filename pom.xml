@@ -6,6 +6,10 @@
 	<groupId>com.carriage</groupId>
 	<artifactId>carriage</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
+	<scm>
+		<connection>scm:git:https://p12sushilkm@bitbucket.org/p12sushilkm/bizbuzz.git</connection>
+		<url>https://p12sushilkm@bitbucket.org/p12sushilkm/bizbuzz.git</url>
+	</scm>
 	<packaging>war</packaging>
 	<name>Carriage Web Application</name>
 	<url>http://maven.apache.org</url>
@@ -253,35 +257,35 @@
 				</configuration>
 			</plugin>
 
-<!-- 			<plugin> -->
-<!-- 				<groupId>net.tqh.plugins</groupId> -->
-<!-- 				<artifactId>uglifyjs-maven-plugin</artifactId> -->
-<!-- 				<version>1.0</version> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>uglify-js</id> -->
-<!-- 						<goals> -->
-<!-- 							<goal>uglify</goal> -->
-<!-- 						</goals> -->
-<!-- 						<configuration> -->
-<!-- 							<skip>false</skip> -->
-<!-- 							<sources> -->
-<!-- 								<directory>${project.build.directory}/${project.build.finalName}/static/js</directory> -->
-<!-- 								<excludes> -->
-<!-- 									<exclude>org/foo</exclude> -->
-<!-- 									<exclude>org/bar</exclude> -->
-<!-- 									<exclude>**/*.min.js</exclude> -->
-<!-- 								</excludes> -->
-<!-- 								<includes> -->
-<!-- 									<include>org/foo/lib</include> -->
-<!-- 								</includes> -->
-<!-- 							</sources> -->
-<!-- 							<sourceDirectory>${project.build.directory}/${project.build.finalName}/static/js</sourceDirectory> -->
-<!-- 							<outputDirectory>${project.build.directory}/${project.build.finalName}/static/js</outputDirectory> -->
-<!-- 						</configuration> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>net.tqh.plugins</groupId> -->
+			<!-- <artifactId>uglifyjs-maven-plugin</artifactId> -->
+			<!-- <version>1.0</version> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <id>uglify-js</id> -->
+			<!-- <goals> -->
+			<!-- <goal>uglify</goal> -->
+			<!-- </goals> -->
+			<!-- <configuration> -->
+			<!-- <skip>false</skip> -->
+			<!-- <sources> -->
+			<!-- <directory>${project.build.directory}/${project.build.finalName}/static/js</directory> -->
+			<!-- <excludes> -->
+			<!-- <exclude>org/foo</exclude> -->
+			<!-- <exclude>org/bar</exclude> -->
+			<!-- <exclude>**/*.min.js</exclude> -->
+			<!-- </excludes> -->
+			<!-- <includes> -->
+			<!-- <include>org/foo/lib</include> -->
+			<!-- </includes> -->
+			<!-- </sources> -->
+			<!-- <sourceDirectory>${project.build.directory}/${project.build.finalName}/static/js</sourceDirectory> -->
+			<!-- <outputDirectory>${project.build.directory}/${project.build.finalName}/static/js</outputDirectory> -->
+			<!-- </configuration> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
 
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
@@ -300,7 +304,7 @@
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<!-- <insertNewLine>true</insertNewLine> -->
-							<output>${project.build.directory}/${project.build.finalName}/static/js/register-combined-min.js</output>
+							<output>${project.build.directory}/${project.build.finalName}/static/js/register-combined-${gitHash}.min.js</output>
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<!--inputDir>base directory for non absolute includes, default to 
@@ -322,7 +326,7 @@
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<!-- <insertNewLine>true</insertNewLine> -->
-							<output>${project.build.directory}/${project.build.finalName}/static/css/register-combined-min.css</output>
+							<output>${project.build.directory}/${project.build.finalName}/static/css/register-combined-${gitHash}.min.css</output>
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<!--inputDir>base directory for non absolute includes, default to 
@@ -343,7 +347,7 @@
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<!-- <insertNewLine>true</insertNewLine> -->
-							<output>${project.build.directory}/${project.build.finalName}/static/js/seller-buyer-combined-min.js</output>
+							<output>${project.build.directory}/${project.build.finalName}/static/js/seller-buyer-combined-${gitHash}.min.js</output>
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<!--inputDir>base directory for non absolute includes, default to 
@@ -365,7 +369,7 @@
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<!-- <insertNewLine>true</insertNewLine> -->
-							<output>${project.build.directory}/${project.build.finalName}/static/css/seller-buyer-combined-min.css</output>
+							<output>${project.build.directory}/${project.build.finalName}/static/css/seller-buyer-combined-${gitHash}.min.css</output>
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<!--inputDir>base directory for non absolute includes, default to 
@@ -386,7 +390,7 @@
 							<!-- remove files after aggregation (default: false) <removeIncluded>true</removeIncluded> -->
 							<!-- insert new line after each concatenation (default: false) -->
 							<!-- <insertNewLine>true</insertNewLine> -->
-							<output>${project.build.directory}/${project.build.finalName}/static/js/cordova/cordova-combined-min.js</output>
+							<output>${project.build.directory}/${project.build.finalName}/static/js/cordova/cordova-combined-${gitHash}.min.js</output>
 							<!-- files to include, path relative to output's directory or absolute 
 								path -->
 							<!--inputDir>base directory for non absolute includes, default to 
@@ -414,6 +418,26 @@
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>buildnumber-maven-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>git-hash</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>create</goal>
+						</goals>
+						<configuration>
+							<format>{0}</format>
+							<items>
+								<item>scmVersion</item>
+							</items>
+							<buildNumberPropertyName>gitHash</buildNumberPropertyName>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
@@ -445,5 +469,17 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/java</directory>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>**/*.properties</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 </project>
