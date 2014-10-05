@@ -21,7 +21,6 @@
 		
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-sm-12 col-md-12  col-lg-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						 <div class="panel-body">
@@ -63,7 +62,6 @@
 								</c:if>
 						 </c:forEach>
 	            		</div>
-					</div>
 				</div>
 			</div>
 		</div>

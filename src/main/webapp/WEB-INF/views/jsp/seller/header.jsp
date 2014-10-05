@@ -19,7 +19,7 @@
 		
 			<ul class="nav navbar-nav">
 				<li> <a href="<c:url value="/seller/home"/>">Home</a></li>
-				<li><a href="<c:url value="/seller/viewcategory/category/-1"/>">View Products</a></li>
+				<li><a href="<c:url value="/seller/viewcategory/category/-1"/>">Products</a></li>
 <!--			<li><a href="<c:url value="/seller/uploadproduct/category/-1"/>">Upload</a></li>                -->
 				<li><a href="<c:url value="/seller/viewcontacts"/>">Contacts</a></li>
 				<li><a href='<c:url value="/j_spring_security_logout"/>'>Logout</a></li>

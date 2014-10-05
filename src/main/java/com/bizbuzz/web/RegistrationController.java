@@ -183,10 +183,10 @@ public class RegistrationController {
       for(GrantedAuthority authority: authorities){
         String authorityString = authority.getAuthority();
         if(authorityString.equals("ROLE_BUYER")){
-          return "redirect:/buyer/home";
+          return "redirect:/buyer/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_SELLER")){
-          return "redirect:/seller/home";
+          return "redirect:/seller/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_ADMIN")){
           return "redirect:/admin/home/";
