@@ -26,7 +26,12 @@
     view-name="home" /> -->
   <mvc:resources mapping="/static/**" location="/static/" />
 	<!-- Enables the Spring MVC @Controller programming model -->
-	
+	<mvc:annotation-driven>
+		<mvc:argument-resolvers>
+			<bean
+				class="com.bizbuzz.utils.AtmosphereArgumentResolver" />
+		</mvc:argument-resolvers>
+	</mvc:annotation-driven>
 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
     	<property name="definitions">
       	<list>
@@ -39,5 +44,22 @@
     	<property name="prefix" value="/WEB-INF/views/" />
     	<property name="suffix" value=".jsp" />
   	</bean>
-  	
+  	<bean id="multipartResolver"
+        class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+<!-- 	    <beans:property name="maxUploadSize" value="100000" /> -->
+	</bean>
+  
+	<bean id="jsonConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes" value="application/json" />
+		<property name="objectMapper" ref="jaxbJacksonObjectMapper" />
+	</bean>
+
+	<bean id="jaxbJacksonObjectMapper" class="com.bizbuzz.utils.JaxbJacksonObjectMapper" />
+
+<!-- 	<bean class="org.springframework.mvc.samples.atmosphere.service.TwitterService"/>
+ -->
+	<task:executor id="executor" pool-size="5"/>
+  	<task:scheduler id="scheduler" pool-size="5"/>
+  	<task:annotation-driven scheduler="scheduler" executor="executor"/>
+
 </beans>

@@ -239,7 +239,6 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
-
 	</dependencies>
 	<build>
 		<finalName>bizbuzz</finalName>
@@ -254,35 +253,35 @@
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>net.tqh.plugins</groupId>
-				<artifactId>uglifyjs-maven-plugin</artifactId>
-				<version>1.0</version>
-				<executions>
-					<execution>
-						<id>uglify-js</id>
-						<goals>
-							<goal>uglify</goal>
-						</goals>
-						<configuration>
-							<skip>false</skip>
-							<sources>
-								<directory>${project.build.directory}/${project.build.finalName}/static/js</directory>
-								<excludes>
-									<exclude>org/foo</exclude>
-									<exclude>org/bar</exclude>
-									<exclude>**/*.min.js</exclude>
-								</excludes>
-								<includes>
-									<include>org/foo/lib</include>
-								</includes>
-							</sources>
-							<sourceDirectory>${project.build.directory}/${project.build.finalName}/static/js</sourceDirectory>
-							<outputDirectory>${project.build.directory}/${project.build.finalName}/static/js</outputDirectory>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>net.tqh.plugins</groupId> -->
+<!-- 				<artifactId>uglifyjs-maven-plugin</artifactId> -->
+<!-- 				<version>1.0</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>uglify-js</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>uglify</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<skip>false</skip> -->
+<!-- 							<sources> -->
+<!-- 								<directory>${project.build.directory}/${project.build.finalName}/static/js</directory> -->
+<!-- 								<excludes> -->
+<!-- 									<exclude>org/foo</exclude> -->
+<!-- 									<exclude>org/bar</exclude> -->
+<!-- 									<exclude>**/*.min.js</exclude> -->
+<!-- 								</excludes> -->
+<!-- 								<includes> -->
+<!-- 									<include>org/foo/lib</include> -->
+<!-- 								</includes> -->
+<!-- 							</sources> -->
+<!-- 							<sourceDirectory>${project.build.directory}/${project.build.finalName}/static/js</sourceDirectory> -->
+<!-- 							<outputDirectory>${project.build.directory}/${project.build.finalName}/static/js</outputDirectory> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
