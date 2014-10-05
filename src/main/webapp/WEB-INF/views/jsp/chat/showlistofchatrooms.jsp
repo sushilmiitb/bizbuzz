@@ -25,20 +25,24 @@
 		                   </c:if>
 			          </c:forEach>
 		  </c:if>
-			
+			<c:set var="totalMessages" value="${totalMessages + noOfNewChatsOfChatrooms}" />
 			<div class="media chat-room-container" 
-			   onclick='loadNormalChatRoom("${post_url}")' id="${chat.chatRoom.id}">
+			   onclick='loadNormalChatRoom("${post_url}")' id="${chat.chatRoom.id}" >
 				<img class="media-object pull-left"
 					src="${static_base_url}/css/images/icons/user.png" height="60"
 					width="60" alt="...">
 
 				<div class="media-body chat-room-body">
 					<h4 class="media-heading"> ${showperson.firstName} 
-						${showperson.middleName} ${showperson.lastName} ${chat.createdAt}  
-                       <c:if test="${!empty noOfNewChatsOfChatrooms}" >
-                         <span class="chat-room-message-notification"> <span id="noOfNewChats">${noOfNewChatsOfChatrooms}</span> new messages</span>
-                         <c:set var="totalMessages" value="${totalMessages + noOfNewChatsOfChatrooms}" /> 
-                      </c:if>
+						${showperson.middleName} ${showperson.lastName} ${chat.createdAt.date}th  ${monthForDisplay[chat.createdAt.month]} ${chat.createdAt.hours}:${chat.createdAt.minutes} 
+						 <c:choose>
+                           <c:when test="${empty noOfNewChatsOfChatrooms}" >
+                             <span class="chat-room-message-notification" id="noOfNewChats" style="display: none;">0</span>
+                           </c:when>
+                           <c:otherwise>
+                      	     <span class="chat-room-message-notification" id="noOfNewChats">${noOfNewChatsOfChatrooms}</span>
+                           </c:otherwise>
+                         </c:choose>  	
 					</h4>
 					<p class="chat-room-first-line">${chat.message}</p>
 				</div>

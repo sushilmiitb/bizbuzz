@@ -26,6 +26,11 @@
 <link href="${static_base_url}/css/slidermenu.css"
 	rel="stylesheet">
 
+<!-- Show message notification box -->
+<link href="${static_base_url}/css/notification/ns-default.css"
+	rel="stylesheet">
+<link href="${static_base_url}/css/notification/ns-style-growl.css"
+	rel="stylesheet">
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 
@@ -49,6 +54,12 @@
 	<script src="<c:url value='/static/js/jquery/jquery.atmosphere.js'/>"></script>
 	
 	<script src="${static_base_url}/js/slidermenu.js"></script>
+	
+	<!-- Show message notification box -->
+	<script src="${static_base_url}/js/notification/classie.js"></script>
+	<script src="${static_base_url}/js/notification/modernizr.custom.js"></script>
+	<script src="${static_base_url}/js/notification/notificationFx.js"></script>
+	
 	
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />

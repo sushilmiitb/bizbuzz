@@ -2,6 +2,7 @@ package com.bizbuzz.dto;
 
 public class ChatResponseDTO {
   private Long senderId;
+  private String senderName;
   private Long receiverId;
   private Long chatId;
   private Long chatRoomId;
@@ -31,6 +32,13 @@ public class ChatResponseDTO {
   public void setSenderId(Long senderId) {
     this.senderId = senderId;
   }
+  public String getSenderName() {
+    return senderName;
+  }
+  public void setSenderName(String senderName) {
+    this.senderName = senderName;
+  }
+
   public Long getReceiverId() {
     return receiverId;
   }

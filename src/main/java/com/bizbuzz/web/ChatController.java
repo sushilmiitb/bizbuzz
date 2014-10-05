@@ -36,6 +36,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,6 +70,7 @@ import org.springframework.http.ResponseEntity;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection;
+import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
@@ -190,6 +192,7 @@ public class ChatController {
           chatResponseDTO.setReceiverId(member.getId());
         }
       }
+      
       Chat chat = new Chat();
       chat.setSender((Party)person);
       chat.setMessage(message);
@@ -221,6 +224,7 @@ public class ChatController {
       chatResponseDTO.setChatRoomId(chatRoomId);
       chatResponseDTO.setItemId(itemId);
       chatResponseDTO.setSenderId(person.getId());
+      chatResponseDTO.setSenderName(person.getFirstName());
       chatResponseDTO.setMessage(message);
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       if(itemId.intValue()!=0)
@@ -388,15 +392,29 @@ public class ChatController {
     session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
+    Map<Integer, String> monthForDisplay = new HashMap<Integer, String>();
+    monthForDisplay.put(0,"Jan");
+    monthForDisplay.put(1,"Feb");
+    monthForDisplay.put(2,"Mar");
+    monthForDisplay.put(3,"Apr");
+    monthForDisplay.put(4,"May");
+    monthForDisplay.put(5,"Jun");
+    monthForDisplay.put(6,"Jul");
+    monthForDisplay.put(7,"Aug");
+    monthForDisplay.put(8,"Sep");
+    monthForDisplay.put(9,"Oct");
+    monthForDisplay.put(10,"Nov");
+    monthForDisplay.put(11,"Dec");
+    
     List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
-  //  Long newIncomingChats = chatService.getCountOfNewIncomingChats((long)1,person.getId());
-  //  m.addAttribute("noOfNewChats",newIncomingChats);
-   List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
+   
+    List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
     m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);
     m.addAttribute("userid", person.getId());
+    m.addAttribute("monthForDisplay",monthForDisplay);
    return "jsp/chat/showlistofchatrooms";
    
   }
@@ -411,7 +429,7 @@ public class ChatController {
     UserLogin user = person.getUserId();
 
 //  Update ChatroomMember      
-       chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(new Date(), chatroomid,person.getId());
+    chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(new Date(), chatroomid,person.getId());
  
     List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
     if(members==null) return "jsp/error/usernotfound";
@@ -445,7 +463,6 @@ public class ChatController {
       }
       itemChatMap.get(itemId).add(chat);
     }
-
 
     List<SortedMixedChatsForChatRoomDTO> sortedMixedChatsOfChatRoomDTOList = new ArrayList<SortedMixedChatsForChatRoomDTO>();
     List<List<Chat>> itemChatLists = new ArrayList<List<Chat>>(itemChatMap.values());

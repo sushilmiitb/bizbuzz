@@ -3,24 +3,7 @@ var pageStat;
 var subSocket;
 var chatroomid;
 var broadcasterIncrement=0;
-var newChats;
-
-
-/*
-	$('#totalnewchats').bind('DOMSubtreeModified', function() {
-		alert("In change event..");
-		if(Number($("#totalnewchats").text())>0){
-			$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
-		}
-	});
-
-	$("#totalnewchats").change(function(){
-		if(Number($("#totalnewchats").text())>0){
-			$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
-		}
-	});
-*/	
-
+var totalNewChats;
 
 function initializeChatPanel(){
 	$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -38,9 +21,6 @@ function initializeChatPanel(bodyBottomOffset){
 
 function setChatPanelToggleCallback(){
 	$( ".chat-toggle-btn" ).click(function() {
-		if(pageStat!='singlechatroom' || pageStat!='singleitemchatroom'){
-			$(".chat-back").click();   // Manually update no. of chats for listOfChatrooms,if new chats are arrive
-		} 
 		$( ".chat-content" ).animate({
 			height: "toggle"
 		}, 200, function() {
@@ -88,9 +68,9 @@ function setChatBackButtonCallback(){
 		});
 		
 	});
-	newChats=Number($("#totalnewchats").text());
-	if(newChats>0){
-		$(".badge1").attr("data-badge",newChats);
+	totalNewChats=Number($("#totalnewchats").text());
+	if(totalNewChats>0){
+		$(".badge1").attr("data-badge",totalNewChats);
 	}
 	else{
 		$(".badge1").removeAttr("data-badge");
@@ -166,9 +146,9 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
-			newChats=Number($("#totalnewchats").text());
-			if(newChats>0){
-				$(".badge1").attr("data-badge",newChats);
+			totalNewChats=Number($("#totalnewchats").text());
+			if(totalNewChats>0){
+				$(".badge1").attr("data-badge",totalNewChats);
 			}
 			else{
 				$(".badge1").removeAttr("data-badge");
@@ -224,13 +204,6 @@ function loadNormalChatRoom(url){
 	error: function(){
 	}
 	});
-	if(newChats>0){
-		$(".badge1").attr("data-badge",newChats);
-	}
-	else{
-		$(".badge1").removeAttr("data-badge");
-	}
-	//$(".badge1").attr("data-badge",newChats);
 }
 
 /**
@@ -294,16 +267,31 @@ function changeState(stateOfPage,idOfChatroom){
 	pageStat=stateOfPage;
 	chatroomid=idOfChatroom;
 }
-function changeNoOfNewChats(totalNoOfNewMessages){
-
-	newChats=totalNoOfNewMessages;
-	if(newChats>0){
-		$(".badge1").attr("data-badge",newChats);
+function changeTotalNoOfNewChats(totalNoOfNewMessages){
+	totalNewChats=totalNoOfNewMessages;
+	if(totalNewChats>0){
+		$(".badge1").attr("data-badge",totalNewChats);
 	}
 	else{
 		$(".badge1").removeAttr("data-badge");
 	}
 } 
+function showNotificationBox(senderName){
+	setTimeout( function() {
+		// create the notification
+		var notification = new NotificationFx({
+			message : '<p>'+senderName+' messages you .</p>',
+			layout : 'growl',
+			effect : 'scale',
+			type : 'notice', // notice, warning, error or success
+			onClose : function() {
+				
+			}
+		});
+		// show the notification
+		notification.show();
+	}, 200 );
+}
 
 /**
  * Initialize the chat room. It can be used for both normal chat room and item chatroom. It initializes the socket.
@@ -362,18 +350,19 @@ function initializeSocket(socketUrl,senderId){
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
-				newChats=newChats+1;
-				$(".badge1").attr("data-badge",newChats);
-				$("[id="+result.chatRoomId+"]").find()
-		//	$(".chat-back").click();	 
-/*				if(Number($("#totalnewchats").text())>0){
-					alert("Total chats value: " +Number($("#totalnewchats").text()));
-					$(".badge1").attr("data-badge",Number($("#totalnewchats").text()));
-				}        */       
+				showNotificationBox(result.senderName);
+				totalNewChats=totalNewChats+1;
+				$(".badge1").attr("data-badge",totalNewChats);
+				var noOfNewChatsOfChatroom = Number($("[id="+result.chatRoomId+"]").find("#noOfNewChats").text());
+				$("[id="+result.chatRoomId+"]").find("#noOfNewChats").text(noOfNewChatsOfChatroom+1);
+				if(noOfNewChatsOfChatroom==0){
+					$("[id="+result.chatRoomId+"]").find(".chat-room-message-notification").css("display","inline");
+				}       
 			}
 			else if(chatroomid!=result.chatRoomId){
-				newChats=newChats+1;
-				$(".badge1").attr("data-badge",newChats);
+				showNotificationBox(result.senderName);
+				totalNewChats=totalNewChats+1;
+				$(".badge1").attr("data-badge",totalNewChats);
 			}
 			else{
 				$.ajax({

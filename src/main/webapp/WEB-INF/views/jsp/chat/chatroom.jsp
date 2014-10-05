@@ -141,6 +141,6 @@
 		$(".item-chat").click(function(){
 			loadItemChatRoom(${chatroomId}, $(this).attr("id"), "normalchatroom");
 		});
-		changeNoOfNewChats(${totalNoOfNewChats});
+		changeTotalNoOfNewChats(${totalNoOfNewChats});
 	});
 </script>
