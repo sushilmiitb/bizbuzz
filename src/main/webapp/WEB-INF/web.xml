@@ -19,15 +19,15 @@
 		<async-supported>true</async-supported>
 		<init-param>
 			<param-name>ExpiresByType image</param-name>
-			<param-value>access plus 20 minutes</param-value>
+			<param-value>access plus 2 months</param-value>
 		</init-param>
 		<init-param>
 			<param-name>ExpiresByType text/css</param-name>
-			<param-value>access plus 20 minutes</param-value>
+			<param-value>access plus 2 months</param-value>
 		</init-param>
 		<init-param>
 			<param-name>ExpiresByType application/javascript</param-name>
-			<param-value>access plus 20 minutes</param-value>
+			<param-value>access plus 2 months</param-value>
 		</init-param>
 	</filter>
 	<filter-mapping>
