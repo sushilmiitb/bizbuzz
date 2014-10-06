@@ -32,9 +32,11 @@ package com.bizbuzz.web;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -68,6 +70,7 @@ import org.springframework.http.ResponseEntity;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Connection;
+import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
@@ -75,6 +78,7 @@ import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ChatService;
+import com.bizbuzz.service.ChatroomMemberService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
@@ -82,6 +86,8 @@ import com.bizbuzz.service.PropertyService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
+import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
 
@@ -132,6 +138,8 @@ public class ChatController {
   @Autowired
   PropertyService propertyService;
 
+  @Autowired
+  ChatroomMemberService chatroomMemberService;
 
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -144,13 +152,12 @@ public class ChatController {
 
     Person person = getPerson();
     UserLogin user = person.getUserId();
-    session.setAttribute("userId",user.getId());
-    session.setAttribute("chatroomId",(long)1);
+  //  session.setAttribute("userId",user.getId());
+   // session.setAttribute("chatroomId",(long)1);
 
     return "home";
   }
-
-  // ~~~~~~~~~~~~~~~~~~~~~            CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMWORK             ~~~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~            CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMEWORK             ~~~~~~~~~~~~~~~~~~~~~~~
 
   @RequestMapping(value = "/websockets", method = RequestMethod.POST)
   @ResponseBody
@@ -159,27 +166,33 @@ public class ChatController {
     ChatResponseDTO chatResponseDTO = new ChatResponseDTO();
     JSONObject jsonObject = JSONObject.fromObject(request);
     String message = jsonObject.get("message").toString();
-    String userId = jsonObject.get("userId").toString();
+    Long personId = (long)jsonObject.get("personId").hashCode();
     Long chatRoomId = (long)jsonObject.get("chatroomId").hashCode();   
     Long itemId = (long)jsonObject.get("itemId").hashCode();
 
     if(message.equals("0Open0")){
       Broadcaster b;
       if(itemId.intValue()!=0){
-        b  = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+itemId+"/"+userId ,true);
+        b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+itemId+"/"+personId ,true);
       }
       else{
-        b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+userId ,true);
+        b = BroadcasterFactory.getDefault().lookup("/"+personId ,true);
       }
       b.addAtmosphereResource(event);  
+     
       return null;
     }
     else{
 
-      Person person = partyManagementService.getPersonFromUsername(userId);
+      Person person = partyManagementService.getPerson(personId);
       ChatRoom chatRoom = chatRoomService.getChatRoomByChatRoomId(chatRoomId);
       List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatRoomId);
-
+      for(Person member : members){
+        if(person.getId().longValue()!=member.getId().longValue()){
+          chatResponseDTO.setReceiverId(member.getId());
+        }
+      }
+      
       Chat chat = new Chat();
       chat.setSender((Party)person);
       chat.setMessage(message);
@@ -189,29 +202,50 @@ public class ChatController {
         chat.setItem(item);
       }
       chatService.saveChat(chat);
-
       Date lastChatDate = chat.getCreatedAt();
+      
+      Calendar calenderDate = Calendar.getInstance();
+      calenderDate.setTime(lastChatDate);
+      int year       = calenderDate.get(Calendar.YEAR);
+      int month      = calenderDate.get(Calendar.MONTH)+1; 
+      int dayOfMonth = calenderDate.get(Calendar.DAY_OF_MONTH); 
+      int hourOfDay  = calenderDate.get(Calendar.HOUR_OF_DAY);
+      int minute     = calenderDate.get(Calendar.MINUTE);
+      int second     = calenderDate.get(Calendar.SECOND);
+      
       chatRoom.setUpdatedAt(lastChatDate);
       chatRoomService.saveChatRoom(chatRoom);
-      String dateOfBroadcast = lastChatDate.getYear()+"-"+lastChatDate.getMonth()+"-"+lastChatDate.getDay()+" "+lastChatDate.getHours()+":"+lastChatDate.getMinutes()+":"+lastChatDate.getSeconds()+":0";
+ //   Update ChatroomMember  
+      chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(lastChatDate, chatRoomId,person.getId());
+      
+      String dateOfBroadcast = year+"-"+month+"-"+dayOfMonth+" "+hourOfDay+":"+minute+":"+second+":0";
       /*     
        */
       chatResponseDTO.setChatRoomId(chatRoomId);
       chatResponseDTO.setItemId(itemId);
       chatResponseDTO.setSenderId(person.getId());
+      chatResponseDTO.setSenderName(person.getFirstName());
       chatResponseDTO.setMessage(message);
-      chatResponseDTO.setDate(lastChatDate.getYear(), lastChatDate.getMonth(), lastChatDate.getDay(), lastChatDate.getHours(), lastChatDate.getMinutes());
+      chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
         //MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
         for(Person member : members){
-          BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
-        }  
+    /*     if(person.getId().longValue()!=member.getId().longValue()){
+            Broadcaster receiverBroadcaster = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId());
+            if(receiverBroadcaster!=null && receiverBroadcaster.getAtmosphereResources().size()!=0){
+              BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+            }
+          }
+          else{
+            
+          }  */
+          BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
       }
-      logger.info("Received message to broadcast: {}"+ userId +" : " +message +"           " +dateOfBroadcast);         
+      logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);         
+      }
     }
-
     return  "success";
   }
 
@@ -358,12 +392,31 @@ public class ChatController {
     session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
+    Map<Integer, String> monthForDisplay = new HashMap<Integer, String>();
+    monthForDisplay.put(0,"Jan");
+    monthForDisplay.put(1,"Feb");
+    monthForDisplay.put(2,"Mar");
+    monthForDisplay.put(3,"Apr");
+    monthForDisplay.put(4,"May");
+    monthForDisplay.put(5,"Jun");
+    monthForDisplay.put(6,"Jul");
+    monthForDisplay.put(7,"Aug");
+    monthForDisplay.put(8,"Sep");
+    monthForDisplay.put(9,"Oct");
+    monthForDisplay.put(10,"Nov");
+    monthForDisplay.put(11,"Dec");
+    
     List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+   
+    List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
+    m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);
     m.addAttribute("userid", person.getId());
-    return "jsp/chat/showlistofchatrooms";
+    m.addAttribute("monthForDisplay",monthForDisplay);
+   return "jsp/chat/showlistofchatrooms";
+   
   }
 
   @RequestMapping(value="/chat/showchatroom/chatroomid/{chatroomid}", method = RequestMethod.GET)
@@ -375,6 +428,9 @@ public class ChatController {
     Person person = getPerson();
     UserLogin user = person.getUserId();
 
+//  Update ChatroomMember      
+    chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(new Date(), chatroomid,person.getId());
+ 
     List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
     if(members==null) return "jsp/error/usernotfound";
 
@@ -408,7 +464,6 @@ public class ChatController {
       itemChatMap.get(itemId).add(chat);
     }
 
-
     List<SortedMixedChatsForChatRoomDTO> sortedMixedChatsOfChatRoomDTOList = new ArrayList<SortedMixedChatsForChatRoomDTO>();
     List<List<Chat>> itemChatLists = new ArrayList<List<Chat>>(itemChatMap.values());
     int i=0;
@@ -438,9 +493,15 @@ public class ChatController {
         j++;
       }
     }
+    Long totalNoOfNewMessages=(long)0;
+    List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
+    for(NoOfNewMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
+      totalNoOfNewMessages=totalNoOfNewMessages+dto.getNoOfNewMessages();
+    }
+    m.addAttribute("totalNoOfNewChats",totalNoOfNewMessages);
     m.addAttribute("allChatsOfChatroomDTOList",sortedMixedChatsOfChatRoomDTOList);
     m.addAttribute("person", person);
-    m.addAttribute("userId", user.getId());
+   // m.addAttribute("userId", user.getId());
     m.addAttribute("chatroomId", chatroomid);
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
@@ -448,6 +509,20 @@ public class ChatController {
     return "jsp/chat/chatroom";
   }
 
+  @RequestMapping(value="/chat/updatechatroommember", method = RequestMethod.GET)
+  public String updateChatroomMember( @RequestParam Map<String, String> allRequestParams){
+
+    Date lastChatDate = new Date();
+    lastChatDate.setYear(Integer.parseInt(allRequestParams.get("year")));
+    lastChatDate.setMonth(Integer.parseInt(allRequestParams.get("month")));
+    lastChatDate.setDate(Integer.parseInt(allRequestParams.get("day")));
+    lastChatDate.setHours(Integer.parseInt(allRequestParams.get("hour")));
+    lastChatDate.setMinutes(Integer.parseInt(allRequestParams.get("minute")));
+    lastChatDate.setSeconds(Integer.parseInt(allRequestParams.get("seconds")));
+    chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(lastChatDate, Long.parseLong(allRequestParams.get("chatRoomId")), Long.parseLong(allRequestParams.get("receiverId")));
+    
+    return "success";
+  }  
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~       CHAT FUNTIONALITY WITH NORMAL REQUEST-RESPONSE MODEL     ~~~~~~~~~~~~~~~~~~~~~~~
 
   @RequestMapping(value = "/chat/showonetoonechatmessages/{chatroomid}", method = RequestMethod.POST)

@@ -56,6 +56,7 @@
 			* code for mobile devices ends
 			***************************************************************************************/
 		});
+		
 		</script>
 	</tiles:putAttribute>
 
@@ -70,7 +71,7 @@
 							
 							<ul class="nav nav-pills nav-stacked n">
 								<li><a href="<c:url value="/seller/viewcategory/category/-1"/>"><span
-										class="glyphicon glyphicon-search"></span> View Products </a></li>
+										class="glyphicon glyphicon-search"></span> Products </a></li>
 				<!--  			<li><a href="<c:url value="/seller/uploadproduct/category/-1"/>"><span
 										class="glyphicon glyphicon-upload"></span> Upload Products </a></li>   -->
 								<li><a href="<c:url value="/seller/viewcontacts"/>"><span class="glyphicon glyphicon-cog"></span>

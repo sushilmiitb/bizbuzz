@@ -68,7 +68,7 @@
 						<div class="panel-body">
 							<ul class="nav nav-pills nav-stacked n">
 								<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>"><span
-										class="glyphicon glyphicon-search"></span> View Products </a></li>
+										class="glyphicon glyphicon-search"></span> Products </a></li>
 								<li><a href="<c:url value="/buyer/viewcontacts"/>"><span class="glyphicon glyphicon-cog"></span>
 										Contacts </a></li>
 							</ul>

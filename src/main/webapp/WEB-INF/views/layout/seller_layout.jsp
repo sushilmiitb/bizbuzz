@@ -32,6 +32,7 @@
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="${static_base_url}/js/seller-buyer-combined-<spring:message code="git_hash" />.min.js"></script>
+	
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 

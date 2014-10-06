@@ -16,7 +16,7 @@
 	    <basefileuploadurl>static/upload/images</basefileuploadurl>
 	</image>
 	<industry>
-	    <sarees>2</sarees>
+	    <sarees>3</sarees>
 	</industry>
 	<sarees>
 	    <groupingCode2 name="primary">

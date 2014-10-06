@@ -69,10 +69,15 @@ public abstract class Party implements Serializable{
   @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Item> sharedItems = new ArrayList<Item>();
-  
+ /* 
   @ManyToMany(mappedBy="members", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
+ */ 
+  
+  @OneToMany(mappedBy="member", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<ChatroomMember> chatrooms = new ArrayList<ChatroomMember>();
   
   @OneToMany(mappedBy="sender", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
@@ -225,7 +230,7 @@ public abstract class Party implements Serializable{
   public void setSentChat(List<Chat> sentChat) {
     this.sentChat = sentChat;
   }
-
+/*
   public List<ChatRoom> getChatRooms() {
     return chatRooms;
   }
@@ -233,7 +238,16 @@ public abstract class Party implements Serializable{
   public void setChatRooms(List<ChatRoom> chatRooms) {
     this.chatRooms = chatRooms;
   }
+*/
 
+  public List<ChatroomMember> getChatrooms() {
+    return chatrooms;
+  }
+
+  public void setChatrooms(List<ChatroomMember> chatrooms) {
+    this.chatrooms = chatrooms;
+  }
+  
   public String getEmail() {
     return email;
   }

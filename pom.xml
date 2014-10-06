@@ -360,6 +360,10 @@
 								<include>${project.build.directory}/${project.build.finalName}/static/js/slidermenu.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/chat.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery.atmosphere.js</include>
+								<!-- Show message notification box -->
+								<include>${project.build.directory}/${project.build.finalName}/static/js/notification/classie.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/notification/modernizr.custom.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/notification/notificationFx.js</include>
 							</includes>
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->
@@ -381,6 +385,8 @@
 								<!-- Css for making phonenumber international... -->
 								<include>${project.build.directory}/${project.build.finalName}/static/css/slidermenu.css</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/css/chat-theme.css</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/css/notification/ns-default.css</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/css/notification/ns-style-growl.css</include>
 							</includes>
 							<!-- files to exclude, path relative to output's directory <excludes> 
 								<exclude>**/*.pack.js</exclude> <exclude>**/compressed.css</exclude> </excludes> -->

@@ -1,6 +1,7 @@
 package com.bizbuzz.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,7 +31,8 @@ public class ChatRoom implements Serializable{
   @Id
   @GeneratedValue
   private Long id;
-    
+ 
+ /* 
   @ManyToMany(fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
   @JoinTable(
@@ -38,10 +40,16 @@ public class ChatRoom implements Serializable{
       joinColumns={@JoinColumn(name="chatroom_id", referencedColumnName="id")},
       inverseJoinColumns={@JoinColumn(name="member_id", referencedColumnName="id")})
   private List<Party> members;
+*/
+ 
+  @OneToMany(mappedBy="chatroom", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<ChatroomMember> members = new ArrayList<ChatroomMember>();
   
   @OneToMany(mappedBy="chatRoom")
   private List<Chat> chats;
   
+
   
   private Date createdAt;
   
@@ -50,12 +58,21 @@ public class ChatRoom implements Serializable{
   /**
    * setters and getters
    */
-
+/*
   public List<Party> getMembers() {
     return members;
   }
 
   public void setMembers(List<Party> members) {
+    this.members = members;
+  }
+*/
+
+  public List<ChatroomMember> getMembers() {
+    return members;
+  }
+
+  public void setMembers(List<ChatroomMember> members) {
     this.members = members;
   }
 

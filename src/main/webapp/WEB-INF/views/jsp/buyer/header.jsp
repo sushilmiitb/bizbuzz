@@ -12,14 +12,14 @@
 				<span class="icon-bar"></span> 
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="#">Bizbuzz</a>
+			<a class="navbar-brand" href="#">InstaTrade</a>
 		</div>
 		
 		<div id="slidemenu">
 			
 				<ul class="nav navbar-nav">		
 					<li><a href="<c:url value="/buyer/home"/>">Home</a></li>
-					<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>"> View Products </a></li>
+					<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>"> Products </a></li>
 					<li><a href="<c:url value="/buyer/viewcontacts"/>">Contacts</a></li>
 					<li><a href='<c:url value="/j_spring_security_logout"/>'>Logout</a></li>
 				</ul>

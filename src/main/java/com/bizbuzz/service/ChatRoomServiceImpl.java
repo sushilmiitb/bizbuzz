@@ -63,12 +63,12 @@ public class ChatRoomServiceImpl implements ChatRoomService{
   public List<ChatRoom> getAllNewSortedChatRoomsOfPerson(Person person) {  
     return chatRoomRepository.findAllNewSortedChatRoomsOfPerson(person.getId());
   }
-  
+ /* 
   @Override
   public List<ChatRoom> getAllItemChatRoomsWithNoCoversation(Long personId, Long itemId) {  
     return chatRoomRepository.findAllChatRoomsByNotItemIdAndPersonIdOrderedByPersonName(personId, itemId);
   }
-  
+  */
   public void deleteChatRoom(Long chatRoomId) {
     
     chatRoomRepository.delete(chatRoomId);
