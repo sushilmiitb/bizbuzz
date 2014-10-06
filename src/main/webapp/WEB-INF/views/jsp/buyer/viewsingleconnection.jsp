@@ -111,7 +111,7 @@
 								<form role="form" method="POST" class="form-signin" action="${edit_group_url}"
 								id="buyer_viewsingleconnection_editgroupform" class="form">
 									
-<!-- 								<select class="form-control"
+<!-- 						<select class="form-control"
 										id="buyer_viewsingleconnection_changegroupoption">
 										<c:forEach var="item" items="${privateGroupList}">
 											<option value="${item.id}"
@@ -119,7 +119,7 @@
 												selected="true" 
 											</c:if>>${item.privateGroupName}</option>
 										</c:forEach>
-									</select>                                       --> 
+							</select>                                       --> 
 									<input class="btn btn-primary btn-block" type="submit"
 										id="seller_viewsingleconnection_submiteditgroup"
 										value="Change Group" />

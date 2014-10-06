@@ -17,7 +17,7 @@ public interface ChatRoomService {
   public List<Chat> getSortedChatsOfPerson(Person person);
   public List<Chat> getSortedItemChatsOfPerson(Long personId, Long itemId);
   public List<ChatRoom> getAllNewSortedChatRoomsOfPerson(Person person);
-  public List<ChatRoom> getAllItemChatRoomsWithNoCoversation(Long personId, Long itemId);
+ // public List<ChatRoom> getAllItemChatRoomsWithNoCoversation(Long personId, Long itemId);
   
   public void deleteChatRoom(Long chatRoomId);
   

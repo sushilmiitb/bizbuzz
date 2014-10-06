@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.tags.form.HiddenInputTag;
+import javax.servlet.http.HttpSession;
 
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
@@ -56,6 +57,7 @@ import com.bizbuzz.model.PropertyValue;
 import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ChatService;
+import com.bizbuzz.service.ChatroomMemberService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
@@ -93,9 +95,14 @@ public class SellerController {
   @Autowired
   ChatService chatService;
   
+  @Autowired
+  ChatroomMemberService chatroomMemberService;
+  
   
   @RequestMapping(value={"/seller", "/seller/home"}, method = RequestMethod.GET)
-  public String sellerHome(){
+  public String sellerHome(HttpSession session){
+    Person seller = getSeller();
+    session.setAttribute("senderId", seller.getId());
     return "jsp/seller/home";
   }
   
@@ -231,7 +238,7 @@ public class SellerController {
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
     
     if(toPerson == null){
-      SmsSender.sendSms(request.getUserId(),"Hello");   
+      SmsSender.sendSms(request.getUserId(),"hello");   
       return ajaxReply;
     }
     
@@ -252,7 +259,7 @@ public class SellerController {
     }
     
  // below code for add members into chatroom   
-    ChatRoom chatRoomFromDB = chatRoomService.getChatRoomByMembers(seller.getId(),toPerson.getId());
+/*    ChatRoom chatRoomFromDB = chatRoomService.getChatRoomByMembers(seller.getId(),toPerson.getId());
     if(chatRoomFromDB==null){
       List<Party> members = new ArrayList<Party>();
       members.add(seller);
@@ -261,6 +268,12 @@ public class SellerController {
       chatRoom.setMembers(members);
       chatRoomService.saveChatRoom(chatRoom);
     }
+ */   
+    ChatRoom chatroom = new ChatRoom();
+    chatRoomService.saveChatRoom(chatroom);       
+    Date chatroomCreationDate= new Date();
+    chatroomMemberService.createChatroomMember(chatroom,seller,chatroomCreationDate);
+    chatroomMemberService.createChatroomMember(chatroom, toPerson,chatroomCreationDate);    
  // Above  code for add members into chatroom 
     
     ajaxReply.addDetails(toPerson, privateGroup);
@@ -284,7 +297,7 @@ public class SellerController {
     if(privateGroup != null){
       connectionService.deleteConnection(privateGroup, toPerson);
     }
-// =================================================================== Delete Chatroom of the connection members    
+// =============================================================== Delete Chatroom of the connection members    
    // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
    // chatService.deleteAllChatByChatRoomId(chatroom.getId());
     //chatRoomService.deleteChatRoom(chatroom.getId());

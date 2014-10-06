@@ -56,7 +56,7 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "c.connectionType=?2 "
       + "order by p.firstName asc")
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
-  
+ 
   @Query("select c from "
       + "Connection c inner join c.fromParty p "
       + "where c.toPartyId=?1 and "
@@ -77,14 +77,14 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "f.connectionType=?2 "
       + "order by p.firstName asc ")
   List<Connection> findConnectionsByFromPartyIdOrderAndConnectionTypeByToPartyFirstName(Long fromPartyId, ConnectionType connectionType);
- 
+ /*
   @Query("select p from "
       + "Person p inner join p.toParties c inner join c.toParty pg inner join pg.toParties f "
       + "where f.toPartyId=?1 and "
       + "f.connectionType=?2 "
       + "order by p.firstName asc ")
   List<Person> findConnectionsByToPartyIdAndConnectionTypeOrderByFromoPartyFirstName(Long toPartyId, ConnectionType connectionType);
-  
+  */
   @Query("select p from "
       + "Connection c inner join c.toParty p "
       + "where c.fromPartyId=?1 and "

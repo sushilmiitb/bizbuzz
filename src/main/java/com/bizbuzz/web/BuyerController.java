@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -61,7 +63,9 @@ public class BuyerController {
   SellerValidator sellerValidator;
   
   @RequestMapping(value={"/buyer", "/buyer/home"}, method = RequestMethod.GET)
-  public String buyerHome(){
+  public String buyerHome(HttpSession session){
+    Person buyer = getBuyer();
+    session.setAttribute("senderId", buyer.getId());
     return "jsp/buyer/home";
   }
   
@@ -110,18 +114,7 @@ public class BuyerController {
       connectionService.createConnection(privateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
 */    
- // below code for add members into chatroom
-    ChatRoom chatRoomFromDB = chatRoomService.getChatRoomByMembers(toPerson.getId(),buyer.getId());
-    if(chatRoomFromDB==null){
-      List<Party> members = new ArrayList<Party>();
-      members.add(buyer);
-      members.add(toPerson);
-      ChatRoom chatRoom = new ChatRoom();
-      chatRoom.setMembers(members);
-      chatRoomService.saveChatRoom(chatRoom);
-    }
- // Above  code for add members into chatroom
-    
+ 
  //   ajaxReply.addDetails(toPerson, privateGroup);
     return ajaxReply;
   }

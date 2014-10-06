@@ -86,7 +86,8 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		initializeNormalChatRoom('<c:url value="/websockets" />', ${userId}, ${person.id}, ${chatroomId}, ${itemId});
+		changeState('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
+		initializeNormalChatRoom(${person.id}, ${chatroomId}, ${itemId});
 	});
 </script>
 								
