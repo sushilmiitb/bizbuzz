@@ -16,7 +16,6 @@
 		<c:url var="view_full_size_image_url" value="/buyer/viewfullimage" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">Product name</div>
 						<div class="panel-body">
@@ -25,10 +24,11 @@
 									<div class="panel panel-default">
 										<div class="panel-heading">Images</div>
 										<div class="panel-body">
-											<div class="row">
-												<c:forEach var="item" items="${propertyMetadata.imageModels}"
-													varStatus="i">
-													<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+											<c:forEach var="item" items="${propertyMetadata.imageModels}" varStatus="i" >
+											       <c:if test="${i.index % 3 == 0}">
+														<div class="row">
+													</c:if>
+														<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
 														<c:choose>
 															<c:when test="${not empty valueImageModelMap[item.id]}">
 																<a class="thumbnail"
@@ -48,9 +48,11 @@
 																</a>
 															</c:otherwise>
 														</c:choose>
-													</div>
-												</c:forEach>
-											</div>
+														</div>
+													<c:if test="${i.index % 3 == 2 || i.index== fn:length(propertyMetadata.imageModels)}">
+														</div>
+													</c:if>
+										 	</c:forEach>
 										</div>
 									</div>
 								</div>
@@ -88,7 +90,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 	</tiles:putAttribute>

@@ -17,7 +17,6 @@
 		<c:url var="edit_item_url" value="/seller/uploadproduct/category/${item.itemCategory.id}"/>
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">Product name</div>
 						<div class="panel-body">
@@ -34,32 +33,35 @@
 									<div class="panel panel-default">
 										<div class="panel-heading">Images</div>
 										<div class="panel-body">
-											<div class="row">
-												<c:forEach var="item" items="${propertyMetadata.imageModels}"
-													varStatus="i">
-													<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
-														<c:choose>
-															<c:when test="${not empty valueImageModelMap[item.id]}">
-																<a class="thumbnail"
-																	href="${view_full_size_image_url}/${valueImageModelMap[item.id].id}/extn/${imageExtn}">
-																	<img class="image-responsive upload-preview"
-																	id="thumbnail_images_${i.index}" alt="..."
-																	src="${base_image_url}/${sizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}" />
-																	<h4 class="center-align-text">${item.name}</h4>
-																</a>
-															</c:when>
-															<c:otherwise>
-																<a href="#" class="thumbnail"> <img
-																	class="image-responsive no-image upload-preview"
-																	id="thumbnail_images_${i.index}" alt=""
-																	src="${emptyImageUrl}">
-																	<h4 class="center-align-text">${item.name}</h4>
-																</a>
-															</c:otherwise>
-														</c:choose>
-													</div>
-												</c:forEach>
-											</div>
+											<c:forEach var="item" items="${propertyMetadata.imageModels}" varStatus="i" >
+											       <c:if test="${i.index % 3 == 0}">
+														<div class="row">
+													</c:if>
+														<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4">
+															<c:choose>
+																<c:when test="${not empty valueImageModelMap[item.id]}">
+																	<a class="thumbnail"
+																		href="${view_full_size_image_url}/${valueImageModelMap[item.id].id}/extn/${imageExtn}">
+																		<img class="image-responsive upload-preview"
+																		id="thumbnail_images_${i.index}" alt="..."
+																		src="${base_image_url}/${sizeDir}/${valueImageModelMap[item.id].id}.${imageExtn}" />
+																		<h4 class="center-align-text">${item.name}</h4>
+																	</a>
+																</c:when>
+																<c:otherwise>
+																	<a href="#" class="thumbnail"> <img
+																		class="image-responsive no-image upload-preview"
+																		id="thumbnail_images_${i.index}" alt=""
+																		src="${emptyImageUrl}">
+																		<h4 class="center-align-text">${item.name}</h4>
+																	</a>
+																</c:otherwise>
+															</c:choose>
+														</div>
+													<c:if test="${i.index % 3 == 2 || i.index== fn:length(propertyMetadata.imageModels)}">
+														</div>
+													</c:if>
+										 	</c:forEach>
 										</div>
 									</div>
 								</div>
@@ -97,7 +99,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 	</tiles:putAttribute>

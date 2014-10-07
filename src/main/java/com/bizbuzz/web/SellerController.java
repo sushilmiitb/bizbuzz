@@ -456,7 +456,7 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
+    return "redirect:/seller/viewproduct/category/"+categoryId;
   }
   
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)

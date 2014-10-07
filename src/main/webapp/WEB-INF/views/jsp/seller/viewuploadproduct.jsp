@@ -276,7 +276,6 @@
 		<c:set var="value_count" value="0" scope="page" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						<div class="panel-body">
@@ -294,15 +293,15 @@
 								<br />
 							</c:if>
 <!---------------------------------------------------- Share Button ------------------------------------------------------->
-							<div class="row">
-								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
-								<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
-									<button class="btn btn-success btn-block" data-toggle="modal"
-										data-target="#shareModal">Share the product</button>
-								</div>
-								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
-							</div>
-							<br />
+<!-- 							<div class="row"> -->
+<!-- 								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
+<!-- 								<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6"> -->
+<!-- 									<button class="btn btn-success btn-block" data-toggle="modal" -->
+<!-- 										data-target="#shareModal">Share the product</button> -->
+<!-- 								</div> -->
+<!-- 								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
+<!-- 							</div> -->
+<!-- 							<br /> -->
 							<form role="form" id="uploadForm" action="${form_upload_url}"
 								class="productuploadform" method="POST"
 								enctype="multipart/form-data">
@@ -441,7 +440,7 @@
 																<c:otherwise>
 																	<div class="checkbox">
 																		<label><input type="checkbox" id="selectall"
-																			class="second" name="share" value="${item.id}">${item.privateGroupName}</label>
+																			class="second" name="share" value="${item.id}" checked="true">${item.privateGroupName}</label>
 																	</div>
 																</c:otherwise>
 															</c:choose>
@@ -470,7 +469,6 @@
 							</form>
 						</div>
 					</div>
-				</div>
 			</div>
 		</div>
 		<!---------------------------------------------------- Modal for upload ------------------------------------------------------->
