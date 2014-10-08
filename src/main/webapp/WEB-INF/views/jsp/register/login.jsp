@@ -94,7 +94,7 @@
 								<br/>
 								<button class="btn btn-md btn-success btn-block" id="newuser" >Register</button>
 							</form>			
-							<a href="#" id="forgotpass">Forgot Password?</a>
+<!-- 							<a href="#" id="forgotpass">Forgot Password?</a> -->
 						</div>
 					</div>
 				</div>

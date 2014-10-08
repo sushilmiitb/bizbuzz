@@ -10,6 +10,46 @@ label {
 	font-weight: 700
 }
 
+.header .logo{
+	width: 40px;
+	margin-top:-10px;
+	cursor: pointer;
+}
+
+.header > .navbar-header{
+	float:left;
+}
+
+.header-nav-item{
+    float:left;
+    color:#777;
+    padding:15px;
+    height: 50px;
+    text-align:center;
+}
+
+.header-nav-item:hover{
+    background-color:#f2f2f2;
+    cursor:pointer;
+    text-decoration: none;
+    color:#777;
+}
+
+.header-nav-item a{
+	color:#777;
+	text-decoration:none;
+}
+
+.header-nav-item a:focus{
+	color:#777;
+	text-decoration:none;
+	outline: none;
+}
+
+.header-nav-item.active{
+    background-color:#E7E7E7;
+}
+
 .footer{
 	position:fixed;
 	bottom:0px;
