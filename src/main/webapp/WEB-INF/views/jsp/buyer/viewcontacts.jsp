@@ -3,7 +3,7 @@
 
 <tiles:insertDefinition name="buyer">
 	<tiles:putAttribute name="title">
-		BizBuzz-Groups
+		InstaTrade-Groups
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">

@@ -4,7 +4,7 @@
 	<tiles:putAttribute name="include">
 	</tiles:putAttribute>
 	<tiles:putAttribute name="title">
-		BizBuzz-Login
+		InstaTrade-Login
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">

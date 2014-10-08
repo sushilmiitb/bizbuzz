@@ -63,9 +63,7 @@ public class BuyerController {
   SellerValidator sellerValidator;
   
   @RequestMapping(value={"/buyer", "/buyer/home"}, method = RequestMethod.GET)
-  public String buyerHome(HttpSession session){
-    Person buyer = getBuyer();
-    session.setAttribute("senderId", buyer.getId());
+  public String buyerHome(){
     return "jsp/buyer/home";
   }
   

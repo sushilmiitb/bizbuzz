@@ -5,7 +5,7 @@
 
 <tiles:insertDefinition name="seller">
 	<tiles:putAttribute name="title">
-		BizBuzz-Category
+		InstaTrade-Category
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">

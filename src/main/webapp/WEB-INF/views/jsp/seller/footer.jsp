@@ -20,7 +20,7 @@ accordingly makes the chat module hidden or visible.var
 			
 			//Initialize Socket ----------------
 			initializeSocket('<c:url value="/websockets" />',<%= session.getAttribute("senderId") %>);  
-			changeState('<%= session.getAttribute("chatpage") %>',0);
+			changeStateOfPage('<%= session.getAttribute("chatpage") %>',0);
 			
 			var itemId = undefined; 
 			<c:if test="${not empty item}">

@@ -3,7 +3,7 @@
 
 <tiles:insertDefinition name="seller">
 	<tiles:putAttribute name="title">
-		BizBuzz-Groups
+		InstaTrade-Groups
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
@@ -182,7 +182,7 @@
 		
 					$(linkElement).append(divOut);
 		
-					$(linkElement).insertAfter($(".list-group-item").filter(".active").first());
+					$(linkElement).insertAfter($(".list-group-item").filter(".heading").first());
 					$(".loader").remove();
 				},
 				error: function(){

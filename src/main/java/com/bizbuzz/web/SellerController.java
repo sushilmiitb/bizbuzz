@@ -100,9 +100,7 @@ public class SellerController {
   
   
   @RequestMapping(value={"/seller", "/seller/home"}, method = RequestMethod.GET)
-  public String sellerHome(HttpSession session){
-    Person seller = getSeller();
-    session.setAttribute("senderId", seller.getId());
+  public String sellerHome(){
     return "jsp/seller/home";
   }
   

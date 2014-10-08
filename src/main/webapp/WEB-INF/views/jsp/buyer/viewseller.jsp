@@ -5,7 +5,7 @@
 	<tiles:putAttribute name="includejs">
 	</tiles:putAttribute>
 	<tiles:putAttribute name="title">
-		BizBuzz-Sellers
+		InstaTrade-Sellers
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">

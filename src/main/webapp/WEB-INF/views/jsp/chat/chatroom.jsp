@@ -134,13 +134,13 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		changeState('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
+		changeStateOfPage('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
 		
 		
 		initializeNormalChatRoom(${person.id}, ${chatroomId}, 0);
 		$(".item-chat").click(function(){
 			loadItemChatRoom(${chatroomId}, $(this).attr("id"), "normalchatroom");
 		});
-		changeTotalNoOfNewChats(${totalNoOfNewChats});
+		changeTotalNoOfUnreadChats(${totalNoOfUnreadChats});
 	});
 </script>
