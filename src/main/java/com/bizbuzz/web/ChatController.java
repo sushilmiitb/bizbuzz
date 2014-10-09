@@ -392,13 +392,17 @@ public class ChatController {
       else if(chatPage.equals("singleitemchatroom")){
         String fromPage = (String)session.getAttribute("frompage");
         //last state of singleitemchatroom was entered from itemchatroomlist. Hence now move to itehmchatroomlist
-        if(fromPage.equals("itemchatroomlist")){
+      
+        if(fromPage==null) return null;
+        else if(fromPage.equals("itemchatroomlist")){
           return "forward:/chat/showchatrooms/itemid/"+session.getAttribute("itemid");
         }
-        //last state of singleitemchatroom was entered from normal chat room. Hence now move to normal chat room
         else if(fromPage.equals("normalchatroom")){
           return "forward:/chat/showchatroom/chatroomid/"+session.getAttribute("chatroomid");
-        }
+        } 
+        //last state of singleitemchatroom was entered from normal chat room. Hence now move to normal chat room
+        /*       */
+
       }
     }
     return "";
@@ -501,7 +505,7 @@ public class ChatController {
         i++;
         continue;
       }
-      if(normalChats.get(i).getCreatedAt().before(itemChatLists.get(j).get(0).getCreatedAt())){
+      if(normalChats.get(i).getCreatedAt().before(itemChatLists.get(j).get(itemChatLists.get(j).size()-1).getCreatedAt())){
         SortedMixedChatsForChatRoomDTO dto = new SortedMixedChatsForChatRoomDTO(null,normalChats.get(i));
         sortedMixedChatsOfChatRoomDTOList.add(dto);
         i++;
@@ -615,6 +619,7 @@ public class ChatController {
   public String itemChatByItemIdAndSecondPersonId(Model m,HttpSession session,@PathVariable Long secondPersonId,@PathVariable Long itemid) {
     Person person = getPerson();
     UserLogin user = person.getUserId(); 
+    session.setAttribute("chatpage", "singleitemchatroom");
     
     ChatRoom chatRoom = chatRoomService.getChatRoomByMembers(person.getId(), secondPersonId);
     Long chatroomid = chatRoom.getId();
@@ -661,7 +666,7 @@ public class ChatController {
   public String showItemChatRooms(Model m, @PathVariable("itemid") Long itemId, HttpSession session){
     /***Saving chat state***/
     session.setAttribute("itemid", itemId);
-    session.setAttribute("chatpage", "listofitemchatrooms");
+    session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
    /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);

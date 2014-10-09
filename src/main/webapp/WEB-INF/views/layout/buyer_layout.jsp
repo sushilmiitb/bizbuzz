@@ -17,12 +17,6 @@
 <link href="${static_base_url}/css/seller-buyer-combined-<spring:message code="git_hash" />.min.css"
 	rel="stylesheet">
 	
-<!-- Show message notification box -->
-<link href="${static_base_url}/css/notification/ns-default.css"
-	rel="stylesheet">
-<link href="${static_base_url}/css/notification/ns-style-growl.css"
-	rel="stylesheet">
-	
 <tiles:insertAttribute name="includecss" ignore="true" />
 
 <title><tiles:insertAttribute name="title" /></title>
@@ -38,11 +32,8 @@
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="${static_base_url}/js/seller-buyer-combined-<spring:message code="git_hash" />.min.js"></script>
-	<!-- Show message notification box -->
-	<script src="${static_base_url}/js/notification/classie.js"></script>
-	<script src="${static_base_url}/js/notification/modernizr.custom.js"></script>
-	<script src="${static_base_url}/js/notification/notificationFx.js"></script>
-	
+
+<script src="${static_base_url}/js/chat.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 	

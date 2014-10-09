@@ -147,7 +147,7 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
-			totalUnreadChats=Number($("#totalUnreadChats").text());
+		//	totalUnreadChats=Number($("#totalUnreadChats").text());
 			if(totalUnreadChats>0){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
@@ -388,9 +388,10 @@ function initializeSocket(socketUrl,senderId){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else if(chatroomid==result.chatRoomId && itemid!=result.itemId){
-				showNotificationBox(result.senderName ,result.itemId);
-				totalUnreadChats=totalUnreadChats+1;
-				$(".badge1").attr("data-badge",totalUnreadChats);
+			//	showNotificationBox(result.senderName ,result.itemId);
+			//	totalUnreadChats=totalUnreadChats+1;
+			//	$(".badge1").attr("data-badge",totalUnreadChats);
+				loadNormalChatRoom("/bizbuzz/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{
 				$.ajax({
