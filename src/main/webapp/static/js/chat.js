@@ -2,6 +2,7 @@ var socket;
 var pageStat;
 var subSocket;
 var chatroomid;
+var itemid;
 var broadcasterIncrement=0;
 var totalUnreadChats;
 
@@ -146,7 +147,7 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
-			totalUnreadChats=Number($("#totalUnreadChats").text());
+		//	totalUnreadChats=Number($("#totalUnreadChats").text());
 			if(totalUnreadChats>0){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
@@ -263,9 +264,10 @@ function insertChatMessage(msg, isSelf){
 	$(".chat-body").scrollTop(1000000);
 }
 
-function changeStateOfPage(stateOfPage,idOfChatroom){
+function changeStateOfPage(stateOfPage,idOfChatroom,idOfItem){
 	pageStat=stateOfPage;
 	chatroomid=idOfChatroom;
+	itemid=idOfItem;
 }
 function changeTotalNoOfUnreadChats(totalNoOfUnreadMessages){
 	totalUnreadChats=totalNoOfUnreadMessages;
@@ -276,11 +278,19 @@ function changeTotalNoOfUnreadChats(totalNoOfUnreadMessages){
 		$(".badge1").removeAttr("data-badge");
 	}
 } 
-function showNotificationBox(senderName){
+function showNotificationBox(senderName,itemId){
 	setTimeout( function() {
+		var message;
+		if(itemId==0){
+			message='<p>'+senderName+' messages you .</p>'
+		}
+		else{
+			message='<p>'+senderName+' messages you about Item : '+itemId+'.</p>'
+		}
+			
 		// create the notification
 		var notification = new NotificationFx({
-			message : '<p>'+senderName+' messages you .</p>',
+			message : message,
 			layout : 'growl',
 			effect : 'scale',
 			type : 'notice', // notice, warning, error or success
@@ -350,7 +360,8 @@ function initializeSocket(socketUrl,senderId){
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
-				showNotificationBox(result.senderName);
+				
+				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
 				var noOfUnreadChatsOfChatroom = Number($("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").text());	
@@ -372,9 +383,15 @@ function initializeSocket(socketUrl,senderId){
 				
 			}
 			else if(chatroomid!=result.chatRoomId){
-				showNotificationBox(result.senderName);
+				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
+			}
+			else if(chatroomid==result.chatRoomId && itemid!=result.itemId){
+			//	showNotificationBox(result.senderName ,result.itemId);
+			//	totalUnreadChats=totalUnreadChats+1;
+			//	$(".badge1").attr("data-badge",totalUnreadChats);
+				loadNormalChatRoom("/bizbuzz/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{
 				$.ajax({

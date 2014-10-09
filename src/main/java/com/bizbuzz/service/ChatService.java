@@ -2,7 +2,7 @@ package com.bizbuzz.service;
 
 import java.util.List;
 
-import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Item;
@@ -16,5 +16,5 @@ public interface ChatService {
   public List<Chat> getAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId);
   public Long getCountOfNewIncomingChats(Long chatRoomId,Long senderId);
  // public List<Long> getCountOfNewIncomingChatsOfPersonForAllChatroom(Long senderId);
-  public List<NoOfNewMessagesWithPersonIdDTO> getCountOfNewIncomingChatsOfPersonForAllChatroom(Long senderId);
+  public List<NoOfUnreadMessagesWithPersonIdDTO> getCountOfUnreadChatsOfPersonForAllChatroom(Long senderId);
 }

@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
 
-import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Item;
@@ -62,16 +62,16 @@ public class ChatServiceImpl implements ChatService{
     return chatRepository.findCountOfNewIncomingChats(chatRoomId, senderId);
   }
 
-  public List<NoOfNewMessagesWithPersonIdDTO> getCountOfNewIncomingChatsOfPersonForAllChatroom(Long senderId) {
-    List<Object[]> objectList = chatRepository.findCountOfNewIncomingChatsOfPersonForAllChatroom(senderId);
+  public List<NoOfUnreadMessagesWithPersonIdDTO> getCountOfUnreadChatsOfPersonForAllChatroom(Long senderId) {
+    List<Object[]> objectList = chatRepository.findCountOfUnreadChatsOfPersonForAllChatroom(senderId);
     if(objectList==null) return null;
     else{
-      List<NoOfNewMessagesWithPersonIdDTO> noOfNewMessageslist = new ArrayList<NoOfNewMessagesWithPersonIdDTO>();
+      List<NoOfUnreadMessagesWithPersonIdDTO> noOfNewMessageslist = new ArrayList<NoOfUnreadMessagesWithPersonIdDTO>();
       for(Object[] arr : objectList) {
-        NoOfNewMessagesWithPersonIdDTO noOfNewMessagesWithPersonIdDTO = new NoOfNewMessagesWithPersonIdDTO();
-        noOfNewMessagesWithPersonIdDTO.setPersonId((Long)arr[0]);
-        noOfNewMessagesWithPersonIdDTO.setNoOfNewMessages((Long)arr[1]);
-        noOfNewMessageslist.add(noOfNewMessagesWithPersonIdDTO);
+        NoOfUnreadMessagesWithPersonIdDTO noOfUnreadMessagesWithPersonIdDTO = new NoOfUnreadMessagesWithPersonIdDTO();
+        noOfUnreadMessagesWithPersonIdDTO.setPersonId((Long)arr[0]);
+        noOfUnreadMessagesWithPersonIdDTO.setNoOfNewMessages((Long)arr[1]);
+        noOfNewMessageslist.add(noOfUnreadMessagesWithPersonIdDTO);
       }
       return noOfNewMessageslist;
    }

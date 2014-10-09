@@ -9,13 +9,16 @@
         http://www.springframework.org/schema/aop/spring-aop.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
-    
-	<context:component-scan base-package="com.bizbuzz"/>
+
+	<context:component-scan base-package="com.bizbuzz" />
 	<context:annotation-config />
-	
+
 	<context:property-placeholder location="classpath:config/*.properties" />
-	<bean id="personRegistrationFormValidator" class="com.bizbuzz.form.validator.PersonRegistrationFormValidator" />
-	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
-     	p:basename="classpath:message"/>
-	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper"/>
+	
+	<bean id="personRegistrationFormValidator"
+		class="com.bizbuzz.form.validator.PersonRegistrationFormValidator" />
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		p:basename="classpath:message" />
+	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
 </beans>

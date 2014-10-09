@@ -86,8 +86,9 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		changeStateOfPage('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
+		changeStateOfPage('<%= session.getAttribute("chatpage") %>',${chatroomId},${itemId});
 		initializeNormalChatRoom(${person.id}, ${chatroomId}, ${itemId});
+		changeTotalNoOfUnreadChats(${totalNoOfUnreadChats});
 	});
 </script>
 								

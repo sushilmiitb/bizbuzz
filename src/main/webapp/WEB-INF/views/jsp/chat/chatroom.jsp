@@ -134,8 +134,7 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		changeStateOfPage('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
-		
+		changeStateOfPage('<%= session.getAttribute("chatpage") %>',${chatroomId},0);	
 		
 		initializeNormalChatRoom(${person.id}, ${chatroomId}, 0);
 		$(".item-chat").click(function(){

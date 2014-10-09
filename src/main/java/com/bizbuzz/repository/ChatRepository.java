@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Item;
@@ -60,6 +60,6 @@ public interface ChatRepository extends JpaRepository<Chat,Long>{
   @Query("select m.id,count(c) from Person p inner join p.chatrooms crms inner join crms.chatroom cr inner join cr.chats c " +
       "inner join cr.members ms inner join ms.member m " +
       "where p.id=?1 and m.id<>?1 and c.createdAt>crms.lastAccess group by cr.id ")
-  List<Object[]> findCountOfNewIncomingChatsOfPersonForAllChatroom(Long senderId);
+  List<Object[]> findCountOfUnreadChatsOfPersonForAllChatroom(Long senderId);
  
 }  
