@@ -10,7 +10,7 @@
 	<c:if test="${!empty sortedchats}">
 		<c:set var="totalUnreadMessages"  />
 		<c:forEach var="chat" items="${sortedchats}" varStatus="i">
-		    <c:set var="noOfNewChatsOfChatrooms" />
+		    <c:set var="noOfUnreadChatsOfChatroom" />
 			<c:url var="post_url"
 				value="/chat/showchatroom/chatroomid/${chat.chatRoom.id}" />
 			<c:forEach var="chatroomMember" items="${chat.chatRoom.members}">
@@ -21,11 +21,11 @@
   		 <c:if test="${!empty noOfChatsWithPersonIdDTOList}">
 		    	      <c:forEach var="noOfChatsWithPersonIdDTO" items="${noOfChatsWithPersonIdDTOList}" >	   
 						  <c:if test="${showperson.id == noOfChatsWithPersonIdDTO.personId}">
-			           	   <c:set var="noOfNewChatsOfChatrooms" value="${noOfChatsWithPersonIdDTO.noOfNewMessages}" />
+			           	   <c:set var="noOfUnreadChatsOfChatroom" value="${noOfChatsWithPersonIdDTO.noOfNewMessages}" />
 		                   </c:if>
 			          </c:forEach>
 		  </c:if>
-			<c:set var="totalUnreadMessages" value="${totalUnreadMessages + noOfNewChatsOfChatrooms}" />
+			<c:set var="totalUnreadMessages" value="${totalUnreadMessages + noOfUnreadChatsOfChatroom}" />
 			<div class="media chat-room-container" 
 			   onclick='loadNormalChatRoom("${post_url}")' id="${chat.chatRoom.id}" >
 				<img class="media-object pull-left"
@@ -36,11 +36,11 @@
 					<h4 class="media-heading"> ${showperson.firstName} 
 						${showperson.middleName} ${showperson.lastName} <span id="latestChatDate">${chat.createdAt.date}</span>th  <span id="latestChatMonth">${monthForDisplay[chat.createdAt.month]}</span> <span id="latestChatHours">${chat.createdAt.hours}</span>:<span id="latestChatMinutes">${chat.createdAt.minutes}</span> 
 						 <c:choose>
-                           <c:when test="${empty noOfNewChatsOfChatrooms}" >
+                           <c:when test="${empty noOfUnreadChatsOfChatroom}" >
                              <span class="chat-room-message-notification" id="noOfUnreadChats" style="display: none;">0</span>
                            </c:when>
                            <c:otherwise>
-                      	     <span class="chat-room-message-notification" id="noOfUnreadChats">${noOfNewChatsOfChatrooms}</span>
+                      	     <span class="chat-room-message-notification" id="noOfUnreadChats">${noOfUnreadChatsOfChatroom}</span>
                            </c:otherwise>
                          </c:choose>  	
 					</h4>
@@ -77,7 +77,7 @@
 	</c:if>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			changeStateOfPage('<%= session.getAttribute("chatpage") %>',0);
+			changeStateOfPage('<%= session.getAttribute("chatpage") %>',0,0);
 			
 			setChatPanelToggleCallback();
 			setChatBackButtonCallback();

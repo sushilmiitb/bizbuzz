@@ -86,7 +86,7 @@ import com.bizbuzz.service.PropertyService;
 import com.bizbuzz.utils.AtmosphereUtils;
 import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
-import com.bizbuzz.dto.NoOfNewMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
@@ -172,14 +172,15 @@ public class ChatController {
 
     if(message.equals("0Open0")){
       Broadcaster b;
+      b = BroadcasterFactory.getDefault().lookup("/"+personId ,true);
+      b.addAtmosphereResource(event);
+      /*
       if(itemId.intValue()!=0){
         b = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+itemId+"/"+personId ,true);
       }
       else{
-        b = BroadcasterFactory.getDefault().lookup("/"+personId ,true);
-      }
-      b.addAtmosphereResource(event);  
-     
+        
+      }             */    
       return null;
     }
     else{
@@ -242,12 +243,17 @@ public class ChatController {
       chatResponseDTO.setMessage(message);
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
+      for(Person member : members){
+        BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+        logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+      }
+   /*   
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
         //MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/*", "<tr><td>" +userId + " :</td><td> " +message +"</td><td align='right'>" +dateOfBroadcast +"</td></tr>");
-        for(Person member : members){
-    /*     if(person.getId().longValue()!=member.getId().longValue()){
+        
+         if(person.getId().longValue()!=member.getId().longValue()){
             Broadcaster receiverBroadcaster = BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId());
             if(receiverBroadcaster!=null && receiverBroadcaster.getAtmosphereResources().size()!=0){
               BroadcasterFactory.getDefault().lookup("/"+chatRoomId+"/"+member.getUserId().getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
@@ -255,11 +261,8 @@ public class ChatController {
           }
           else{
             
-          }  */
-          BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
-      }
-      logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);         
-      }
+          }  */         
+      
     }
     return  "success";
   }
@@ -424,7 +427,7 @@ public class ChatController {
     List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
    
-    List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
+    List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
     m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);
@@ -509,8 +512,8 @@ public class ChatController {
       }
     }
     Long totalNoOfUnreadMessages=(long)0;
-    List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
-    for(NoOfNewMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
+    List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
+    for(NoOfUnreadMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
       totalNoOfUnreadMessages=totalNoOfUnreadMessages+dto.getNoOfNewMessages();
     }
     m.addAttribute("totalNoOfUnreadChats",totalNoOfUnreadMessages);
@@ -588,10 +591,16 @@ public class ChatController {
       return "jsp/error/usernotfound";
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
+    Long totalNoOfUnreadMessages=(long)0;
+    List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
+    for(NoOfUnreadMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
+      totalNoOfUnreadMessages=totalNoOfUnreadMessages+dto.getNoOfNewMessages();
+    }
     
     Item item = itemService.getItemByItemId(itemid);
     m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
+    m.addAttribute("totalNoOfUnreadChats",totalNoOfUnreadMessages);
     m.addAttribute("person", person);
     m.addAttribute("userId", user.getId());
     m.addAttribute("chatroomId", chatroomid);
@@ -629,6 +638,13 @@ public class ChatController {
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
     Item item = itemService.getItemByItemId(itemid);
+    Long totalNoOfUnreadMessages=(long)0;
+    List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
+    for(NoOfUnreadMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
+      totalNoOfUnreadMessages=totalNoOfUnreadMessages+dto.getNoOfNewMessages();
+    }
+    
+    m.addAttribute("totalNoOfUnreadChats",totalNoOfUnreadMessages);  
     m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
     m.addAttribute("person", person);
@@ -645,13 +661,35 @@ public class ChatController {
   public String showItemChatRooms(Model m, @PathVariable("itemid") Long itemId, HttpSession session){
     /***Saving chat state***/
     session.setAttribute("itemid", itemId);
+    session.setAttribute("chatpage", "listofitemchatrooms");
     
     Person person = getPerson();
-   // List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
-    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
+   /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
+     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+    m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
+    m.addAttribute("sortedChatrooms",sortedNewchatRooms);   */
+    Map<Integer, String> monthForDisplay = new HashMap<Integer, String>();
+    monthForDisplay.put(0,"Jan");
+    monthForDisplay.put(1,"Feb");
+    monthForDisplay.put(2,"Mar");
+    monthForDisplay.put(3,"Apr");
+    monthForDisplay.put(4,"May");
+    monthForDisplay.put(5,"Jun");
+    monthForDisplay.put(6,"Jul");
+    monthForDisplay.put(7,"Aug");
+    monthForDisplay.put(8,"Sep");
+    monthForDisplay.put(9,"Oct");
+    monthForDisplay.put(10,"Nov");
+    monthForDisplay.put(11,"Dec");
+    
+    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+   
+    List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
+    m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);
+    m.addAttribute("monthForDisplay",monthForDisplay);
     m.addAttribute("userid", person.getId());
     m.addAttribute("itemId", itemId);
     return "jsp/chat/itemchatroomlist";

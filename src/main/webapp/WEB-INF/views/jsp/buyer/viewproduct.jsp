@@ -16,7 +16,8 @@
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
-				<div class="col-xs-12 col-sm-12 col-md-12  col-lg-12">
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 no-padding">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">${parentCategory.categoryName}</div>
 						<div class="panel-body">
@@ -51,6 +52,7 @@
 					</div>
 				</div>
 			</div>
+			<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 		</div>
 		</div>
 	</tiles:putAttribute>

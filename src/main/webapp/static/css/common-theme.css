@@ -137,7 +137,9 @@ input.error {
 	background: url('/bizbuzz/static/css/images/icons/loader.gif') 50% 50% no-repeat
 		rgba(0, 0, 0, 0.1);
 }
-
+.no-padding{
+	padding:0px;
+}
 ul.subnav-top-horizontal{
 	padding: 10px;
 }

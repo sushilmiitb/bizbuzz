@@ -1,6 +1,6 @@
 package com.bizbuzz.dto;
 
-public class NoOfNewMessagesWithPersonIdDTO {
+public class NoOfUnreadMessagesWithPersonIdDTO {
 
   private Long personId;
   private Long noOfNewMessages;
