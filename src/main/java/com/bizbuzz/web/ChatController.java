@@ -213,6 +213,20 @@ public class ChatController {
       int minute     = calenderDate.get(Calendar.MINUTE);
       int second     = calenderDate.get(Calendar.SECOND);
       
+      Map<Integer, String> monthForDisplayMap = new HashMap<Integer, String>();
+      monthForDisplayMap.put(1,"Jan");
+      monthForDisplayMap.put(2,"Feb");
+      monthForDisplayMap.put(3,"Mar");
+      monthForDisplayMap.put(4,"Apr");
+      monthForDisplayMap.put(5,"May");
+      monthForDisplayMap.put(6,"Jun");
+      monthForDisplayMap.put(7,"Jul");
+      monthForDisplayMap.put(8,"Aug");
+      monthForDisplayMap.put(9,"Sep");
+      monthForDisplayMap.put(10,"Oct");
+      monthForDisplayMap.put(11,"Nov");
+      monthForDisplayMap.put(12,"Dec");
+      
       chatRoom.setUpdatedAt(lastChatDate);
       chatRoomService.saveChatRoom(chatRoom);
  //   Update ChatroomMember  
@@ -227,6 +241,7 @@ public class ChatController {
       chatResponseDTO.setSenderName(person.getFirstName());
       chatResponseDTO.setMessage(message);
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
+      chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
@@ -493,12 +508,12 @@ public class ChatController {
         j++;
       }
     }
-    Long totalNoOfNewMessages=(long)0;
+    Long totalNoOfUnreadMessages=(long)0;
     List<NoOfNewMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfNewIncomingChatsOfPersonForAllChatroom(person.getId());
     for(NoOfNewMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
-      totalNoOfNewMessages=totalNoOfNewMessages+dto.getNoOfNewMessages();
+      totalNoOfUnreadMessages=totalNoOfUnreadMessages+dto.getNoOfNewMessages();
     }
-    m.addAttribute("totalNoOfNewChats",totalNoOfNewMessages);
+    m.addAttribute("totalNoOfUnreadChats",totalNoOfUnreadMessages);
     m.addAttribute("allChatsOfChatroomDTOList",sortedMixedChatsOfChatRoomDTOList);
     m.addAttribute("person", person);
    // m.addAttribute("userId", user.getId());
@@ -632,6 +647,7 @@ public class ChatController {
     session.setAttribute("itemid", itemId);
     
     Person person = getPerson();
+   // List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
     List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
     List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);

@@ -5,10 +5,10 @@
 	<tiles:putAttribute name="include">
 	</tiles:putAttribute>
 	<tiles:putAttribute name="header">
-		<h1>Bizbuzz</h1>
+		<h1>InstaTrade</h1>
 	</tiles:putAttribute>
 	<tiles:putAttribute name="title">
-		Bizbuzz - Error
+		InstaTrade - Error
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">

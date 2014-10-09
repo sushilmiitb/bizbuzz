@@ -63,25 +63,27 @@
 .chat-room-first-line{
 	line-height: 1.5em;
 	height: 3em;
-	overflow: hidden;
+	white-space: nowrap; 
+    width: 10em; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 /* chat Notification------------*/
 .chat-room-message-notification{
-/*	line-height: 1.5em; 
-	height: 3em;  */
-/*	font-weight: bold;
-	color: red;
-	margin-left:150px;           
-   content:attr(d);    */
-   font-size:.8em; /*0.7*/
-   margin-left:150px;
-   padding:2px 5px;
-   background:#cc0001;  
-   color:white;
-   text-align:center;
-   line-height:10px;            
-   border-radius:28%;
-   box-shadow:-1px 2px 3px rgba(0,0,0,.3), inset 0 2px 5px rgba(225,225,225,.3);
+   	font-size: .8em;
+   	display: block;
+   	margin-left: 318px;
+   	margin-top: -19px;
+  	width: 24px;
+   	height: 24px;
+	/* padding: 2px 5px; */
+	background: #cc0001;
+	color: white;
+	text-align: center;
+	line-height: 24px;
+	border-radius: 28%;
+	box-shadow: -1px 2px 3px rgba(0,0,0,.3),inset 0 2px 5px rgba(225,225,225,.3);
+
 }
 .badge1 {
    position:relative;

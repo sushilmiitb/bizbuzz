@@ -268,6 +268,9 @@ public class PropertyServiceImpl implements PropertyService{
 
   public List<PropertyValue> populatePropertyValues(Map<Long, PropertyField> propertyFieldMap, List<Long> fieldIds, List<String> values, Item item){
     List<PropertyValue> propertyValues = new ArrayList<PropertyValue>();
+    if(fieldIds==null){
+      return propertyValues;
+    }
     for(int i=0; i<fieldIds.size(); i++){
       PropertyValue propertyValue = new PropertyValue();
       propertyValue.setValue(values.get(i));
@@ -345,7 +348,7 @@ public class PropertyServiceImpl implements PropertyService{
       if(byteImages.get(i) == null){//no image upload
         continue;
       }
-      if(valueIds!=null && valueIds.get(i) != null){//image replacement
+      if(valueIds!=null && i<valueIds.size() && valueIds.get(i) != null){//image replacement
         HelperFunctions.saveAllSizeImages(valueIds.get(i).toString(), byteImages.get(i));
       }
       else{//new image
@@ -360,7 +363,7 @@ public class PropertyServiceImpl implements PropertyService{
   }
 
   public List<PropertyValue> updatePropertyValues(Map<Long, PropertyValue> propertyValueMap, List<Long> valueIds, List<String> values){
-    for(int i=0; i<valueIds.size(); i++){
+    for(int i=0; valueIds!=null && i<valueIds.size(); i++){
       propertyValueMap.get(valueIds.get(i)).setValue(values.get(i));
     }
     return new ArrayList<PropertyValue>(propertyValueMap.values());

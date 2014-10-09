@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.jws.WebParam.Mode;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.UserDetailsManager;
@@ -33,6 +35,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
 
 import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
@@ -174,7 +177,10 @@ public class RegistrationController {
   }
 
   @RequestMapping(value="/rolehome", method = RequestMethod.GET)
-  public String getRoleHome(){
+  public String getRoleHome(HttpSession session){
+    Person person = getPerson();
+    session.setAttribute("senderId", person.getId());
+    
     Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     if(authorities==null ||authorities.size()==0){
       return "redirect:/home";
@@ -194,5 +200,12 @@ public class RegistrationController {
       }
     }
     return "redirect:/home";
+  }
+  
+
+  public Person getPerson(){
+    User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String username = user.getUsername();
+    return partyManagementService.getPersonFromUsername(username);
   }
 }

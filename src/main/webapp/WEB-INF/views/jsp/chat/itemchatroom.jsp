@@ -86,7 +86,7 @@
 </div>
 <script type="text/javascript">
 	$(document).ready(function(){
-		changeState('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
+		changeStateOfPage('<%= session.getAttribute("chatpage") %>',<%= session.getAttribute("chatroomid") %>);
 		initializeNormalChatRoom(${person.id}, ${chatroomId}, ${itemId});
 	});
 </script>

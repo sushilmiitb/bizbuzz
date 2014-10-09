@@ -4,7 +4,7 @@
 <tiles:insertDefinition name="chat">
 	
 	<tiles:putAttribute name="title">
-		BizBuzz-Chatroom
+		InstaTrade-Chatroom
 	</tiles:putAttribute>
 	
 	<tiles:putAttribute name="customJsCode">

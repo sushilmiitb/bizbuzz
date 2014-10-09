@@ -28,6 +28,11 @@ $(document).ready(function (){
 	$("form").submit(function(){
 		loaderAnimation();
 	});
+	
+	/*$(".header-nav-item").click(function(e){
+		$(".header-nav-item").removeClass("active");
+		$(this).addClass("active");
+	});*/
 });
 
 function getTenDigitPhoneNumber(phonenumber){

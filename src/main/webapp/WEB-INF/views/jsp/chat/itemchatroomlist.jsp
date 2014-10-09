@@ -10,8 +10,8 @@
 	<c:if test="${!empty sortedchats}">
 		<c:forEach var="chat" items="${sortedchats}">
 			<c:forEach var="member" items="${chat.chatRoom.members}">
-				<c:if test="${member.id ne userid}">
-					<c:set var="showperson" value="${member}" />
+				<c:if test="${member.member.id ne userid}">
+					<c:set var="showperson" value="${member.member}" />
 				</c:if>
 			</c:forEach>
 			<div class="media chat-room-container"
@@ -32,8 +32,8 @@
 
 		<c:forEach var="chatroom" items="${sortedChatrooms}">
 			<c:forEach var="member" items="${chatroom.members}">
-				<c:if test="${member.id ne userid}">
-					<c:set var="showperson" value="${member}" />
+				<c:if test="${member.member.id ne userid}">
+					<c:set var="showperson" value="${member.member}" />
 				</c:if>
 			</c:forEach>
 			<div class="media chat-room-container"

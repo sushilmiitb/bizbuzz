@@ -3,7 +3,7 @@ var pageStat;
 var subSocket;
 var chatroomid;
 var broadcasterIncrement=0;
-var totalNewChats;
+var totalUnreadChats;
 
 function initializeChatPanel(){
 	$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -68,9 +68,9 @@ function setChatBackButtonCallback(){
 		});
 		
 	});
-	totalNewChats=Number($("#totalnewchats").text());
-	if(totalNewChats>0){
-		$(".badge1").attr("data-badge",totalNewChats);
+	totalUnreadChats=Number($("#totalUnreadChats").text());
+	if(totalUnreadChats>0){
+		$(".badge1").attr("data-badge",totalUnreadChats);
 	}
 	else{
 		$(".badge1").removeAttr("data-badge");
@@ -146,9 +146,9 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
-			totalNewChats=Number($("#totalnewchats").text());
-			if(totalNewChats>0){
-				$(".badge1").attr("data-badge",totalNewChats);
+			totalUnreadChats=Number($("#totalUnreadChats").text());
+			if(totalUnreadChats>0){
+				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else{
 				$(".badge1").removeAttr("data-badge");
@@ -263,14 +263,14 @@ function insertChatMessage(msg, isSelf){
 	$(".chat-body").scrollTop(1000000);
 }
 
-function changeState(stateOfPage,idOfChatroom){
+function changeStateOfPage(stateOfPage,idOfChatroom){
 	pageStat=stateOfPage;
 	chatroomid=idOfChatroom;
 }
-function changeTotalNoOfNewChats(totalNoOfNewMessages){
-	totalNewChats=totalNoOfNewMessages;
-	if(totalNewChats>0){
-		$(".badge1").attr("data-badge",totalNewChats);
+function changeTotalNoOfUnreadChats(totalNoOfUnreadMessages){
+	totalUnreadChats=totalNoOfUnreadMessages;
+	if(totalUnreadChats>0){
+		$(".badge1").attr("data-badge",totalUnreadChats);
 	}
 	else{
 		$(".badge1").removeAttr("data-badge");
@@ -351,18 +351,30 @@ function initializeSocket(socketUrl,senderId){
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
 				showNotificationBox(result.senderName);
-				totalNewChats=totalNewChats+1;
-				$(".badge1").attr("data-badge",totalNewChats);
-				var noOfNewChatsOfChatroom = Number($("[id="+result.chatRoomId+"]").find("#noOfNewChats").text());
-				$("[id="+result.chatRoomId+"]").find("#noOfNewChats").text(noOfNewChatsOfChatroom+1);
-				if(noOfNewChatsOfChatroom==0){
-					$("[id="+result.chatRoomId+"]").find(".chat-room-message-notification").css("display","inline");
-				}       
+				totalUnreadChats=totalUnreadChats+1;
+				$(".badge1").attr("data-badge",totalUnreadChats);
+				var noOfUnreadChatsOfChatroom = Number($("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").text());	
+				if(noOfUnreadChatsOfChatroom==0){
+					$("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").css("display","block");
+				}  
+				$("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").text(noOfUnreadChatsOfChatroom+1);
+				$("[id="+result.chatRoomId+"]").find("#latestChat").text(result.message);
+				if($("[id="+result.chatRoomId+"]").find("#latestChatDate").text().length==0) {
+					$("[id="+result.chatRoomId+"]").find("#latestChatDate").text(result.day+"th ");
+					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour+":");
+			    }
+				else{
+					$("[id="+result.chatRoomId+"]").find("#latestChatDate").text(result.day);
+					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour);
+				}
+				$("[id="+result.chatRoomId+"]").find("#latestChatMonth").text(result.showMonth);
+				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);            
+				
 			}
 			else if(chatroomid!=result.chatRoomId){
 				showNotificationBox(result.senderName);
-				totalNewChats=totalNewChats+1;
-				$(".badge1").attr("data-badge",totalNewChats);
+				totalUnreadChats=totalUnreadChats+1;
+				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else{
 				$.ajax({

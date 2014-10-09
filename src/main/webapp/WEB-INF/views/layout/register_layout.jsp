@@ -15,7 +15,7 @@
 
 <!-- Bootstrap core CSS -->
 <link href="${static_base_url}/css/register-combined-<spring:message code="git_hash" />.min.css"
-	rel="stylesheet">	rel="stylesheet">
+	rel="stylesheet">
 
 <tiles:insertAttribute name="includecss" ignore="true" />
 <link rel="shortcut icon"

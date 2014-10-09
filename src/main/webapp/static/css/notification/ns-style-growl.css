@@ -1,6 +1,6 @@
 /* Growl-style notifications */
 .ns-growl {
-	bottom: 40px;
+	bottom: 50px;
 	left: 70px;
 	max-width: 300px;
 	border-radius: 5px;
@@ -21,7 +21,7 @@
 
 /* Scale */
 .ns-effect-scale {
-	background: #428bca/*rgba(65,95,118,0.8)*/;
+	background: rgba(65,95,118,0.8);
 	box-shadow: 0 25px 10px -15px rgba(0,0,0,0.05);
 }
 

@@ -5,7 +5,7 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="title">
-		BizBuzz-Home
+		InstaTrade-Home
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">

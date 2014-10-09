@@ -9,6 +9,7 @@ public class ChatResponseDTO {
   private String message;
   private Long itemId;
   private String errorMsg;
+  private String showMonth;
   private int year;
   private int month;
   private int day;
@@ -68,6 +69,12 @@ public class ChatResponseDTO {
   }
   public void setErrorMsg(String errorMsg) {
     this.errorMsg = errorMsg;
+  }
+  public String getShowMonth() {
+    return showMonth;
+  }
+  public void setShowMonth(String showMonth) {
+    this.showMonth = showMonth;
   }
   public int getYear() {
     return year;

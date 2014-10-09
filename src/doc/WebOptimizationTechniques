@@ -1,0 +1,6 @@
+For versioning
+http://kimrudolph.de/blog/manage-css-and-js-assets-with-maven/
+
+For Cache
+https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/filters/ExpiresFilter.html
+

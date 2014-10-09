@@ -4,7 +4,7 @@
 	<tiles:putAttribute name="include">
 	</tiles:putAttribute>
 	<tiles:putAttribute name="title">
-		BizBuzz-Login
+		InstaTrade-Login
 	</tiles:putAttribute>
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
@@ -94,7 +94,7 @@
 								<br/>
 								<button class="btn btn-md btn-success btn-block" id="newuser" >Register</button>
 							</form>			
-							<a href="#" id="forgotpass">Forgot Password?</a>
+<!-- 							<a href="#" id="forgotpass">Forgot Password?</a> -->
 						</div>
 					</div>
 				</div>

@@ -100,9 +100,7 @@ public class SellerController {
   
   
   @RequestMapping(value={"/seller", "/seller/home"}, method = RequestMethod.GET)
-  public String sellerHome(HttpSession session){
-    Person seller = getSeller();
-    session.setAttribute("senderId", seller.getId());
+  public String sellerHome(){
     return "jsp/seller/home";
   }
   
@@ -456,7 +454,7 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
-    return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+itemId;
+    return "redirect:/seller/viewproduct/category/"+categoryId;
   }
   
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)

@@ -3,7 +3,7 @@
 
 <tiles:insertDefinition name="seller">
 	<tiles:putAttribute name="title">
-		BizBuzz-Product
+		InstaTrade-Product
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">

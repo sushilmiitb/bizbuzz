@@ -18,8 +18,8 @@ import com.bizbuzz.model.PropertyMetadata;
 @Repository
 @Transactional
 public interface ChatRoomRepository extends JpaRepository<ChatRoom,Long>{
-  @Query("select distinct c from ChatRoom c inner join c.members p1 inner join c.members p2 where p1.id=?1 and p2.id=?2 ")
-  List<ChatRoom> findChatRoomByMembers(Long toPartyId,Long fromPartyId);
+  @Query("select distinct c from ChatRoom c inner join c.members p1 inner join p1.member m1 inner join c.members p2 inner join p2.member m2 where m1.id=?1 and m2.id=?2 ")
+  List<ChatRoom> findChatRoomByMembers(Long fromPartyId,Long toPartyId);
 
   @Query("select c " +
       "from Person m inner join m.chatrooms crms inner join crms.chatroom cr inner join cr.chats c " +
