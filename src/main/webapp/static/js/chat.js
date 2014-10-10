@@ -5,6 +5,7 @@ var chatroomid;
 var itemid;
 var broadcasterIncrement=0;
 var totalUnreadChats;
+var chatVisible;
 
 function initializeChatPanel(){
 	$(".chat-content").height(Math.floor($(window).height()*0.8));
@@ -20,6 +21,25 @@ function initializeChatPanel(bodyBottomOffset){
 	$(".chat-body").css({"max-height": maxHeight+"px"});
 }
 
+function changeNameOnChatShowHide(chatVisible){
+	if(chatVisible=="true" || chatVisible==true){
+		if(itemid==0 || itemid===undefined){
+			$( ".chat-toggle-btn" ).text("Hide Chat");		
+		}
+		else{
+			$( ".chat-toggle-btn" ).text("Hide Product Inquiry");
+		}	
+	}
+	else{
+		if(itemid==0 || itemid===undefined){
+			$( ".chat-toggle-btn" ).text("Show Chat");		
+		}
+		else{
+			$( ".chat-toggle-btn" ).text("Show Product Inquiry");
+		}
+		
+	}
+}
 function setChatPanelToggleCallback(){
 	$( ".chat-toggle-btn" ).click(function() {
 		$( ".chat-content" ).animate({
@@ -42,6 +62,7 @@ function setChatPanelToggleCallback(){
 				error: function(){
 				}
 			});
+			changeNameOnChatShowHide(isChatPanelVisible);
 		});
 	});
 }
@@ -127,6 +148,8 @@ function removeChatPanelResizeCallback(){
  * @return
  */
 function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
+	itemid=itemId;
+	changeNameOnChatShowHide(isShow);
 	var url = "/bizbuzz/chat/controller";
 	var data;
 	if(itemId===undefined){//that means it is in normal chat mode and chatcontroller has to determine the state using session state variables
@@ -147,7 +170,7 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			if(isShow){
 				$(".chat-content").show();
 			}
-		//	totalUnreadChats=Number($("#totalUnreadChats").text());
+	//		totalUnreadChats=Number($("#totalUnreadChats").text());
 			if(totalUnreadChats>0){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
@@ -383,6 +406,11 @@ function initializeSocket(socketUrl,senderId){
 				
 			}
 			else if(chatroomid!=result.chatRoomId){
+				showNotificationBox(result.senderName,result.itemId);
+				totalUnreadChats=totalUnreadChats+1;
+				$(".badge1").attr("data-badge",totalUnreadChats);
+			}
+			else if(chatroomid==result.chatRoomId && itemid!=0 && itemid!=result.itemId){
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);

@@ -5,7 +5,7 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="<c:url value='/static/js/jquery/jquery-1.11.1.min.js'/>"></script>
+<script src="<c:url value='/static/js/jquery/jquery-1.11.1.js'/>"></script>
 <tiles:insertAttribute name="include" ignore="true"/>
 <tiles:insertAttribute name="customJsCode" ignore="true" />
 <title><tiles:insertAttribute name="title" /></title>

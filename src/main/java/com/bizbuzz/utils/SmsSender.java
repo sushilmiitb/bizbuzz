@@ -15,11 +15,10 @@ public class SmsSender {
   public static String sendSms(String mobileNo,String msg){
 
     String authkey = "71018ALFVaZrXG7c53eef2a4";
-    String mobiles = mobileNo;
-                                                      //Sender ID,While using route4 sender id should be 6 characters long.
-    String senderId = "bizbuz";
+    String mobiles = mobileNo;                        
+    String senderId = "ITrade";   //Sender ID,While using route4 sender id should be 6 characters long.
    // String message = msg;
-    String route="4";
+    String route="4";             // It should be 4.
 
     //Prepare Url
     URLConnection myURLConnection=null;

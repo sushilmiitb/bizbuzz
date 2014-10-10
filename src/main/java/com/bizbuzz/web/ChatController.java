@@ -393,8 +393,13 @@ public class ChatController {
         String fromPage = (String)session.getAttribute("frompage");
         //last state of singleitemchatroom was entered from itemchatroomlist. Hence now move to itehmchatroomlist
       
-        if(fromPage==null) return null;
-        else if(fromPage.equals("itemchatroomlist")){
+       if(fromPage==null){
+         Long secondPersonId = (Long)session.getAttribute("secondPersonId");
+         Long itemId = (Long)session.getAttribute("itemId");
+         
+         return "forward:/chat/showitemchatroom/secondpersonid/"+secondPersonId+"/itemid/"+itemId;
+       }
+       else if(fromPage.equals("itemchatroomlist")){
           return "forward:/chat/showchatrooms/itemid/"+session.getAttribute("itemid");
         }
         else if(fromPage.equals("normalchatroom")){
@@ -446,13 +451,14 @@ public class ChatController {
     /***Saving chat state***/
     session.setAttribute("chatpage", "singlechatroom");
     session.setAttribute("chatroomid", chatroomid);
-    
+
     Person person = getPerson();
     UserLogin user = person.getUserId();
-
-//  Update ChatroomMember      
-    chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(new Date(), chatroomid,person.getId());
  
+//  Update ChatroomMember
+   
+    chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(new Date(), chatroomid,person.getId());
+    
     List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatroomid); 
     if(members==null) return "jsp/error/usernotfound";
 
@@ -620,6 +626,8 @@ public class ChatController {
     Person person = getPerson();
     UserLogin user = person.getUserId(); 
     session.setAttribute("chatpage", "singleitemchatroom");
+    session.setAttribute("secondPersonId",secondPersonId);
+    session.setAttribute("itemId", itemid);
     
     ChatRoom chatRoom = chatRoomService.getChatRoomByMembers(person.getId(), secondPersonId);
     Long chatroomid = chatRoom.getId();
@@ -666,7 +674,7 @@ public class ChatController {
   public String showItemChatRooms(Model m, @PathVariable("itemid") Long itemId, HttpSession session){
     /***Saving chat state***/
     session.setAttribute("itemid", itemId);
-    session.setAttribute("chatpage", "listofchatrooms");
+  //  session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
    /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);

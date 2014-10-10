@@ -184,6 +184,7 @@
 		
 					$(linkElement).insertAfter($(".list-group-item").filter(".heading").first());
 					$(".loader").remove();
+					$(".chat-back").click();
 				},
 				error: function(){
 					$(".loader").remove();
