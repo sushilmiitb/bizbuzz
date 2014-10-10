@@ -2,6 +2,7 @@ package com.bizbuzz.web;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.jws.WebParam.Mode;
@@ -36,18 +37,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-
 import com.bizbuzz.dto.CountryCodeDTO;
 import com.bizbuzz.dto.RegistrationPersonRegistrationFormDTO;
 import com.bizbuzz.form.validator.Phone;
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.ChatRoom;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.RegisterRequest;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.repository.RegisterRequestsRepository;
 import com.bizbuzz.service.CategoryService;
+import com.bizbuzz.service.ChatRoomService;
+import com.bizbuzz.service.ChatroomMemberService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PartyManagementServiceImpl;
@@ -74,6 +79,15 @@ public class RegistrationController {
   
   @Autowired
   private UserDetailsService manager;
+  
+  @Autowired
+  RegisterRequestsRepository registerRequestsRepository;
+  
+  @Autowired
+  ChatroomMemberService chatroomMemberService;
+  
+  @Autowired
+  ChatRoomService chatRoomService;
 
   @Autowired
   @Qualifier("personRegistrationFormValidator")
@@ -138,7 +152,24 @@ public class RegistrationController {
       partyManagementService.savePrivateGroup(privateGroup);
       connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
     }
-
+    List<RegisterRequest> registerRequests = registerRequestsRepository.findByToPartyPhoneNumber(personRegistration.getUserLogin().getId());
+    for(int i=0; registerRequests!=null && i<registerRequests.size(); i++){
+      RegisterRequest registerRequest = registerRequests.get(i);
+      if(registerRequest.getFromParty()!=null)
+        connectionService.createConnection(registerRequest.getFromParty(), personRegistration.getPerson(), ConnectionType.SELLER_BUYER);
+      else
+        continue;
+      if(registerRequest.getPrivateGroup()!=null)
+        connectionService.createConnection(registerRequest.getPrivateGroup(), personRegistration.getPerson(), ConnectionType.GROUP_MEMBERS);
+      ChatRoom chatroom = new ChatRoom();
+      chatRoomService.saveChatRoom(chatroom);       
+      Date chatroomCreationDate= new Date();
+      chatroomMemberService.createChatroomMember(chatroom,registerRequest.getFromParty(),chatroomCreationDate);
+      chatroomMemberService.createChatroomMember(chatroom, personRegistration.getPerson(),chatroomCreationDate);
+    }
+    /**
+     * Auto Login after successfull registration
+     */
     UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
     UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
 

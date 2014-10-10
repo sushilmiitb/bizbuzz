@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.tags.form.HiddenInputTag;
+
 import javax.servlet.http.HttpSession;
 
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
@@ -54,6 +55,8 @@ import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyField;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
+import com.bizbuzz.model.RegisterRequest;
+import com.bizbuzz.repository.RegisterRequestsRepository;
 import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ChatRoomService;
 import com.bizbuzz.service.ChatService;
@@ -97,6 +100,9 @@ public class SellerController {
   
   @Autowired
   ChatroomMemberService chatroomMemberService;
+  
+  @Autowired
+  RegisterRequestsRepository registerRequestsRepository;
   
   
   @RequestMapping(value={"/seller", "/seller/home"}, method = RequestMethod.GET)
@@ -234,15 +240,27 @@ public class SellerController {
     SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
     Person seller = getSeller();
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
+    PrivateGroup privateGroup = null;
+    if(request.getGroupId()!=-1){
+      privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
+    }
     
     if(toPerson == null){
-      SmsSender.sendSms(request.getUserId(),"hello");   
-      return ajaxReply;
+      //SmsSender.sendSms(request.getUserId(),"hello");
+      
+      //code to handle the connection that will automatically happen when buyer registers
+      RegisterRequest registerRequest = new RegisterRequest();
+      registerRequest.setFromParty(seller);
+      registerRequest.setToPartyPhoneNumber(request.getUserId());
+      registerRequest.setPrivateGroup(privateGroup);
+      registerRequestsRepository.save(registerRequest);
+      //Message will be sent through validator that registration request has been sent
     }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
     if(errors.size()>0){
       ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
       return ajaxReply;
     }
     
@@ -250,9 +268,7 @@ public class SellerController {
      * change other functions also to use generic createconnection
      */
     connectionService.createConnection(seller, toPerson, ConnectionType.SELLER_BUYER);
-    PrivateGroup privateGroup = null;
     if(request.getGroupId()!=-1){
-      privateGroup = partyManagementService.getPrivateGroup(request.getGroupId());
       connectionService.createConnection(privateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
     

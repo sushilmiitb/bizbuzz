@@ -159,3 +159,14 @@ ul.subnav-top-horizontal{
 	width:30px;
 	
 }
+.quicknotification{
+    position:fixed;
+    padding:20px;
+    width: 50%;
+    z-index:999;
+    background-color:#FF8C8C;
+    top:25%;
+    left:25%;
+    text-align:center;
+    display:none;
+}

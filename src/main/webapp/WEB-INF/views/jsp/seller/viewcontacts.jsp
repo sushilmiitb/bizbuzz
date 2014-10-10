@@ -155,6 +155,17 @@
 					xhr.setRequestHeader("Content-Type", "application/json");
 				},
 				success: function(data) {
+					$(".loader").remove();
+					var response = data.response;
+					if(response=="error"){
+						if(data.errors.duplicate_connection !== undefined){
+							displayQuickNotification(data.errors.duplicate_connection, 3000);
+						}
+						if(data.errors.to_party_absent !== undefined){
+							displayQuickNotification(data.errors.to_party_absent, 5000);
+						}
+						return;
+					}
 					var baseUrl = "/seller/viewconnection/";
 					var baseDeleteUrl = "/seller/deleteconnection/";
 					var baseGroupUrl = "/seller/viewgroup/";
@@ -183,7 +194,6 @@
 					$(linkElement).append(divOut);
 		
 					$(linkElement).insertAfter($(".list-group-item").filter(".heading").first());
-					$(".loader").remove();
 				},
 				error: function(){
 					$(".loader").remove();

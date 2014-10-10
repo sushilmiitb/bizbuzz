@@ -87,6 +87,10 @@ public abstract class Party implements Serializable{
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Item> ownedItems = new ArrayList<Item>();
   
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<RegisterRequest> registerRequests = new ArrayList<RegisterRequest>();
+  
   Map<ConnectionType, List<Party>>getFromPartiesHashMappedWithConnectionType(){
     Map<ConnectionType, List<Party>> map = new LinkedHashMap<Connection.ConnectionType, List<Party>>();
     for(int i=0; i<fromParties.size(); i++){
@@ -271,5 +275,12 @@ public abstract class Party implements Serializable{
   public void setOwnedItems(List<Item> ownedItems) {
     this.ownedItems = ownedItems;
   }
-    
+
+  public List<RegisterRequest> getRegisterRequests() {
+    return registerRequests;
+  }
+
+  public void setRegisterRequests(List<RegisterRequest> registerRequests) {
+    this.registerRequests = registerRequests;
+  }
 }
