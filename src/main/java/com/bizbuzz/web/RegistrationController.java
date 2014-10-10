@@ -210,7 +210,11 @@ public class RegistrationController {
   @RequestMapping(value="/rolehome", method = RequestMethod.GET)
   public String getRoleHome(HttpSession session){
     Person person = getPerson();
-    session.setAttribute("senderId", person.getId());
+    if(person!=null){
+      session.setAttribute("senderId", person.getId());
+      session.setAttribute("userId", person.getId());
+      session.setAttribute("userName", person.getFirstName()+" "+person.getMiddleName()+" "+person.getLastName());
+    }
     
     Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     if(authorities==null ||authorities.size()==0){
@@ -220,12 +224,15 @@ public class RegistrationController {
       for(GrantedAuthority authority: authorities){
         String authorityString = authority.getAuthority();
         if(authorityString.equals("ROLE_BUYER")){
+          session.setAttribute("userRole", "buyer");
           return "redirect:/buyer/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_SELLER")){
+          session.setAttribute("userRole", "seller");
           return "redirect:/seller/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_ADMIN")){
+          session.setAttribute("userRole", "admin");
           return "redirect:/admin/home/";
         }
       }
