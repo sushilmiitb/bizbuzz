@@ -212,7 +212,7 @@ public class RegistrationController {
     Person person = getPerson();
     if(person!=null){
       session.setAttribute("senderId", person.getId());
-      session.setAttribute("userId", person.getId());
+      session.setAttribute("userId", person.getUserId().getId());
       session.setAttribute("userName", person.getFirstName()+" "+person.getMiddleName()+" "+person.getLastName());
     }
 
