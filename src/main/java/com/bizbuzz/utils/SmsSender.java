@@ -46,10 +46,10 @@ public class SmsSender {
     String response=null;
     try
     {
-      Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.32.2", 8080));
+   //   Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.32.2", 8080));
         //prepare connection
         myURL = new URL(mainUrl);
-        myURLConnection = myURL.openConnection(proxy);
+        myURLConnection = myURL.openConnection();    //Use It For Proxy:-> myURL.openConnection(proxy);
         myURLConnection.connect();
         reader= new BufferedReader(new InputStreamReader(myURLConnection.getInputStream()));
         //reading response 
