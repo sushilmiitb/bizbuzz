@@ -225,14 +225,10 @@
 				          xhr.setRequestHeader("Accept", "application/json");
 				          xhr.setRequestHeader("Content-Type", "application/json");
 				      },
-				      success: function(data) {      	
+				      success: function(data) {
+				      	  $(".loader").remove();       	
 				          if(typeof data.errors.duplicate_name != 'undefined'){
-				          	$("span.error").remove();
-			          		var spanElement = document.createElement('span');
-			          		$(spanElement).addClass('error');
-			          		$(spanElement).html(data.errors.duplicate_name);
-				          	$(spanElement).insertAfter($("#seller_viewgroup_groupname"));
-				          	$(spanElement).before("<br/><br/>");
+				          	displayQuickNotification(data.errors.duplicate_name, 3000);
 				          	return;
 				          }
 				          var linkElement = document.createElement('a');
@@ -248,8 +244,7 @@
 				          $(divOut).append(divInner);
 				          $(linkElement).append(divOut);
 				          
-				          $(linkElement).insertAfter($(".list-group-item").filter(".active").first());
-				          $(".loader").remove();  
+				          $(linkElement).insertAfter($("#groups-header"));
 				      },
 				      error: function(){
 			        	$(".loader").remove();
@@ -401,7 +396,7 @@
 <!---------------------------------------------   Groups Module -------------------------------------------->							
 						<div class="panel-body" id="groupContainer" style="display:none;" >
 							<div class="list-group">
-								<a href="#" class="list-group-item active">
+								<a href="#" id="groups-header" class="list-group-item active">
 									<h4 class="list-group-item-heading">Your Groups</h4>
 								</a>
 								<c:forEach items="${privateGroups}" var="item">
