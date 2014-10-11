@@ -61,7 +61,7 @@ accordingly makes the chat module hidden or visible.
 		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="left">
 		</div>
 		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2" align="center">
-			<button class="badge1 btn btn-primary btn-block chat-toggle-btn">Chat</button>
+			<button class="badge1 btn btn-primary btn-block chat-toggle-btn">Show Chat</button>
 		</div>
 		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="right">
 		</div>

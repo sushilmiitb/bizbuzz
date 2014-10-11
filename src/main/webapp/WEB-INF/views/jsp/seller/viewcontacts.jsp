@@ -194,6 +194,8 @@
 					$(linkElement).append(divOut);
 		
 					$(linkElement).insertAfter($(".list-group-item").filter(".heading").first());
+
+					$(".chat-back").click();
 				},
 				error: function(){
 					$(".loader").remove();

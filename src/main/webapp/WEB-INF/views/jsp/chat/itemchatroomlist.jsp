@@ -3,7 +3,7 @@
 <c:url var="static_base_url" value="/static" />
 
 <div class="panel-heading chat-header">
-	<span>Chats about this product</span>
+	<span>Inquiry about this product</span>
 	<span class="glyphicon glyphicon-arrow-left pull-right chat-back"></span>
 </div>
 <div class="panel-body chat-body">
@@ -75,6 +75,7 @@
 			</div>
 		</c:forEach>
 	</c:if>
+	
 	<script type="text/javascript">
 		$(document).ready(function(){
 		changeStateOfPage('<%= session.getAttribute("chatpage") %>',0,${itemId});

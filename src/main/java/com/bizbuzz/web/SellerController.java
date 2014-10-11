@@ -246,8 +246,6 @@ public class SellerController {
     }
     
     if(toPerson == null){
-      //SmsSender.sendSms(request.getUserId(),"hello");
-      
       //code to handle the connection that will automatically happen when buyer registers
       RegisterRequest registerRequest = new RegisterRequest();
       registerRequest.setFromParty(seller);
@@ -255,6 +253,10 @@ public class SellerController {
       registerRequest.setPrivateGroup(privateGroup);
       registerRequestsRepository.save(registerRequest);
       //Message will be sent through validator that registration request has been sent
+      SmsSender.sendSms(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
+      		" Go to " + 
+      		" https://play.google.com/store/apps/details?id=com.bizbuzz.cordova.Frotal&hl=en" +
+      		" and install it . ");
     }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);

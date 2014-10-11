@@ -75,6 +75,11 @@
 			</div>
 		</c:forEach>
 	</c:if>
+	<c:if test="${(empty  sortedchats) and (empty sortedChatrooms)}">
+		<div class="no-connection-yet">
+			 No Contacts 
+		</div>
+	</c:if>
 	<script type="text/javascript">
 		$(document).ready(function(){
 			changeStateOfPage('<%= session.getAttribute("chatpage") %>',0,0);

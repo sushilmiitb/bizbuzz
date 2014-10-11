@@ -42,6 +42,9 @@
 	margin-top:40px;
 	padding-left:0px;
 	padding-right:0px;
+	overflow: scroll;
+	width: inherit;
+	height: inherit;
 }
 
 .chat-text-box{
@@ -51,10 +54,13 @@
 
 .chat-room-container{
 	border-bottom: solid 1px gray;
+	margin-top:0px;
+	padding-top:15px;
 }
 
 .chat-room-container:hover{
 	cursor: pointer;
+	background-color: #d9edf7;
 }
 .chat-room-body{
 	overflow:hidden;
@@ -102,7 +108,12 @@
    border-radius:28%;
    box-shadow:-1px 2px 3px rgba(0,0,0,.3), inset 0 2px 5px rgba(225,225,225,.3);
 }
-
+.no-connection-yet{
+	color: #777;
+    font-size: 25px;
+    text-align: center;
+    margin-top: 150px;
+}
 /******************ChatRoom style********************/
 .ind-chat-panel{
 	background-color:#ffffff;

@@ -215,7 +215,7 @@ public class RegistrationController {
       session.setAttribute("userId", person.getId());
       session.setAttribute("userName", person.getFirstName()+" "+person.getMiddleName()+" "+person.getLastName());
     }
-    
+
     Collection<GrantedAuthority> authorities = (Collection<GrantedAuthority>) SecurityContextHolder.getContext().getAuthentication().getAuthorities();
     if(authorities==null ||authorities.size()==0){
       return "redirect:/home";
@@ -229,6 +229,7 @@ public class RegistrationController {
         }
         if(authorityString.equals("ROLE_SELLER")){
           session.setAttribute("userRole", "seller");
+          session.setAttribute("senderId", person.getId());
           return "redirect:/seller/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_ADMIN")){
