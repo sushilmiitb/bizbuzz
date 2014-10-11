@@ -21,7 +21,7 @@ function initializeChatPanel(bodyBottomOffset){
 	$(".chat-body").css({"max-height": maxHeight+"px"});
 }
 
-function changeNameOnChatShowHide(chatVisible){
+function changeNameOfChatButtonOnClick(chatVisible){
 	if(chatVisible=="true" || chatVisible==true){
 		if(itemid==0 || itemid===undefined){
 			$( ".chat-toggle-btn" ).text("Hide Chat");		
@@ -62,7 +62,7 @@ function setChatPanelToggleCallback(){
 				error: function(){
 				}
 			});
-			changeNameOnChatShowHide(isChatPanelVisible);
+			changeNameOfChatButtonOnClick(isChatPanelVisible);
 		});
 	});
 }
@@ -149,7 +149,7 @@ function removeChatPanelResizeCallback(){
  */
 function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 	itemid=itemId;
-	changeNameOnChatShowHide(isShow);
+	changeNameOfChatButtonOnClick(isShow);
 	var url = "/bizbuzz/chat/controller";
 	var data;
 	if(itemId===undefined){//that means it is in normal chat mode and chatcontroller has to determine the state using session state variables

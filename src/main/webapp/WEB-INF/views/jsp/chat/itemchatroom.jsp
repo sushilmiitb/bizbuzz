@@ -6,7 +6,7 @@
 <c:url var="emptyImageUrl" value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 
 <div class="panel-heading chat-header">
-	<span class="pull-left">Product chat with
+	<span class="pull-left">Inquiry about this product with 
 	<c:choose>
 		<c:when test="${!empty secondperson}">
 				<c:out value=" ${secondperson.firstName} ${secondperson.middleName} ${secondperson.lastName}"></c:out>

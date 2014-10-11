@@ -52,6 +52,7 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PartyManagementServiceImpl;
 import com.bizbuzz.utils.HelperFunctions;
+import com.bizbuzz.utils.SmsSender;
 
 @Controller
 public class RegistrationController {
@@ -153,7 +154,10 @@ public class RegistrationController {
     }catch(Exception e){
       e.printStackTrace();
     }
-    
+    // Congratulate the person on registration in InstaTrade By Sending message
+    SmsSender.sendSms(personRegistration.getUserLogin().getId(), "Dear " +personRegistration.getPerson().getFirstName() 
+        +", Congratulations! You have successfully registered On InstaTrade." 
+        +"  Now You can use the features of InstaTrade.");
 /*
     UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
     Authentication auth = new UsernamePasswordAuthenticationToken (userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
