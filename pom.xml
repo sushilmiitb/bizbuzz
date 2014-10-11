@@ -358,7 +358,7 @@
 								<include>${project.build.directory}/${project.build.finalName}/static/js/customjs.js</include>
 								<!-- Sliding menu -->
 								<include>${project.build.directory}/${project.build.finalName}/static/js/slidermenu.js</include>
-<!-- 								<include>${project.build.directory}/${project.build.finalName}/static/js/chat.js</include> -->
+								<include>${project.build.directory}/${project.build.finalName}/static/js/chat.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery.atmosphere.js</include>
 								<!-- Show message notification box -->
 								<include>${project.build.directory}/${project.build.finalName}/static/js/notification/classie.js</include>
