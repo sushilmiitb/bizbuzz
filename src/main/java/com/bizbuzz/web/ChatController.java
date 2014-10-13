@@ -150,8 +150,8 @@ public class ChatController {
   @RequestMapping(value = "/samplechat", method = RequestMethod.GET)
   public String chatByAtmosphere(HttpSession session) {
 
-    Person person = getPerson();
-    UserLogin user = person.getUserId();
+  //  Person person = getPerson();
+  //  UserLogin user = person.getUserId();
   //  session.setAttribute("userId",user.getId());
    // session.setAttribute("chatroomId",(long)1);
 
@@ -243,11 +243,11 @@ public class ChatController {
       chatResponseDTO.setMessage(message);
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
-      for(Person member : members){
+           for(Person member : members){
         BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
         logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
       }
-   /*   
+           /*     
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
@@ -279,8 +279,8 @@ public class ChatController {
   @ResponseBody
   public void websockets(final AtmosphereResource event)
       throws JsonGenerationException, JsonMappingException, IOException {
-
-     AtmosphereUtils.suspend(event);
+    Person person = getPerson();
+     AtmosphereUtils.suspend(event,person.getId());
 
     //final Broadcaster bc = event.getBroadcaster();
 

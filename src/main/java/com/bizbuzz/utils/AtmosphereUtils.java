@@ -41,7 +41,7 @@ public final class AtmosphereUtils {
 	public static Meteor getMeteor(HttpServletRequest request) {
 		return Meteor.build(request);
 	}
-	public static void suspend(final AtmosphereResource resource) {
+	public static void suspend(final AtmosphereResource resource,Long personId) {
 
 		final CountDownLatch countDownLatch = new CountDownLatch(1);
 		resource.addEventListener(new AtmosphereResourceEventListenerAdapter() {
@@ -66,7 +66,7 @@ public final class AtmosphereUtils {
 
 		});
 
-		AtmosphereUtils.lookupBroadcaster().addAtmosphereResource(resource);
+		AtmosphereUtils.lookupBroadcaster(personId).addAtmosphereResource(resource);
 
 		if (AtmosphereResource.TRANSPORT.LONG_POLLING.equals(resource.transport())) {
 			resource.resumeOnBroadcast(true).suspend();
@@ -81,8 +81,8 @@ public final class AtmosphereUtils {
 		}
 	}
 
-	public static Broadcaster lookupBroadcaster() {
-		Broadcaster b = BroadcasterFactory.getDefault().get();
+	public static Broadcaster lookupBroadcaster(Long personId) {
+		Broadcaster b = BroadcasterFactory.getDefault().lookup("/"+personId, true);
 		return b;
 	}
 
