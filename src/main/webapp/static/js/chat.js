@@ -341,8 +341,8 @@ function initializeSocket(socketUrl,senderId){
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
-	request.transport = 'websocket';
-	request.fallbackTransport = 'long-polling';
+	request.transport = 'long-polling';
+	request.fallbackTransport = 'websocket';
 
 	console.log("socketUrl : " +socketUrl +"<>senderId : " +senderId);
 	/**
@@ -352,10 +352,14 @@ function initializeSocket(socketUrl,senderId){
 		console.log('onOpen: connection opened using transport:' + response.transport);	
 		if(broadcasterIncrement==0){
 			console.log('To Create the broadcaster...');
-			subSocket.push(JSON.stringify({"message":"0Open0","personId": senderId,"chatroomId":0,"itemId":0}));
+			setTimeout(function(){
+				subSocket.push(JSON.stringify({"message":"0Open0","personId": senderId,"chatroomId":0,"itemId":0}));
+			},500);
 			broadcasterIncrement=broadcasterIncrement+1;
 		}
 	}
+	
+	request.pollingInterval = '10';
 
 	request.onReconnect = function(request, response){
 		console.log('onReconnect:');

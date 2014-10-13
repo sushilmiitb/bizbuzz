@@ -280,9 +280,9 @@ public class ChatController {
   public void websockets(final AtmosphereResource event)
       throws JsonGenerationException, JsonMappingException, IOException {
 
-    // AtmosphereUtils.suspend(event);
+     AtmosphereUtils.suspend(event);
 
-    // final Broadcaster bc = event.getBroadcaster();
+    //final Broadcaster bc = event.getBroadcaster();
 
     // final int numberOfClients = bc.getAtmosphereResources().size();
 
