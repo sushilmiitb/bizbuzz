@@ -176,8 +176,7 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 			}
 			else{
 				$(".badge1").removeAttr("data-badge");
-			}
-			
+			}		
 		},
 		error: function(){
 		}
@@ -291,6 +290,13 @@ function changeStateOfPage(stateOfPage,idOfChatroom,idOfItem){
 	pageStat=stateOfPage;
 	chatroomid=idOfChatroom;
 	itemid=idOfItem;
+	if(pageStat=='singlechatroom'  ||  pageStat=='singleitemchatroom'){
+		$(".chat-body").addClass("chat-body-chatroom");
+	}
+	else{
+		$(".chat-body").removeClass("chat-body-chatroom");
+	}
+	
 }
 function changeTotalNoOfUnreadChats(totalNoOfUnreadMessages){
 	totalUnreadChats=totalNoOfUnreadMessages;
@@ -387,7 +393,6 @@ function initializeSocket(socketUrl,senderId){
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
-				
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
@@ -407,7 +412,6 @@ function initializeSocket(socketUrl,senderId){
 				}
 				$("[id="+result.chatRoomId+"]").find("#latestChatMonth").text(result.showMonth);
 				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);            
-				
 			}
 			else if(chatroomid!=result.chatRoomId){
 				showNotificationBox(result.senderName,result.itemId);
@@ -420,12 +424,10 @@ function initializeSocket(socketUrl,senderId){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else if(chatroomid==result.chatRoomId && itemid!=result.itemId){
-			//	showNotificationBox(result.senderName ,result.itemId);
-			//	totalUnreadChats=totalUnreadChats+1;
-			//	$(".badge1").attr("data-badge",totalUnreadChats);
 				loadNormalChatRoom("/bizbuzz/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{
+				insertChatMessage(result.message, false);
 				$.ajax({
 					url: '/bizbuzz/chat/updatechatroommember',
 					type: "GET",
@@ -444,7 +446,6 @@ function initializeSocket(socketUrl,senderId){
 					error: function(){
 					}
 				});
-				insertChatMessage(result.message, false);
 			}
 		}
 	}
@@ -472,7 +473,7 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 	setChatPanelResizeCallback(bottomOffset);
 	setChatPanelToggleCallback();
 	setChatBackButtonCallback();
-	$(".chat-body").scrollTop(1000000);
+	$(".chat-body").scrollTop(1000000); 
 	
 	/****Code for handling variable height for text area***/
 	var previouslines = 2;
@@ -541,7 +542,6 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 		console.log('SentMessage:'+message);
 		$('#message-field').val("");
 		insertChatMessage(message, true);
-		
 		if(previouslines>2){
 			previouslines = 2;
 			bottomOffset = baseBottomOffset;
@@ -553,7 +553,7 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 			 
 			//$(".chat-input-area").height(baseChatInputAreaHeight);			
 		}
-		$("#message-field").focus();
+	//	$("#message-field").focus();
 		subSocket.push(JSON.stringify({"message":message,"personId": senderId,"chatroomId":chatroomId,"itemId":itemId}));
 	}
 	$('#message-button').click(function(){

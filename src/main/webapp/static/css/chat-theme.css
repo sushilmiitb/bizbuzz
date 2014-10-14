@@ -38,15 +38,17 @@
 }
 
 .chat-body{
-	overflow-y:auto;
-	margin-top:40px;
-	padding-left:0px;
-	padding-right:0px;
-	overflow: scroll;
-	width: inherit;
 	height: inherit;
+	width: inherit; 
+ /*   margin-top: 40px;  */
+    overflow-y: scroll;
+    padding: 42px 0 0;
 }
 
+.chat-body-chatroom{
+	margin-top: 40px;
+	padding:0 0 0;
+}
 .chat-text-box{
 	height: 3em;
 	
@@ -78,7 +80,7 @@
 .chat-room-message-notification{
    	font-size: .8em;
    	display: block;
-   	margin-left: 318px;
+   	margin-left: 200px;   
    	margin-top: -19px;
   	width: 24px;
    	height: 24px;
