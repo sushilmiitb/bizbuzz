@@ -147,16 +147,6 @@ public class ChatController {
     return "test";
   }
 
-  @RequestMapping(value = "/samplechat", method = RequestMethod.GET)
-  public String chatByAtmosphere(HttpSession session) {
-
-  //  Person person = getPerson();
-  //  UserLogin user = person.getUserId();
-  //  session.setAttribute("userId",user.getId());
-   // session.setAttribute("chatroomId",(long)1);
-
-    return "home";
-  }
   // ~~~~~~~~~~~~~~~~~~~~~            CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMEWORK             ~~~~~~~~~~~~~~~~~~~~~~~
 
   @RequestMapping(value = "/websockets", method = RequestMethod.POST)
@@ -243,11 +233,11 @@ public class ChatController {
       chatResponseDTO.setMessage(message);
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
-           for(Person member : members){
-             if(person.getId().longValue()!=member.getId().longValue()){
-                 BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
-                 logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
-             }
+      for(Person member : members){
+        if(person.getId().longValue()!=member.getId().longValue()){
+          BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+          logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+        }
       }
            /*     
       if(itemId.intValue()!=0)
@@ -679,7 +669,7 @@ public class ChatController {
   //  session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
-   /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
+  /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
      List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);   */

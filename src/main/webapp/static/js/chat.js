@@ -341,8 +341,8 @@ function initializeSocket(socketUrl,senderId){
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
-	request.transport = 'long-polling';
-	request.fallbackTransport = 'websocket';
+	request.transport = 'websocket';
+	request.fallbackTransport = 'long-polling';
 
 	console.log("socketUrl : " +socketUrl +"<>senderId : " +senderId);
 	/**

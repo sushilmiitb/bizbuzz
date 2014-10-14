@@ -58,12 +58,12 @@ accordingly makes the chat module hidden or visible.
 </div>
 <div class="panel-footer footer">
 	<div class="row" id="footer">
-		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="left">
+		<div class="col-xs-2 col-sm-4 col-md-5 col-lg-5" align="left">
 		</div>
-		<div class="col-xs-6 col-sm-4 col-md-2 col-lg-2" align="center">
+		<div class="col-xs-8 col-sm-4 col-md-2 col-lg-2" align="center">
 			<button class="badge1 btn btn-primary btn-block chat-toggle-btn">Show Chat</button>
 		</div>
-		<div class="col-xs-3 col-sm-4 col-md-5 col-lg-5" align="right">
+		<div class="col-xs-2 col-sm-4 col-md-5 col-lg-5" align="right">
 		</div>
 	</div>
 </div>
