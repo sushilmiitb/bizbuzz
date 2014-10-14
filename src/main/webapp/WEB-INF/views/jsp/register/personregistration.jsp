@@ -17,7 +17,7 @@
 				var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
 				var processAndroidSubmitForm;
 				var isCordovaLoaded;
-				var baseStaticUrl = "/bizbuzz/static";
+				var baseStaticUrl = "/static";
 				if(isAndroid) {
 					if(debug)
 						alert("This is android platform.");

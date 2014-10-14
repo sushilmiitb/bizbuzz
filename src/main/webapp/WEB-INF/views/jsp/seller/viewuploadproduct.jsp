@@ -11,7 +11,7 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		var debug=false;
-		var baseStaticUrl = "/bizbuzz/static";
+		var baseStaticUrl = "/static";
 		var max_height = 800;
 		var max_width = 600;
 		var compressionRatio = 0.7;

@@ -244,8 +244,10 @@ public class ChatController {
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
            for(Person member : members){
-        BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
-        logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+             if(person.getId().longValue()!=member.getId().longValue()){
+                 BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+                 logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+             }
       }
            /*     
       if(itemId.intValue()!=0)

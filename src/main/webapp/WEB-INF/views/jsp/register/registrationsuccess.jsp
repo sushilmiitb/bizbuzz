@@ -15,7 +15,7 @@
 				var debug = false;
 				var ua = navigator.userAgent.toLowerCase();   
 				var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
-				var baseStaticUrl = "/bizbuzz/static";
+				var baseStaticUrl = "/static";
 				if(isAndroid) {
 					if(debug)
 						alert("This is android platform.");

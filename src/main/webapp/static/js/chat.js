@@ -47,7 +47,7 @@ function setChatPanelToggleCallback(){
 		}, 200, function() {
 			// Animation complete.
 			// Send info of chat visibility state
-			var url = "/bizbuzz/chat/controller";
+			var url = "/chat/controller";
 			var parentObj = $(".chat-panel");
 			var isChatPanelVisible = "false";
 			if($(".chat-content").length && $(".chat-content").is(":visible")){
@@ -69,7 +69,7 @@ function setChatPanelToggleCallback(){
 
 function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
-		var url = "/bizbuzz/chat/controller";
+		var url = "/chat/controller";
 		var parentObj = $(".chat-panel");
 		
 		//$(".chat-panel").addClass("div-loader");
@@ -150,7 +150,7 @@ function removeChatPanelResizeCallback(){
 function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 	itemid=itemId;
 	changeNameOfChatButtonOnClick(isShow);
-	var url = "/bizbuzz/chat/controller";
+	var url = "/chat/controller";
 	var data;
 	if(itemId===undefined){//that means it is in normal chat mode and chatcontroller has to determine the state using session state variables
 		data = {chatpage:"determine"};
@@ -189,7 +189,7 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
  * @return
  */
 function loadChatRoomList(){
-	var url = "/bizbuzz/chat/controller";
+	var url = "/chat/controller";
 	var parentObj = $(".chat-panel");
 	var params = 'chatpage=listofchatrooms';
 	$.ajax({
@@ -241,7 +241,7 @@ function loadItemChatRoom(chatroomId, itemId, fromPage){
 	var parentObj = $(".chat-panel");
 	//$(".chat-panel").addClass("div-loader");
 	loadDivLoader(parentObj);
-	var url = "/bizbuzz/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId+"/frompage/"+fromPage;
+	var url = "/chat/showitemchatroom/chatroomid/"+chatroomId+"/itemid/"+itemId+"/frompage/"+fromPage;
 	$.ajax({
 		url: url,
 		type: "GET",
@@ -386,8 +386,7 @@ function initializeSocket(socketUrl,senderId){
 		}
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
-			{	
-				
+			{
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
@@ -406,8 +405,7 @@ function initializeSocket(socketUrl,senderId){
 					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour);
 				}
 				$("[id="+result.chatRoomId+"]").find("#latestChatMonth").text(result.showMonth);
-				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);            
-				
+				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);
 			}
 			else if(chatroomid!=result.chatRoomId){
 				showNotificationBox(result.senderName,result.itemId);
@@ -423,11 +421,12 @@ function initializeSocket(socketUrl,senderId){
 			//	showNotificationBox(result.senderName ,result.itemId);
 			//	totalUnreadChats=totalUnreadChats+1;
 			//	$(".badge1").attr("data-badge",totalUnreadChats);
-				loadNormalChatRoom("/bizbuzz/chat/showchatroom/chatroomid/"+result.chatRoomId);
+				loadNormalChatRoom("/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{
+				insertChatMessage(result.message, false);
 				$.ajax({
-					url: '/bizbuzz/chat/updatechatroommember',
+					url: '/chat/updatechatroommember',
 					type: "GET",
 					data: { "chatRoomId" :result.chatRoomId ,
 					     "receiverId" : result.receiverId,
@@ -444,7 +443,6 @@ function initializeSocket(socketUrl,senderId){
 					error: function(){
 					}
 				});
-				insertChatMessage(result.message, false);
 			}
 		}
 	}
@@ -541,7 +539,6 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 		console.log('SentMessage:'+message);
 		$('#message-field').val("");
 		insertChatMessage(message, true);
-		
 		if(previouslines>2){
 			previouslines = 2;
 			bottomOffset = baseBottomOffset;
