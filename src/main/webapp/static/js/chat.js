@@ -347,8 +347,8 @@ function initializeSocket(socketUrl,senderId){
 	var request = new $.atmosphere.AtmosphereRequest();        
 	request.url = socketUrl;
 	request.contentType = "application/json";
-	request.transport = 'long-polling';
-	request.fallbackTransport = 'websocket';
+	request.transport = 'websocket';
+	request.fallbackTransport = 'long-polling';
 
 	console.log("socketUrl : " +socketUrl +"<>senderId : " +senderId);
 	/**
@@ -381,6 +381,7 @@ function initializeSocket(socketUrl,senderId){
 	request.onMessage = function(response){
 		var message = response.responseBody;
 		console.log("Message : " +message);
+		alert(message);
 		var result;
 		try {
 			result =  $.parseJSON(message);
@@ -393,6 +394,7 @@ function initializeSocket(socketUrl,senderId){
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
+				alert("insert message no Single Chatroom");
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
