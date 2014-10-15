@@ -37,7 +37,7 @@ function changeNameOfChatButtonOnClick(chatVisible){
 		else{
 			$( ".chat-toggle-btn" ).text("Show Product Inquiry");
 		}
-		
+
 	}
 }
 function setChatPanelToggleCallback(){
@@ -71,7 +71,7 @@ function setChatBackButtonCallback(){
 	$(".chat-back").click(function(){
 		var url = "/chat/controller";
 		var parentObj = $(".chat-panel");
-		
+
 		//$(".chat-panel").addClass("div-loader");
 		loadDivLoader(parentObj);
 		$.ajax({
@@ -79,16 +79,16 @@ function setChatBackButtonCallback(){
 			type: "GET",
 			data: {chatpage: "back"},
 			success: function(data) {
-			$(".chat-panel").removeClass("div-loader");
-			removeChatPanelToggleCallback();
-			removeChatBackButtonCallback();
-			$(parentObj).children().remove();
-			$(parentObj).append(data);
-		},
-		error: function(){
-		}
+				$(".chat-panel").removeClass("div-loader");
+				removeChatPanelToggleCallback();
+				removeChatBackButtonCallback();
+				$(parentObj).children().remove();
+				$(parentObj).append(data);
+			},
+			error: function(){
+			}
 		});
-		
+
 	});
 	totalUnreadChats=Number($("#totalUnreadChats").text());
 	if(totalUnreadChats>0){
@@ -97,7 +97,7 @@ function setChatBackButtonCallback(){
 	else{
 		$(".badge1").removeAttr("data-badge");
 	}
-	
+
 }
 
 function removeChatPanelToggleCallback(){
@@ -166,21 +166,21 @@ function loadCurrentChatRoomState(isShow, itemId, secondPersonId){
 		type: "GET",
 		data: data,
 		success: function(data) {
-			$(parentObj).append(data);
-			if(isShow){
-				$(".chat-content").show();
-			}
-	//		totalUnreadChats=Number($("#totalUnreadChats").text());
-			if(totalUnreadChats>0){
-				$(".badge1").attr("data-badge",totalUnreadChats);
-			}
-			else{
-				$(".badge1").removeAttr("data-badge");
-			}
-			
-		},
-		error: function(){
+		$(parentObj).append(data);
+		if(isShow){
+			$(".chat-content").show();
 		}
+		//		totalUnreadChats=Number($("#totalUnreadChats").text());
+		if(totalUnreadChats>0){
+			$(".badge1").attr("data-badge",totalUnreadChats);
+		}
+		else{
+			$(".badge1").removeAttr("data-badge");
+		}
+
+	},
+	error: function(){
+	}
 	});
 }
 
@@ -217,13 +217,13 @@ function loadNormalChatRoom(url){
 		url: url,
 		type: "GET",
 		success: function(data) {
-			$(".chat-panel").removeClass("div-loader");
-			removeChatPanelToggleCallback();
-			removeChatBackButtonCallback();
-			removeChatPanelResizeCallback();
-			$(parentObj).children().remove();
-			$(parentObj).append(data);
-			$(".chat-body").scrollTop(1000000);
+		$(".chat-panel").removeClass("div-loader");
+		removeChatPanelToggleCallback();
+		removeChatBackButtonCallback();
+		removeChatPanelResizeCallback();
+		$(parentObj).children().remove();
+		$(parentObj).append(data);
+		$(".chat-body").scrollTop(1000000);
 	},
 	error: function(){
 	}
@@ -310,7 +310,7 @@ function showNotificationBox(senderName,itemId){
 		else{
 			message='<p>'+senderName+' messages you about Item : '+itemId+'.</p>'
 		}
-			
+
 		// create the notification
 		var notification = new NotificationFx({
 			message : message,
@@ -318,8 +318,8 @@ function showNotificationBox(senderName,itemId){
 			effect : 'scale',
 			type : 'notice', // notice, warning, error or success
 			onClose : function() {
-				
-			}
+
+		}
 		});
 		// show the notification
 		notification.show();
@@ -358,7 +358,7 @@ function initializeSocket(socketUrl,senderId){
 			broadcasterIncrement=broadcasterIncrement+1;
 		}
 	}
-	
+
 	request.pollingInterval = '10';
 
 	request.onReconnect = function(request, response){
@@ -367,7 +367,7 @@ function initializeSocket(socketUrl,senderId){
 	}
 
 	request.onClose = function(response) {               
-	    console.log('onClose ' + response);
+		console.log('onClose ' + response);
 	}
 	/**
 	 * On receiving message from other person
@@ -375,6 +375,7 @@ function initializeSocket(socketUrl,senderId){
 	request.onMessage = function(response){
 		var message = response.responseBody;
 		console.log("Message : " +message);
+		alert(message);
 		var result;
 		try {
 			result =  $.parseJSON(message);
@@ -385,8 +386,7 @@ function initializeSocket(socketUrl,senderId){
 		if(result.senderId==senderId){
 		}
 		else{
-			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
-			{
+			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom'){
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
 				$(".badge1").attr("data-badge",totalUnreadChats);
@@ -399,7 +399,7 @@ function initializeSocket(socketUrl,senderId){
 				if($("[id="+result.chatRoomId+"]").find("#latestChatDate").text().length==0) {
 					$("[id="+result.chatRoomId+"]").find("#latestChatDate").text(result.day+"th ");
 					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour+":");
-			    }
+				}
 				else{
 					$("[id="+result.chatRoomId+"]").find("#latestChatDate").text(result.day);
 					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour);
@@ -418,9 +418,9 @@ function initializeSocket(socketUrl,senderId){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else if(chatroomid==result.chatRoomId && itemid!=result.itemId){
-			//	showNotificationBox(result.senderName ,result.itemId);
-			//	totalUnreadChats=totalUnreadChats+1;
-			//	$(".badge1").attr("data-badge",totalUnreadChats);
+				//	showNotificationBox(result.senderName ,result.itemId);
+				//	totalUnreadChats=totalUnreadChats+1;
+				//	$(".badge1").attr("data-badge",totalUnreadChats);
 				loadNormalChatRoom("/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{
@@ -429,19 +429,19 @@ function initializeSocket(socketUrl,senderId){
 					url: '/chat/updatechatroommember',
 					type: "GET",
 					data: { "chatRoomId" :result.chatRoomId ,
-					     "receiverId" : result.receiverId,
-					     "year" :result.year ,
-					     "month" : result.month,
-					     "day" : result.day,
-					     "hour" : result.hour,
-					     "minute" :result.minute ,
-					     "seconds" : result.seconds	     
-			        },
-					success: function(data) {	
-						console.log(data);
-					}, 
-					error: function(){
-					}
+					"receiverId" : result.receiverId,
+					"year" :result.year ,
+					"month" : result.month,
+					"day" : result.day,
+					"hour" : result.hour,
+					"minute" :result.minute ,
+					"seconds" : result.seconds	     
+				},
+				success: function(data) {	
+					console.log(data);
+				}, 
+				error: function(){
+				}
 				});
 			}
 		}
@@ -450,13 +450,13 @@ function initializeSocket(socketUrl,senderId){
 		console.log("An error ocurred in web socket: " + response.responseBody);
 		return;
 	}
-   subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
-   
+	subSocket = socket.subscribe(request);               //subSocket is used to push messages to the server.
+
 }
 
 
 function initializeNormalChatRoom(senderId, chatroomId, itemId){
-/*
+	/*
 	if($("#newchats").length>0){		
 		if(newChats>=Number($("#newchats").text())){
 			newChats=newChats-Number($("#newchats").text());
@@ -471,7 +471,7 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 	setChatPanelToggleCallback();
 	setChatBackButtonCallback();
 	$(".chat-body").scrollTop(1000000);
-	
+
 	/****Code for handling variable height for text area***/
 	var previouslines = 2;
 	var baseMessageFieldHeight;
@@ -479,7 +479,7 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 	//var baseChatInputAreaHeight = baseInputHeight;
 	var baseBottomOffset = bottomOffset;
 	$("textarea").on("keydown", function(e) {
-	    /*if ($("textarea").attr("cols")) {
+		/*if ($("textarea").attr("cols")) {
 	        var cols = parseInt($("textarea").attr("cols")),
 	            curPos = $('textarea').prop("selectionStart"),
 	            result = Math.floor(curPos/cols);
@@ -490,7 +490,7 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 			sendChatCallback();
 			return;
 		}
-		
+
 		var lht = parseInt($('textarea').css('lineHeight'),10);		
 		var lines = Math.round($('textarea').prop('scrollHeight') / lht);		
 		if(!!window.chrome){
@@ -510,13 +510,13 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
 			$("#message-field").height($("#message-field").height()+lht);         
-	  		$("#message-button").height($("#message-button").height()+lht);
+			$("#message-button").height($("#message-button").height()+lht);
 			//$(".chat-input-area").height($(".chat-input-area").height()+lht);
 			$(".chat-body").scrollTop(1000000);
 		}
 		console.log(lines);
 	});
-	
+
 	/****websocket code starts***/
 	if (!window.console) {
 		console = {log: function() {}};
@@ -524,8 +524,8 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 	function refresh() {
 		console.log("Refreshing data tables...");
 	}
-// Put the socket initialzing code here ---------------------------------//
-    	/**
+//	Put the socket initialzing code here ---------------------------------//
+	/**
 	 * Send the chat.
 	 */
 	function sendChatCallback(){
@@ -545,9 +545,9 @@ function initializeNormalChatRoom(senderId, chatroomId, itemId){
 			initializeChatPanel(bottomOffset);
 			removeChatPanelResizeCallback();
 			setChatPanelResizeCallback(bottomOffset);
-			 $("#message-field").height(baseMessageFieldHeight);         
-			 $("#message-button").height(baseMessageButtonHeight);   
-			 
+			$("#message-field").height(baseMessageFieldHeight);         
+			$("#message-button").height(baseMessageButtonHeight);   
+
 			//$(".chat-input-area").height(baseChatInputAreaHeight);			
 		}
 		$("#message-field").focus();
