@@ -296,7 +296,6 @@ function changeStateOfPage(stateOfPage,idOfChatroom,idOfItem){
 	else{
 		$(".chat-body").removeClass("chat-body-chatroom");
 	}
-	
 }
 function changeTotalNoOfUnreadChats(totalNoOfUnreadMessages){
 	totalUnreadChats=totalNoOfUnreadMessages;
@@ -381,7 +380,6 @@ function initializeSocket(socketUrl,senderId){
 	request.onMessage = function(response){
 		var message = response.responseBody;
 		console.log("Message : " +message);
-		alert(message);
 		var result;
 		try {
 			result =  $.parseJSON(message);
@@ -394,10 +392,10 @@ function initializeSocket(socketUrl,senderId){
 		else{
 			if(pageStat!='singlechatroom'  &&  pageStat!='singleitemchatroom')
 			{	
-				alert("insert message no Single Chatroom");
+				
 				showNotificationBox(result.senderName,result.itemId);
 				totalUnreadChats=totalUnreadChats+1;
-				$(".badge1").attr("data-badge",totalUnreadChats);
+				$(".badge1").attr("data-badge",totalUnreadChats);		
 				var noOfUnreadChatsOfChatroom = Number($("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").text());	
 				if(noOfUnreadChatsOfChatroom==0){
 					$("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").css("display","block");
@@ -413,7 +411,7 @@ function initializeSocket(socketUrl,senderId){
 					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour);
 				}
 				$("[id="+result.chatRoomId+"]").find("#latestChatMonth").text(result.showMonth);
-				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);            
+				$("[id="+result.chatRoomId+"]").find("#latestChatMinutes").text(result.minute);    
 			}
 			else if(chatroomid!=result.chatRoomId){
 				showNotificationBox(result.senderName,result.itemId);
