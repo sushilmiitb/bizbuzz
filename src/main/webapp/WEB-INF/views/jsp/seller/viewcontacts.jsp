@@ -68,9 +68,9 @@
 					var strVar="";
 					$(validContacts).each(function (i) { //populate contact_selection options
 						strVar += "<div class=\"row list-group-item\" onclick='contactAndroidObj.processContact(this);' >";
-						strVar += "	<div class=\"col-xs-8 col-sm-8 col-md-8 col-lg-8\">";
+						strVar += "	<div class=\"col-xs-6 col-sm-6 col-md-6 col-lg-6\">";
 						strVar += 		validContacts[i].displayName+"<\/div>";
-						strVar += "	<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\">";
+						strVar += "	<div class=\"col-xs-6 col-sm-6 col-md-6 col-lg-6\">";
 						strVar += 		validContacts[i].phoneNumbers[0].value+"<\/div>";
 						strVar += "<\/div>";
 					});
@@ -85,6 +85,7 @@
 					var children = $(event).children();
 					if(typeof children !== 'undefined' && children.length==2){
 						var number = $(children[1]).html();
+						number = "+91"+getTenDigitPhoneNumber(number);
 						$("#seller_viewconnection_phonenumber").attr("value",number);
 						$('#phonebookModal').modal('toggle');
 					}
@@ -284,7 +285,7 @@
 <!------------------------------------------ 	 Contacts Module -------------------------------------------->
 			<div class="row" id="maincontent" class="contacts-page">
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 no-padding">
 					<div class="panel panel-primary">
 <!-- 						<div class="panel-heading center-align-text">Connections</div> -->
 		               <ul class="nav nav-pills subnav-top-horizontal">

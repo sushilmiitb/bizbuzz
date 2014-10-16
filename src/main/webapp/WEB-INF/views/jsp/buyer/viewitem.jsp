@@ -70,7 +70,7 @@
 												<div class="row">
 													<c:forEach var="subgroup"
 														items="${group.propertySubGroups}" varStatus="j">
-														<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+														<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 overflow-auto">
 															<strong>${subgroup.name}</strong>
 															<table>
 																<c:forEach var="field"

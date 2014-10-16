@@ -26,7 +26,7 @@
 
 <body role="document">
 	<tiles:insertAttribute name="header" ignore="true" />
-	<div id="page-content">
+	<div id="page-content" class="break-word">
 		<tiles:insertAttribute name="body" />
 	</div>
 

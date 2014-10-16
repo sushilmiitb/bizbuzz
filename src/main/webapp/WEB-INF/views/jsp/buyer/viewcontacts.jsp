@@ -44,7 +44,7 @@
 <!------------------------------------------ 	 Contacts Module -------------------------------------------->
 			<div class="row" id="maincontent" class="contacts-page">
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 no-padding">
 					<div class="panel panel-primary">
 <!-- 						<div class="panel-heading center-align-text">Connections</div> -->
 		               <ul class="nav nav-pills subnav-top-horizontal">
