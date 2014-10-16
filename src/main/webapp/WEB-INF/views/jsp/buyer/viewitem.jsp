@@ -63,7 +63,7 @@
 							<div class="row" id="propertyContent">
 								<c:forEach var="group"
 									items="${propertyMetadata.propertyGroups}" varStatus="i">
-									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 no-padding">
 										<div class="panel panel-default">
 											<div class="panel-heading">${group.name}</div>
 											<div class="panel-body">
