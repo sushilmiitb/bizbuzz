@@ -170,3 +170,13 @@ ul.subnav-top-horizontal{
     text-align:center;
     display:none;
 }
+
+/****************Contacts Start********************/
+#phonebookModal{
+	z-index:102;
+}
+
+#addConnectionModal{
+	z-index:101;
+}
+/****************Contacts Ends********************/
