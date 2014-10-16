@@ -9,7 +9,7 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		var debug=false;
-		var baseStaticUrl = "/bizbuzz/static";
+		var baseStaticUrl = "/static";
 		var contactAndroidObj;
 		$(document).ready(function() {
 			//call the specific function on document ready

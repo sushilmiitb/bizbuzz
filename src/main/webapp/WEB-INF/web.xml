@@ -13,28 +13,38 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
-	<filter>
-		<filter-name>ExpiresFilter</filter-name>
-		<filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class>
-		<async-supported>true</async-supported>
-		<init-param>
-			<param-name>ExpiresByType image</param-name>
-			<param-value>access plus 2 months</param-value>
-		</init-param>
-		<init-param>
-			<param-name>ExpiresByType text/css</param-name>
-			<param-value>access plus 2 months</param-value>
-		</init-param>
-		<init-param>
-			<param-name>ExpiresByType application/javascript</param-name>
-			<param-value>access plus 2 months</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>ExpiresFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-	</filter-mapping>
+<!-- 	<session-config> -->
+<!-- 		<session-timeout>-1</session-timeout> -->
+<!-- 		<cookie-config> -->
+<!-- 			<name>JSESSION</name> -->
+<!-- 			<path>/</path> -->
+<!-- 			<http-only>true</http-only> -->
+<!-- 			<secure>true</secure> -->
+<!-- 		</cookie-config> -->
+<!-- 	</session-config> -->
+
+	<!-- <filter> -->
+	<!-- <filter-name>ExpiresFilter</filter-name> -->
+	<!-- <filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class> -->
+	<!-- <async-supported>true</async-supported> -->
+	<!-- <init-param> -->
+	<!-- <param-name>ExpiresByType image</param-name> -->
+	<!-- <param-value>access plus 2 months</param-value> -->
+	<!-- </init-param> -->
+	<!-- <init-param> -->
+	<!-- <param-name>ExpiresByType text/css</param-name> -->
+	<!-- <param-value>access plus 2 months</param-value> -->
+	<!-- </init-param> -->
+	<!-- <init-param> -->
+	<!-- <param-name>ExpiresByType application/javascript</param-name> -->
+	<!-- <param-value>access plus 2 months</param-value> -->
+	<!-- </init-param> -->
+	<!-- </filter> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>ExpiresFilter</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- <dispatcher>REQUEST</dispatcher> -->
+	<!-- </filter-mapping> -->
 
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
