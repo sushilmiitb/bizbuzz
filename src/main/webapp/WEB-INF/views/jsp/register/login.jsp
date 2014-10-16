@@ -43,7 +43,8 @@
 				$('#j_username').val($('select[id=register_login_countrycode]').val());
 			
 		*/		
-				   $("#j_username").intlTelInput();		   
+				   $("#j_username").intlTelInput();		  
+		           $("#j_username").val("+91");
 				   
 			});
 		</script>

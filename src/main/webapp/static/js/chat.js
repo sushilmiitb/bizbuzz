@@ -314,7 +314,7 @@ function showNotificationBox(senderName,itemId){
 			message='<p>'+senderName+' messages you .</p>'
 		}
 		else{
-			message='<p>'+senderName+' messages you about Item : '+itemId+'.</p>'
+			message='<p>'+senderName+' messages you about Product : '+itemId+'.</p>'
 		}
 
 		// create the notification
@@ -335,10 +335,7 @@ function showNotificationBox(senderName,itemId){
 /**
  * Initialize the chat room. It can be used for both normal chat room and item chatroom. It initializes the socket.
  * @param socketUrl
- * @param userId
  * @param senderId
- * @param chatroomId
- * @param itemId
  * @return
  */
 
@@ -424,9 +421,6 @@ function initializeSocket(socketUrl,senderId){
 				$(".badge1").attr("data-badge",totalUnreadChats);
 			}
 			else if(chatroomid==result.chatRoomId && itemid!=result.itemId){
-				//	showNotificationBox(result.senderName ,result.itemId);
-				//	totalUnreadChats=totalUnreadChats+1;
-				//	$(".badge1").attr("data-badge",totalUnreadChats);
 				loadNormalChatRoom("/chat/showchatroom/chatroomid/"+result.chatRoomId);
 			}
 			else{

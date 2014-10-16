@@ -541,7 +541,7 @@ public class ChatController {
     lastChatDate.setSeconds(Integer.parseInt(allRequestParams.get("seconds")));
     chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(lastChatDate, Long.parseLong(allRequestParams.get("chatRoomId")), Long.parseLong(allRequestParams.get("receiverId")));
     
-    return "success";
+    return "";
   }  
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~       CHAT FUNTIONALITY WITH NORMAL REQUEST-RESPONSE MODEL     ~~~~~~~~~~~~~~~~~~~~~~~
 
