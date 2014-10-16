@@ -17,6 +17,8 @@
 		<c:url var="edit_item_url" value="/seller/uploadproduct/category/${item.itemCategory.id}"/>
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 no-padding">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">Product name</div>
 						<div class="panel-body">
@@ -70,7 +72,7 @@
 							<div class="row" id="propertyContent">
 								<c:forEach var="group"
 									items="${propertyMetadata.propertyGroups}" varStatus="i">
-									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 no-padding">
 										<div class="panel panel-default">
 											<div class="panel-heading">${group.name}</div>
 											<div class="panel-body">
@@ -97,6 +99,8 @@
 							</div>
 						</div>
 					</div>
+				</div>
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 			</div>
 		</div>
 	</tiles:putAttribute>
