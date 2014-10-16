@@ -160,7 +160,6 @@
  
 				$("#register_personregistration_username").intlTelInput();
 				
-//			$('#register_personregistration_username').val("");
 				 $("#register_personregistration_submit").click(function(event){
 					event.preventDefault();
 			
@@ -187,6 +186,7 @@
 						}
 					}
 				});
+					$("#register_personregistration_username").val("+91");
 			});
 		</script>
 	</tiles:putAttribute>
@@ -206,7 +206,7 @@
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
 							<div class="row" id="register_personregistration_companyrole">
-								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+								<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
 								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
 									<form:radiobutton  path="company.companyRole" value="Buyer" class="user-type-radiobutton" />
     									Buyer
