@@ -60,6 +60,8 @@
 								</div>
 							</div>
 
+						</div>
+
 							<div class="row" id="propertyContent">
 								<c:forEach var="group"
 									items="${propertyMetadata.propertyGroups}" varStatus="i">
@@ -88,7 +90,6 @@
 									</div>
 								</c:forEach>
 							</div>
-						</div>
 					</div>
 				</div>
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
