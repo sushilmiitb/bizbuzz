@@ -400,7 +400,7 @@ function initializeSocket(socketUrl,senderId){
 				$("[id="+result.chatRoomId+"]").find("#noOfUnreadChats").text(noOfUnreadChatsOfChatroom+1);
 				$("[id="+result.chatRoomId+"]").find("#latestChat").text(result.message);
 				if($("[id="+result.chatRoomId+"]").find("#latestChatDate").text().length==0) {
-					$("[id="+result.chatRoomId+"]").find("#latestChatDate").text(result.day+"th ");
+					$("[id="+result.chatRoomId+"]").find("#latestChatDate").html(result.day+"<sup>th</sup> ");
 					$("[id="+result.chatRoomId+"]").find("#latestChatHours").text(result.hour+":");
 				}
 				else{

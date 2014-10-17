@@ -34,8 +34,14 @@
 
 				<div class="media-body chat-room-body">
 					<h4 class="media-heading"> ${showperson.firstName} 
-						${showperson.middleName} ${showperson.lastName} <span id="latestChatDate">${chat.createdAt.date}</span>th  <span id="latestChatMonth">${monthForDisplay[chat.createdAt.month]}</span> <span id="latestChatHours">${chat.createdAt.hours}</span>:<span id="latestChatMinutes">${chat.createdAt.minutes}</span> 
-						 <c:choose>
+						${showperson.middleName} ${showperson.lastName}
+						<div class="latest-chat-time">
+						  <span id="latestChatDate">${chat.createdAt.date}</span><sup>th</sup>  <span id="latestChatMonth">${monthForDisplay[chat.createdAt.month]}</span> <span id="latestChatHours">${chat.createdAt.hours}</span>:<span id="latestChatMinutes">${chat.createdAt.minutes}</span>
+						</div> 
+					</h4>
+					<div class="latestchat-notification-combine">
+						 <div class="chat-room-first-line" id="latestChat">${chat.message}</div>
+                         <c:choose>
                            <c:when test="${empty noOfUnreadChatsOfChatroom}" >
                              <span class="chat-room-message-notification" id="noOfUnreadChats" style="display: none;">0</span>
                            </c:when>
@@ -43,8 +49,7 @@
                       	     <span class="chat-room-message-notification" id="noOfUnreadChats">${noOfUnreadChatsOfChatroom}</span>
                            </c:otherwise>
                          </c:choose>  	
-					</h4>
-					<p class="chat-room-first-line" id="latestChat">${chat.message}</p>
+                   </div>					
 				</div>
 			</div>
 		</c:forEach>
@@ -67,10 +72,15 @@
 
 				<div class="media-body chat-room-body">
 					<h4 class="media-heading">${showperson.firstName}
-						${showperson.middleName} ${showperson.lastName} <span id="latestChatDate"></span>  <span id="latestChatMonth"></span> <span id="latestChatHours"></span><span id="latestChatMinutes"></span>
-					<span class="chat-room-message-notification" id="noOfUnreadChats" style="display: none;">0</span>	
+						${showperson.middleName} ${showperson.lastName}
+						<div class="latest-chat-time">
+						  <span id="latestChatDate"></span>  <span id="latestChatMonth"></span> <span id="latestChatHours"></span><span id="latestChatMinutes"></span>
+						</div>	
 					</h4>
-					<p class="chat-room-first-line" id="latestChat">No conversation yet</p>
+					<div class="latestchat-notification-combine">
+						 <div class="chat-room-first-line" id="latestChat">No conversation yet</div>
+                        <span id="noOfUnreadChats" class="chat-room-message-notification" style="display: none;">0</span>
+                   </div>
 				</div>
 			</div>
 		</c:forEach>
