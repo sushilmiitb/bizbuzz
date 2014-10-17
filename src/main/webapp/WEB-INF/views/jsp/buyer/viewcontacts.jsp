@@ -52,7 +52,7 @@
 		                        <a href="#">Contacts</a>
 							</li>
 						</ul>
-						<div class="panel-body" id="connectionContainer">
+						<div class="panel-body no-padding" id="connectionContainer">
 
 							
 							<div class="list-group">
@@ -64,10 +64,10 @@
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
 											<h4 class="list-group-item-heading">Phone Number</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 											<h4 class="list-group-item-heading">Group</h4>
 										</div>
 									</div>
@@ -78,9 +78,9 @@
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 												${item.fromParty.firstName} ${item.fromParty.middleName}
 												${item.fromParty.lastName}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
 												${item.fromParty.userId.id}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 											  </div>
 										</div>
 									</a>

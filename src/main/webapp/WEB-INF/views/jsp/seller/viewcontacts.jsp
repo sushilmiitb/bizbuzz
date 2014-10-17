@@ -296,7 +296,7 @@
 		                        <a href="#">Groups</a>
 							</li>
 						</ul>
-						<div class="panel-body" id="connectionContainer">
+						<div class="panel-body no-padding" id="connectionContainer">
 							<button class="btn btn-primary btn-block" data-toggle="modal" data-target="#addConnectionModal">Add new contact</button>
 							<br />
 							<div class="list-group">
@@ -308,10 +308,10 @@
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
 											<h4 class="list-group-item-heading">Phone Number</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 											<h4 class="list-group-item-heading">Group</h4>
 										</div>
 									</div>
@@ -322,9 +322,9 @@
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 												${item.toParty.firstName} ${item.toParty.middleName}
 												${item.toParty.lastName}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
 												${item.toParty.userId.id}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 												${item.fromParty.privateGroupName }</div>
 										</div>
 									</a>
@@ -395,7 +395,7 @@
 							</div>
 						</div>
 <!---------------------------------------------   Groups Module -------------------------------------------->							
-						<div class="panel-body" id="groupContainer" style="display:none;" >
+						<div class="panel-body no-padding" id="groupContainer" style="display:none;" >
 							<div class="list-group">
 								<a href="#" id="groups-header" class="list-group-item active">
 									<h4 class="list-group-item-heading">Your Groups</h4>
