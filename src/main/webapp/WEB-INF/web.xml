@@ -10,45 +10,51 @@
 		<param-value>classpath*:META-INF/springatmosphere/*.xml</param-value>
 	</context-param>
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
 	</listener>
 
-<!-- 	<session-config> -->
-<!-- 		<session-timeout>-1</session-timeout> -->
-<!-- 		<cookie-config> -->
-<!-- 			<name>JSESSION</name> -->
-<!-- 			<path>/</path> -->
-<!-- 			<http-only>true</http-only> -->
-<!-- 			<secure>true</secure> -->
-<!-- 		</cookie-config> -->
-<!-- 	</session-config> -->
+	<!-- <session-config> -->
+	<!-- <session-timeout>-1</session-timeout> -->
+	<!-- <cookie-config> -->
+	<!-- <name>JSESSION</name> -->
+	<!-- <path>/</path> -->
+	<!-- <http-only>true</http-only> -->
+	<!-- <secure>true</secure> -->
+	<!-- </cookie-config> -->
+	<!-- </session-config> -->
 
-	<!-- <filter> -->
-	<!-- <filter-name>ExpiresFilter</filter-name> -->
-	<!-- <filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class> -->
-	<!-- <async-supported>true</async-supported> -->
-	<!-- <init-param> -->
-	<!-- <param-name>ExpiresByType image</param-name> -->
-	<!-- <param-value>access plus 2 months</param-value> -->
-	<!-- </init-param> -->
-	<!-- <init-param> -->
-	<!-- <param-name>ExpiresByType text/css</param-name> -->
-	<!-- <param-value>access plus 2 months</param-value> -->
-	<!-- </init-param> -->
-	<!-- <init-param> -->
-	<!-- <param-name>ExpiresByType application/javascript</param-name> -->
-	<!-- <param-value>access plus 2 months</param-value> -->
-	<!-- </init-param> -->
-	<!-- </filter> -->
-	<!-- <filter-mapping> -->
-	<!-- <filter-name>ExpiresFilter</filter-name> -->
-	<!-- <url-pattern>/*</url-pattern> -->
-	<!-- <dispatcher>REQUEST</dispatcher> -->
-	<!-- </filter-mapping> -->
+	<filter>
+		<filter-name>ExpiresFilter</filter-name>
+		<filter-class>org.apache.catalina.filters.ExpiresFilter</filter-class>
+		<async-supported>true</async-supported>
+		<init-param>
+			<param-name>ExpiresByType image</param-name>
+			<param-value>modification plus 15 days</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType text/css</param-name>
+			<param-value>access plus 15 days</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType application/javascript</param-name>
+			<param-value>access plus 15 days</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ExpiresByType image/gif</param-name>
+			<param-value>modification plus 15 days</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ExpiresFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+	</filter-mapping>
 
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
 		<async-supported>true</async-supported>
 	</filter>
 
@@ -63,11 +69,13 @@
 		<async-supported>true</async-supported>
 		<init-param>
 			<param-name>org.atmosphere.servlet</param-name>
-			<param-value>org.springframework.web.servlet.DispatcherServlet</param-value>
+			<param-value>org.springframework.web.servlet.DispatcherServlet
+			</param-value>
 		</init-param>
 		<init-param>
 			<param-name>org.atmosphere.filter</param-name>
-			<param-value>org.springframework.web.filter.DelegatingFilterProxy</param-value>
+			<param-value>org.springframework.web.filter.DelegatingFilterProxy
+			</param-value>
 		</init-param>
 		<init-param>
 			<param-name>org.atmosphere.filter.name</param-name>
@@ -76,13 +84,15 @@
 		<!-- Reduce memory usage by sharing ExecutorServices || Preventing Out 
 			Of Memory -->
 		<init-param>
-			<param-name>org.atmosphere.cpr.broadcaster.shareableThreadPool</param-name>
+			<param-name>org.atmosphere.cpr.broadcaster.shareableThreadPool
+			</param-name>
 			<param-value>true</param-value>
 		</init-param>
 
 		<!-- Recovering a destroyed Broadcaster -->
 		<init-param>
-			<param-name>org.atmosphere.cpr.recoverFromDestroyedBroadcaster</param-name>
+			<param-name>org.atmosphere.cpr.recoverFromDestroyedBroadcaster
+			</param-name>
 			<param-value>true</param-value>
 		</init-param>
 
@@ -100,7 +110,8 @@
 
 	<servlet>
 		<servlet-name>bizbuzz</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
 		<load-on-startup>1</load-on-startup>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
