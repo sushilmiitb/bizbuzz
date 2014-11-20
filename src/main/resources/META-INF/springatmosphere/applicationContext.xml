@@ -21,4 +21,5 @@
 		class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
 		p:basename="classpath:message" />
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+	<bean class="org.springframework.aop.aspectj.annotation.AnnotationAwareAspectJAutoProxyCreator" />
 </beans>

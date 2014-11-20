@@ -4,3 +4,8 @@ http://kimrudolph.de/blog/manage-css-and-js-assets-with-maven/
 For Cache
 https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/filters/ExpiresFilter.html
 
+For gzip
+
+For PermGem error
+1. Inside $CATALINA_HOME/bin make setenv.sh file and add CATALINA_OPTS="$CATALINA_OPTS -server -XX:MaxPermSize=512m -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
+
