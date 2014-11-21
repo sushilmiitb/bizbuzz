@@ -17,7 +17,7 @@
 				var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
 				var processAndroidSubmitForm;
 				var isCordovaLoaded;
-				var baseStaticUrl = "/bizbuzz/static";
+				var baseStaticUrl = "/static";
 				if(isAndroid) {
 					if(debug)
 						alert("This is android platform.");
@@ -160,7 +160,6 @@
  
 				$("#register_personregistration_username").intlTelInput();
 				
-//			$('#register_personregistration_username').val("");
 				 $("#register_personregistration_submit").click(function(event){
 					event.preventDefault();
 			
@@ -187,6 +186,7 @@
 						}
 					}
 				});
+					$("#register_personregistration_username").val("+91");
 			});
 		</script>
 	</tiles:putAttribute>
@@ -200,13 +200,13 @@
 		<div class="row" id="maincontent">
 			<div class="hidden-xs hidden-sm col-md-2 col-lg-3" >
 			</div>	
-			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6">
+			<div class="col-xs-12 col-sm-12 col-md-8 col-lg-6 no-padding">
 				<div class="panel panel-primary">
 					<div class="panel-heading">Register</div>
 					<div class="panel-body">
 						<form:form class="form-signin form" role="form" method="POST" action="${post_url}" id="register_personregistration_form" modelAttribute="personRegistration">
 							<div class="row" id="register_personregistration_companyrole">
-								<div class="col-xs-2 col-sm-3 col-md-3 col-lg-3"></div>
+								<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3"></div>
 								<div class="col-xs-4 col-sm-3 col-md-3 col-lg-3">
 									<form:radiobutton  path="company.companyRole" value="Buyer" class="user-type-radiobutton" />
     									Buyer

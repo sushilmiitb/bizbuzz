@@ -11,7 +11,7 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		var debug=false;
-		var baseStaticUrl = "/bizbuzz/static";
+		var baseStaticUrl = "/static";
 		var max_height = 800;
 		var max_width = 600;
 		var compressionRatio = 0.7;
@@ -282,18 +282,18 @@
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						<div class="panel-body">
 <!---------------------------------------------------- Edit Button ------------------------------------------------------->						
-							<c:if test="${not empty itemId }">
-								<div class="row">
-									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
-									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6">
-										<a href="${newProductUpload}"
-											class="btn btn-success btn-block">Upload another
-											${parentCategoryName} product</a>
-									</div>
-									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div>
-								</div>
-								<br />
-							</c:if>
+<%-- 							<c:if test="${not empty itemId }"> --%>
+<!-- 								<div class="row"> -->
+<!-- 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
+<!-- 									<div class="col-xs-12 col-xs-12 col-md-8 col-lg-6"> -->
+<%-- 										<a href="${newProductUpload}" --%>
+<!-- 											class="btn btn-success btn-block">Upload another -->
+<%-- 											${parentCategoryName} product</a> --%>
+<!-- 									</div> -->
+<!-- 									<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->
+<!-- 								</div> -->
+<!-- 								<br /> -->
+<%-- 							</c:if> --%>
 <!---------------------------------------------------- Share Button ------------------------------------------------------->
 <!-- 							<div class="row"> -->
 <!-- 								<div class="hidden-xs hidden-sm col-md-2 col-lg-3"></div> -->

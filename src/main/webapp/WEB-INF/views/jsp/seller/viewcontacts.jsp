@@ -10,7 +10,7 @@
 <!------------------------------------------ 	Javascript code for Contacts -------------------------------------------->
 		<script type="text/javascript">
 		var debug=false;
-		var baseStaticUrl = "/bizbuzz/static";
+		var baseStaticUrl = "/static";
 		var contactAndroidObj;
 		$(document).ready(function() {
 			//call the specific function on document ready
@@ -68,9 +68,9 @@
 					var strVar="";
 					$(validContacts).each(function (i) { //populate contact_selection options
 						strVar += "<div class=\"row list-group-item\" onclick='contactAndroidObj.processContact(this);' >";
-						strVar += "	<div class=\"col-xs-8 col-sm-8 col-md-8 col-lg-8\">";
+						strVar += "	<div class=\"col-xs-6 col-sm-6 col-md-6 col-lg-6\">";
 						strVar += 		validContacts[i].displayName+"<\/div>";
-						strVar += "	<div class=\"col-xs-4 col-sm-4 col-md-4 col-lg-4\">";
+						strVar += "	<div class=\"col-xs-6 col-sm-6 col-md-6 col-lg-6\">";
 						strVar += 		validContacts[i].phoneNumbers[0].value+"<\/div>";
 						strVar += "<\/div>";
 					});
@@ -85,6 +85,7 @@
 					var children = $(event).children();
 					if(typeof children !== 'undefined' && children.length==2){
 						var number = $(children[1]).html();
+						number = "+91"+getTenDigitPhoneNumber(number);
 						$("#seller_viewconnection_phonenumber").attr("value",number);
 						$('#phonebookModal').modal('toggle');
 					}
@@ -284,7 +285,7 @@
 <!------------------------------------------ 	 Contacts Module -------------------------------------------->
 			<div class="row" id="maincontent" class="contacts-page">
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
-				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8 no-padding">
 					<div class="panel panel-primary">
 <!-- 						<div class="panel-heading center-align-text">Connections</div> -->
 		               <ul class="nav nav-pills subnav-top-horizontal">
@@ -295,7 +296,7 @@
 		                        <a href="#">Groups</a>
 							</li>
 						</ul>
-						<div class="panel-body" id="connectionContainer">
+						<div class="panel-body no-padding" id="connectionContainer">
 							<button class="btn btn-primary btn-block" data-toggle="modal" data-target="#addConnectionModal">Add new contact</button>
 							<br />
 							<div class="list-group">
@@ -307,10 +308,10 @@
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 no-padding">
 											<h4 class="list-group-item-heading">Phone Number</h4>
 										</div>
-										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+										<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 											<h4 class="list-group-item-heading">Group</h4>
 										</div>
 									</div>
@@ -321,9 +322,9 @@
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 												${item.toParty.firstName} ${item.toParty.middleName}
 												${item.toParty.lastName}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 no-padding">
 												${item.toParty.userId.id}</div>
-											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+											<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 												${item.fromParty.privateGroupName }</div>
 										</div>
 									</a>
@@ -394,7 +395,7 @@
 							</div>
 						</div>
 <!---------------------------------------------   Groups Module -------------------------------------------->							
-						<div class="panel-body" id="groupContainer" style="display:none;" >
+						<div class="panel-body no-padding" id="groupContainer" style="display:none;" >
 							<div class="list-group">
 								<a href="#" id="groups-header" class="list-group-item active">
 									<h4 class="list-group-item-heading">Your Groups</h4>

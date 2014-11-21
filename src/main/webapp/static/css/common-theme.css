@@ -13,6 +13,8 @@ label {
 .header .logo{
 	width: 40px;
 	margin-top:-10px;
+	margin-left:-10px;
+	margin-right:-10px;
 	cursor: pointer;
 }
 
@@ -101,7 +103,7 @@ span.error {
 	background-repeat: no-repeat;
 	padding-left: 1.5em;
 	background-position: 0px 0px;
-	background-image: url("/bizbuzz/static/css/images/icons/unchecked.gif");
+	background-image: url("/static/css/images/icons/unchecked.gif");
 	display: block;
 	margin-top: 5px;
 	margin-bottom: 5px;
@@ -123,7 +125,7 @@ input.error {
 	width: 100%;
 	height: 100%;
 	z-index: 9999;
-	background: url('/bizbuzz/static/css/images/icons/loader.gif') 50% 50% no-repeat
+	background: url('/static/css/images/icons/loader.gif') 50% 50% no-repeat
 		rgba(0, 0, 0, 0.4);
 }
 
@@ -134,11 +136,25 @@ input.error {
 	width: 100%;
 	height: 100%;
 	z-index: 9999;
-	background: url('/bizbuzz/static/css/images/icons/loader.gif') 50% 50% no-repeat
+	background: url('/static/css/images/icons/loader.gif') 50% 50% no-repeat
 		rgba(0, 0, 0, 0.1);
 }
 .no-padding{
 	padding:0px;
+}
+.break-word{
+	word-wrap:break-word;
+}
+.overflow-auto{
+	overflow:auto;
+}
+hr.low-margin{
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.low-top-padding{
+	padding-top:5px;
+	padding-bottom:5px;
 }
 ul.subnav-top-horizontal{
 	padding: 10px;
@@ -170,3 +186,13 @@ ul.subnav-top-horizontal{
     text-align:center;
     display:none;
 }
+
+/****************Contacts Start********************/
+#phonebookModal{
+	z-index:1042;
+}
+
+#addConnectionModal{
+	z-index:1041;
+}
+/****************Contacts Ends********************/

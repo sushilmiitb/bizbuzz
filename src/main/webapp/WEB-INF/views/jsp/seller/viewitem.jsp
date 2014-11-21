@@ -17,6 +17,8 @@
 		<c:url var="edit_item_url" value="/seller/uploadproduct/category/${item.itemCategory.id}"/>
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
+				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 no-padding">
 					<div class="panel panel-primary">
 						<div class="panel-heading center-align-text">Product name</div>
 						<div class="panel-body">
@@ -67,10 +69,12 @@
 								</div>
 							</div>
 
+						</div>
+
 							<div class="row" id="propertyContent">
 								<c:forEach var="group"
 									items="${propertyMetadata.propertyGroups}" varStatus="i">
-									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12">
+									<div class="col-xs-12 col-md-12 col-sm-12 col-lg-12 no-padding">
 										<div class="panel panel-default">
 											<div class="panel-heading">${group.name}</div>
 											<div class="panel-body">
@@ -78,17 +82,14 @@
 													<c:forEach var="subgroup"
 														items="${group.propertySubGroups}" varStatus="j">
 														<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-															<strong>${subgroup.name}</strong>
-															<table>
-																<c:forEach var="field"
-																	items="${subgroup.propertyFields}" varStatus="k">
-																	<tr>
-																		<td class="col-xs-5 col-sm-5 col-md-5 col-lg-5">${field.value}</td>
-																		<td class="col-xs-1 col-sm-1 col-md-1 col-lg-1">:</td>
-																		<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6">${propertyValueMap[field.id].value}</td>
-																	</tr>
-																</c:forEach>
-															</table>
+															<h4>${subgroup.name}</h4>
+															<c:forEach var="field"
+																items="${subgroup.propertyFields}" varStatus="k">
+																<div class="row low-top-padding">
+																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">${field.value}</div>
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">${propertyValueMap[field.id].value}</div>
+																</div>
+															</c:forEach>
 														</div>
 													</c:forEach>
 												</div>
@@ -97,8 +98,9 @@
 									</div>
 								</c:forEach>
 							</div>
-						</div>
 					</div>
+				</div>
+				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 			</div>
 		</div>
 	</tiles:putAttribute>

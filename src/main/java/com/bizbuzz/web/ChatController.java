@@ -147,16 +147,6 @@ public class ChatController {
     return "test";
   }
 
-  @RequestMapping(value = "/samplechat", method = RequestMethod.GET)
-  public String chatByAtmosphere(HttpSession session) {
-
-    Person person = getPerson();
-    UserLogin user = person.getUserId();
-  //  session.setAttribute("userId",user.getId());
-   // session.setAttribute("chatroomId",(long)1);
-
-    return "home";
-  }
   // ~~~~~~~~~~~~~~~~~~~~~            CHAT FUNCTIONALITY WITH ATMOSPHERE FRAMEWORK             ~~~~~~~~~~~~~~~~~~~~~~~
 
   @RequestMapping(value = "/websockets", method = RequestMethod.POST)
@@ -244,10 +234,12 @@ public class ChatController {
       chatResponseDTO.setDate(year, month, dayOfMonth,hourOfDay,minute, second);
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
       for(Person member : members){
-        BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
-        logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+        if(person.getId().longValue()!=member.getId().longValue()){
+          BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+          logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
+        }
       }
-   /*   
+           /*     
       if(itemId.intValue()!=0)
         MetaBroadcaster.getDefault().broadcastTo("/"+chatRoomId+"/"+itemId+"/*", objectMapper.writeValueAsString(chatResponseDTO));
       else{ 
@@ -279,10 +271,10 @@ public class ChatController {
   @ResponseBody
   public void websockets(final AtmosphereResource event)
       throws JsonGenerationException, JsonMappingException, IOException {
+    Person person = getPerson();
+     AtmosphereUtils.suspend(event,person.getId());
 
-    // AtmosphereUtils.suspend(event);
-
-    // final Broadcaster bc = event.getBroadcaster();
+    //final Broadcaster bc = event.getBroadcaster();
 
     // final int numberOfClients = bc.getAtmosphereResources().size();
 
@@ -549,7 +541,7 @@ public class ChatController {
     lastChatDate.setSeconds(Integer.parseInt(allRequestParams.get("seconds")));
     chatroomMemberService.updateChatroomMemberByChatroomIdAndMemberId(lastChatDate, Long.parseLong(allRequestParams.get("chatRoomId")), Long.parseLong(allRequestParams.get("receiverId")));
     
-    return "success";
+    return "";
   }  
   //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~       CHAT FUNTIONALITY WITH NORMAL REQUEST-RESPONSE MODEL     ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -677,7 +669,7 @@ public class ChatController {
   //  session.setAttribute("chatpage", "listofchatrooms");
     
     Person person = getPerson();
-   /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
+  /* List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedItemChatsOfPerson(person.getId(), itemId);
      List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
     m.addAttribute("sortedchats",sortedChatsByTimeOfPerson);
     m.addAttribute("sortedChatrooms",sortedNewchatRooms);   */

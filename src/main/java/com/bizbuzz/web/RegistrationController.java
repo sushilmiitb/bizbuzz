@@ -106,7 +106,6 @@ public class RegistrationController {
 
   @RequestMapping(value="/register/personregistration", method = RequestMethod.GET)
   public String getPersonRegistrationForm(Model m){
-
     RegistrationPersonRegistrationFormDTO personRegistration = new RegistrationPersonRegistrationFormDTO();
     UserLogin userLogin = new UserLogin();
     personRegistration.setUserLogin(userLogin);

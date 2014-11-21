@@ -354,6 +354,7 @@
 								parent dir of output</inputDir -->
 							<includes>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery-1.11.1.js</include>
+								<include>${project.build.directory}/${project.build.finalName}/static/js/jquery/jquery.browser.deprecated.support.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/bootstrap/bootstrap.js</include>
 								<include>${project.build.directory}/${project.build.finalName}/static/js/customjs.js</include>
 								<!-- Sliding menu -->

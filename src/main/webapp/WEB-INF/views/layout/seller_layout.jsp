@@ -26,16 +26,14 @@
 
 <body role="document">
 	<tiles:insertAttribute name="header" ignore="true" />
-	<div id="page-content">
+	<div id="page-content" class="break-word">
 		<tiles:insertAttribute name="body" />
 	</div>
 
 	<!-- Bootstrap core JavaScript
     ================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
-	<script
-		src="${static_base_url}/js/seller-buyer-combined-<spring:message code="git_hash" />.min.js"></script>
-
+	<script	src="${static_base_url}/js/seller-buyer-combined-<spring:message code="git_hash" />.min.js"></script>
 	<tiles:insertAttribute name="customJsCode" ignore="true" />
 	<tiles:insertAttribute name="includejs" ignore="true" />
 
