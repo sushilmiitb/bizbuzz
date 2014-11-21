@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,8 +68,12 @@ public class PropertyServiceImpl implements PropertyService{
     }
   }
 
+  @Transactional
   public PropertyMetadata getPropertyMetadata(Long categoryId){
-    return propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
+    PropertyMetadata pm = propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
+    Hibernate.initialize(pm.getImageModels().size());
+    Hibernate.initialize(pm.getPropertyGroups());
+    return pm;
   }
 
   public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId){

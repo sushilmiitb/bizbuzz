@@ -45,19 +45,19 @@ public abstract class Party implements Serializable{
   
   private String email;
   
-  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="party", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
   
-  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="party", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Address> addresses = new ArrayList<Address>();
   
-  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> toParties = new ArrayList<Connection>();
   
-  @OneToMany(mappedBy="toParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="toParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> fromParties = new ArrayList<Connection>();
   
@@ -66,7 +66,7 @@ public abstract class Party implements Serializable{
   private CategoryTree categoryRoot;
   
 
-  @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Item> sharedItems = new ArrayList<Item>();
  /* 
@@ -75,19 +75,19 @@ public abstract class Party implements Serializable{
   private List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
  */ 
   
-  @OneToMany(mappedBy="member", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="member", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<ChatroomMember> chatrooms = new ArrayList<ChatroomMember>();
   
-  @OneToMany(mappedBy="sender", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="sender", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Chat> sentChat = new ArrayList<Chat>();
   
-  @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="owner", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Item> ownedItems = new ArrayList<Item>();
   
-  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<RegisterRequest> registerRequests = new ArrayList<RegisterRequest>();
   

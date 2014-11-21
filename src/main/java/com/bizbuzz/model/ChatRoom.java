@@ -42,7 +42,7 @@ public class ChatRoom implements Serializable{
   private List<Party> members;
 */
  
-  @OneToMany(mappedBy="chatroom", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="chatroom", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<ChatroomMember> members = new ArrayList<ChatroomMember>();
   
