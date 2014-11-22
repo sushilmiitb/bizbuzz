@@ -13,6 +13,8 @@ label {
 .header .logo{
 	width: 40px;
 	margin-top:-10px;
+	margin-left:-10px;
+	margin-right:-10px;
 	cursor: pointer;
 }
 
@@ -141,10 +143,18 @@ input.error {
 	padding:0px;
 }
 .break-word{
-	word-wrap: break-word;
+	word-wrap:break-word;
 }
 .overflow-auto{
 	overflow:auto;
+}
+hr.low-margin{
+	margin-top:0px;
+	margin-bottom:0px;
+}
+.low-top-padding{
+	padding-top:5px;
+	padding-bottom:5px;
 }
 ul.subnav-top-horizontal{
 	padding: 10px;

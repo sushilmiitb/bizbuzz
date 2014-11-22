@@ -64,7 +64,7 @@
 										<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 											<h4 class="list-group-item-heading">Name</h4>
 										</div>
-										<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+										<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 no-padding">
 											<h4 class="list-group-item-heading">Phone Number</h4>
 										</div>
 										<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
@@ -78,7 +78,7 @@
 											<div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
 												${item.fromParty.firstName} ${item.fromParty.middleName}
 												${item.fromParty.lastName}</div>
-											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">
+											<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5 no-padding">
 												${item.fromParty.userId.id}</div>
 											<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3">
 											  </div>

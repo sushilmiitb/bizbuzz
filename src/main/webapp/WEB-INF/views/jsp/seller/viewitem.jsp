@@ -82,13 +82,12 @@
 													<c:forEach var="subgroup"
 														items="${group.propertySubGroups}" varStatus="j">
 														<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-															<strong>${subgroup.name}</strong>
+															<h4>${subgroup.name}</h4>
 															<c:forEach var="field"
 																items="${subgroup.propertyFields}" varStatus="k">
-																<div class="row">
+																<div class="row low-top-padding">
 																	<div class="col-xs-5 col-sm-5 col-md-5 col-lg-5">${field.value}</div>
-																	<div class="col-xs-1 col-sm-1 col-md-1 col-lg-1">:</div>
-																	<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6">${propertyValueMap[field.id].value}</div>
+																	<div class="col-xs-7 col-sm-7 col-md-7 col-lg-7">${propertyValueMap[field.id].value}</div>
 																</div>
 															</c:forEach>
 														</div>
