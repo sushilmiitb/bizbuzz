@@ -109,6 +109,12 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "t.toPartyId=?2")
   PrivateGroup findPrivateGroupByFromPartyIdAndToPartyId(Long fromPartyId, Long toPartyId);
   
+  @Query("select p from "
+      + "PrivateGroup p inner join p.fromParties f inner join fetch p.toParties t "
+      + "where f.fromPartyId=?1 and "
+      + "t.toPartyId=?2")
+  PrivateGroup findPrivateGroupByFromPartyIdAndToPartyIdWithToParties(Long fromPartyId, Long toPartyId);
+  
   /**
    * This function will delete all toParty connections (only connections and not parties)
    * @param id: id of the party whose connections needs to be deleted

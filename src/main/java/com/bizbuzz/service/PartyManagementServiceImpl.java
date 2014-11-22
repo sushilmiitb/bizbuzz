@@ -2,6 +2,9 @@ package com.bizbuzz.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -118,6 +121,13 @@ public class PartyManagementServiceImpl implements PartyManagementService {
   
   public Person getPerson(Long id){
     return personRepository.findOne(id);
+  }
+  
+  @Transactional
+  public Person getPersonWithFromParties(Long id){
+    Person person = personRepository.findOne(id);
+    Hibernate.initialize(person.getFromParties());
+    return person;
   }
 
 /*  @Override

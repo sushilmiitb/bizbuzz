@@ -22,6 +22,7 @@ public interface ConnectionService {
   public List<Person> getAllSellersConnections(Person seller);
   public List<Connection> getAllBuyersConnection(Person buyer);
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMember(Party groupOwner, Party groupMember);
+  public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMemberWithToParties(Party groupOwner, Party groupMember);
   public List<Person> getGroupMembersByPrivateGroup(PrivateGroup privateGroup);
   public Person getBuyerBySellerAndBuyerId(Person seller, Long buyerId);
   public Person getSellerByBuyerAndSellerId(Person buyer,Long sellerId);

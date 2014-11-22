@@ -31,6 +31,5 @@ public interface PartyManagementService {
   public PrivateGroup getPrivateGroup(Long id);
   public void deletePerson(Person person);
   public Person getPerson(Long id);
-  
-  
+  public Person getPersonWithFromParties(Long id);
 }

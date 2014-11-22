@@ -327,7 +327,7 @@ public class SellerController {
     Map<String, String> errors;
     SellerAddConnectionResponseAjaxDTO ajaxReply = new SellerAddConnectionResponseAjaxDTO();
     Person seller = getSeller();
-    Person toPerson = partyManagementService.getPerson(request.getPersonId());
+    Person toPerson = partyManagementService.getPersonWithFromParties(request.getPersonId());
     if(toPerson == null){
       /**
        * Person hasnot registered. Add code to ask him register him. Till then handle it in the validation.
@@ -343,7 +343,7 @@ public class SellerController {
     /**
      * change other functions also to use generic createconnection
      */
-    PrivateGroup oldGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMember(seller, toPerson);
+    PrivateGroup oldGroup = connectionService.getPrivateGroupByGroupOwnerAndGroupMemberWithToParties(seller, toPerson);
     if(oldGroup!=null){
       connectionService.deleteConnection(oldGroup, toPerson);
     }
@@ -432,7 +432,7 @@ public class SellerController {
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     m.addAttribute("propertyMetadata", propertyMetadata);
     
-    Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
+    Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());
     m.addAttribute("propertyValueMap", propertyValueMap);
     ProductDetailDTO productDetailDTO = new ProductDetailDTO();
@@ -460,7 +460,7 @@ public class SellerController {
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     Person seller = getSeller();    
-    Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
+    Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
     item.setPropertyValues(propertyValuesNew);
@@ -506,13 +506,13 @@ public class SellerController {
   }
   
   @RequestMapping(value="/seller/viewproduct/category/{categoryId}", method=RequestMethod.GET)
-  public String viewProduct(Model m, @PathVariable Long categoryId){
+  public String viewProducts(Model m, @PathVariable Long categoryId){
     Person seller = getSeller();
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
     m.addAttribute("parentCategoryName", categoryTree.getCategoryName());
     //PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     //m.addAttribute("propertyMetadata", propertyMetadata);
-    List<Item> items = itemService.getItemsByCategoryIdAndOwner(categoryId, seller.getId()); 
+    List<Item> items = itemService.getItemsByCategoryIdAndOwnerWithImages(categoryId, seller.getId()); 
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
@@ -522,9 +522,9 @@ public class SellerController {
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)
-  public String viewProduct(@PathVariable Long itemId, Model m){
+  public String viewItem(@PathVariable Long itemId, Model m){
     Person seller =  getSeller();
-    Item item = itemService.getItemByItemIdAndOwner(itemId, seller);
+    Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
@@ -544,7 +544,7 @@ public class SellerController {
   }
   
   @RequestMapping(value="/seller/viewfullimage/{id}/extn/{extn}")
-  public String viewProduct(@PathVariable String id, @PathVariable String extn, Model m){
+  public String viewFullImage(@PathVariable String id, @PathVariable String extn, Model m){
     int width=600;
     int height=600*4/3;
     m.addAttribute("rootDir", propertyService.getImageDir());

@@ -25,8 +25,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hsqldb.lib.ArrayListIdentity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.web.RegistrationController;
 
 @Entity
 @Table(name="party")
@@ -34,6 +37,7 @@ import com.bizbuzz.model.Connection.ConnectionType;
 @DiscriminatorColumn(name="party_type", discriminatorType=DiscriminatorType.STRING)
 public abstract class Party implements Serializable{
   private static final long serialVersionUID = 4009473233597932062L;
+  private static final Logger logger = LoggerFactory.getLogger(Party.class);
   
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE)
@@ -154,21 +158,27 @@ public abstract class Party implements Serializable{
   }
   
   public void deleteFromParty(Long fromPartyId){
+    logger.debug("model.Party.deleteFromParty: Size of fromParties before deleting "+fromParties.size());
     for(int i=0; i<fromParties.size(); i++){
       if(fromParties.get(i).getFromPartyId() == fromPartyId){
+        logger.debug("model.Party.deleteFromParty: Deleting frompartyid "+ fromPartyId);
         fromParties.remove(i);
         break;
       }
     }
+    logger.debug("model.Party.deleteFromParty: Size of fromParties after deleting "+fromParties.size());
   }
   
   public void deleteToParty(Long toPartyId){
+    logger.debug("model.Party.deleteToParty: Size of toParties before deleting "+toParties.size());
     for(int i=0; i<toParties.size(); i++){
       if(toParties.get(i).getToPartyId() == toPartyId){
+        logger.debug("model.Party.deleteToParty: Deleting topartyid "+toPartyId);
         toParties.remove(i);
         break;
       }
     }
+    logger.debug("model.Party.deleteToParty: Size of toParties after deleting "+toParties.size());
   }
   
   public void addFromParty(Connection con){

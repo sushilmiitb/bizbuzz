@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import org.hibernate.Hibernate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,9 +33,11 @@ import com.bizbuzz.repository.PropertyMetadataRepository;
 import com.bizbuzz.repository.PropertySubGroupRepository;
 import com.bizbuzz.repository.PropertyValueRepository;
 import com.bizbuzz.utils.HelperFunctions;
+import com.bizbuzz.web.RegistrationController;
 
 @Service
 public class PropertyServiceImpl implements PropertyService{
+  private static final Logger logger = LoggerFactory.getLogger(RegistrationController.class);
   @Autowired
   PropertyMetadataRepository propertyMetadataRepository;
   @Autowired
@@ -78,7 +82,9 @@ public class PropertyServiceImpl implements PropertyService{
 
   public PropertyMetadata savePropertyMetadata(PropertyMetadata propertyMetadata, Long categoryId){
     CategoryTree categoryTree = categoryTreeRepository.findOne(categoryId);
+    logger.debug("service.savePropertyMetadata: category retrieved");
     propertyMetadata = propertyMetadataRepository.save(propertyMetadata);
+    logger.debug("service.savePropertyMetadata: propertyMetadata saved");
     List<ImageModel> imageModels = propertyMetadata.getImageModels();
     for(int i=0; i<imageModels.size(); i++){
       imageModels.get(i).setProperty(propertyMetadata);
@@ -96,8 +102,10 @@ public class PropertyServiceImpl implements PropertyService{
       }
     }
     propertyMetadataRepository.save(propertyMetadata);
+    logger.debug("service.savePropertyMetadata: propertyMetadata saved after populating");
     categoryTree.setPropertyMetadata(propertyMetadata);
     categoryTreeRepository.save(categoryTree);
+    logger.debug("service.savePropertyMetadata: categoryTree saved after populating");
     return propertyMetadata;
   }
 

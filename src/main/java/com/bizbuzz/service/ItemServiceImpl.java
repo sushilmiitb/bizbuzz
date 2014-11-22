@@ -6,12 +6,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
@@ -39,8 +43,24 @@ public class ItemServiceImpl implements ItemService{
     return itemRepository.findItemByIdAndOwnerId(itemId, owner.getId());
   }
   
+  @Transactional
+  public Item getItemByItemIdAndOwnerWithImagesAndPropertyValues(Long itemId, Person owner){
+    Item item = itemRepository.findItemByIdAndOwnerIdWithPropertyValues(itemId, owner.getId());
+    Hibernate.initialize(item.getImageModels());
+    return item;
+  }
+  
   public List<Item> getItemsByCategoryIdAndOwner(Long categoryId, Long ownerId){
     return itemRepository.findItemsByCategoryIdAndOwnerId(categoryId, ownerId);
+  }
+  
+  @Transactional
+  public List<Item> getItemsByCategoryIdAndOwnerWithImages(Long categoryId, Long ownerId){
+    List<Item> itemList = itemRepository.findItemsByCategoryIdAndOwnerId(categoryId, ownerId);
+    for (Item item : itemList) {
+      Hibernate.initialize(item.getImageModels());
+    }
+    return itemList;
   }
    
   public List<Item> getItemsOfAllSellersByCategoryAndBuyer(CategoryTree category, Person buyer){
@@ -59,6 +79,15 @@ public class ItemServiceImpl implements ItemService{
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId){
     return itemRepository.findItemsByCategoryIdAndOwnerIdAndBuyerIdSharedThroughPrivateGroup(categoryId, sellerId, buyerId, ConnectionType.GROUP_MEMBERS);
   }
+  
+  @Transactional
+  public List<Item> getItemsByCategoryIdAndOwnerAndBuyerWithImageModels(Long categoryId, Long sellerId, Long buyerId){
+    List<Item> items = itemRepository.findItemsByCategoryIdAndOwnerIdAndBuyerIdSharedThroughPrivateGroup(categoryId, sellerId, buyerId, ConnectionType.GROUP_MEMBERS);
+    for (Item item : items) {
+      Hibernate.initialize(item.getImageModels());
+    }
+    return items;
+  }
 
   @Override
   public Item getItemByItemId(Long itemId) {
@@ -67,6 +96,14 @@ public class ItemServiceImpl implements ItemService{
   
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId){
     return itemRepository.findItemByItemIdAndOwnerIdAndBuyerId(itemId, sellerId, buyerId);
+  }
+  
+  @Transactional
+  public Item getItemByItemIdAndOwnerAndBuyerWithImageModelsAndPropertyValues(Long itemId, Long sellerId, Long buyerId){
+    Item item = itemRepository.findItemByItemIdAndOwnerIdAndBuyerId(itemId, sellerId, buyerId);
+    Hibernate.initialize(item.getImageModels());
+    Hibernate.initialize(item.getPropertyValues());
+    return item;
   }
   
   public Item populateItemWithSharedPrivateGroups(Item item, Map<Long, PrivateGroup> groupMap, Long[] sharedGroupIds){
