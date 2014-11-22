@@ -26,8 +26,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hsqldb.lib.ArrayListIdentity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.bizbuzz.model.Connection.ConnectionType;
+import com.bizbuzz.web.RegistrationController;
 
 @Entity
 @Table(name="party")
@@ -35,6 +38,7 @@ import com.bizbuzz.model.Connection.ConnectionType;
 @DiscriminatorColumn(name="party_type", discriminatorType=DiscriminatorType.STRING)
 public abstract class Party implements Serializable{
   private static final long serialVersionUID = 4009473233597932062L;
+  private static final Logger logger = LoggerFactory.getLogger(Party.class);
   
   @Id
   @GeneratedValue(strategy=GenerationType.TABLE)
@@ -46,19 +50,19 @@ public abstract class Party implements Serializable{
   
   private String email;
   
-  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="party", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<PhoneNumber> phoneNumbers = new ArrayList<PhoneNumber>();
   
-  @OneToMany(mappedBy="party", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="party", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Address> addresses = new ArrayList<Address>();
   
-  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> toParties = new ArrayList<Connection>();
   
-  @OneToMany(mappedBy="toParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="toParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Connection> fromParties = new ArrayList<Connection>();
   
@@ -69,7 +73,7 @@ public abstract class Party implements Serializable{
   @OneToOne(mappedBy="party")
   private RegisterDevice registerDevice;
 
-  @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.EAGER)
+  @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Item> sharedItems = new ArrayList<Item>();
  /* 
@@ -78,19 +82,19 @@ public abstract class Party implements Serializable{
   private List<ChatRoom> chatRooms = new ArrayList<ChatRoom>();
  */ 
   
-  @OneToMany(mappedBy="member", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="member", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<ChatroomMember> chatrooms = new ArrayList<ChatroomMember>();
   
-  @OneToMany(mappedBy="sender", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="sender", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Chat> sentChat = new ArrayList<Chat>();
   
-  @OneToMany(mappedBy="owner", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="owner", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List <Item> ownedItems = new ArrayList<Item>();
   
-  @OneToMany(mappedBy="fromParty", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="fromParty", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<RegisterRequest> registerRequests = new ArrayList<RegisterRequest>();
   
@@ -157,21 +161,27 @@ public abstract class Party implements Serializable{
   }
   
   public void deleteFromParty(Long fromPartyId){
+    logger.debug("model.Party.deleteFromParty: Size of fromParties before deleting "+fromParties.size());
     for(int i=0; i<fromParties.size(); i++){
       if(fromParties.get(i).getFromPartyId() == fromPartyId){
+        logger.debug("model.Party.deleteFromParty: Deleting frompartyid "+ fromPartyId);
         fromParties.remove(i);
         break;
       }
     }
+    logger.debug("model.Party.deleteFromParty: Size of fromParties after deleting "+fromParties.size());
   }
   
   public void deleteToParty(Long toPartyId){
+    logger.debug("model.Party.deleteToParty: Size of toParties before deleting "+toParties.size());
     for(int i=0; i<toParties.size(); i++){
       if(toParties.get(i).getToPartyId() == toPartyId){
+        logger.debug("model.Party.deleteToParty: Deleting topartyid "+toPartyId);
         toParties.remove(i);
         break;
       }
     }
+    logger.debug("model.Party.deleteToParty: Size of toParties after deleting "+toParties.size());
   }
   
   public void addFromParty(Connection con){

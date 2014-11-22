@@ -33,7 +33,7 @@ public class CategoryTree implements Serializable{
   @JoinColumn(name="parent_category")
   private CategoryTree parentCategory;
   
-  @OneToMany(mappedBy="parentCategory", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="parentCategory", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<CategoryTree> childrenCategory;
 

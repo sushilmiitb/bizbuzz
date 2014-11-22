@@ -44,5 +44,6 @@
                   phone: '${sessionScope.userId}',
                   role: '${sessionScope.userRole}'});
     </script>    
+
 </body>
 </html>

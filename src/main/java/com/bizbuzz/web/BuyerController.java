@@ -211,7 +211,7 @@ public class BuyerController {
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
     m.addAttribute("parentCategory", categoryTree);
     
-    List<Item> items = itemService.getItemsByCategoryIdAndOwnerAndBuyer(categoryId, sellerId, buyer.getId());
+    List<Item> items = itemService.getItemsByCategoryIdAndOwnerAndBuyerWithImageModels(categoryId, sellerId, buyer.getId());
     
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
@@ -221,13 +221,13 @@ public class BuyerController {
   }
   
   @RequestMapping(value="/buyer/viewproduct/item/{itemId}/seller/{sellerId}", method=RequestMethod.GET)
-  public String viewProduct(@PathVariable Long itemId, @PathVariable Long sellerId, Model m){
+  public String viewItem(@PathVariable Long itemId, @PathVariable Long sellerId, Model m){
     Person buyer =  getBuyer();
     
     Person seller = partyManagementService.getPerson(sellerId);
     m.addAttribute("seller", seller);
     
-    Item item = itemService.getItemByItemIdAndOwnerAndBuyer(itemId, sellerId, buyer.getId());
+    Item item = itemService.getItemByItemIdAndOwnerAndBuyerWithImageModelsAndPropertyValues(itemId, sellerId, buyer.getId());
     
     PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
     m.addAttribute("propertyMetadata", propertyMetadata);

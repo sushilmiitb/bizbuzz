@@ -40,11 +40,11 @@ public class PropertyMetadata implements Serializable{
   @GeneratedValue(strategy = GenerationType.TABLE)
   private Long id;
   
-  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.LAZY, cascade={CascadeType.ALL}, orphanRemoval = true)
   @Fetch(value=FetchMode.SUBSELECT)
   private List<ImageModel> imageModels = new ArrayList<ImageModel>();
   
-  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.EAGER, cascade={CascadeType.ALL}, orphanRemoval = true)
+  @OneToMany(mappedBy="propertyMetadata", fetch=FetchType.LAZY, cascade={CascadeType.ALL}, orphanRemoval = true)
   @Fetch(value=FetchMode.SUBSELECT)
   private List<PropertyGroup> propertyGroups = new ArrayList<PropertyGroup>();
   

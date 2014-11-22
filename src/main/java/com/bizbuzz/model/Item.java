@@ -38,7 +38,7 @@ public class Item implements Serializable{
   @JoinColumn(name="category_id")
   private CategoryTree itemCategory;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   @JoinTable(
       name="share",
@@ -46,7 +46,7 @@ public class Item implements Serializable{
           inverseJoinColumns={@JoinColumn(name="party_id", referencedColumnName="id")})
   private List<Party> sharedToParties;
   
-  @OneToMany(mappedBy="item", fetch = FetchType.EAGER)
+  @OneToMany(mappedBy="item", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Chat> chats;
   
@@ -54,11 +54,11 @@ public class Item implements Serializable{
   @JoinColumn(name="owner_id", referencedColumnName="id")
   private Party owner;
   
-  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @OneToMany(mappedBy="item", fetch=FetchType.LAZY, cascade={CascadeType.ALL})
   @Fetch(value=FetchMode.SUBSELECT)
   private List<PropertyValue> propertyValues;
     
-  @OneToMany(mappedBy="item", fetch=FetchType.EAGER, cascade={CascadeType.ALL})
+  @OneToMany(mappedBy="item", fetch=FetchType.LAZY, cascade={CascadeType.ALL})
   @Fetch(value=FetchMode.SUBSELECT)
   private List<ImageModel> imageModels;
   

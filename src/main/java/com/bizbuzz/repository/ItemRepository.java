@@ -25,6 +25,12 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
   Item findItemByIdAndOwnerId(Long itemId, Long ownerId);
   
   @Query("select i "
+      + "from Item i inner join i.owner o left join fetch i.propertyValues "
+      + "where i.id=?1 "
+      + "and o.id=?2")
+  Item findItemByIdAndOwnerIdWithPropertyValues(Long itemId, Long ownerId);
+  
+  @Query("select i "
       + "from Item i "
       + "where i.itemCategory.id=?1 "
       + "and i.owner.id=?2 "

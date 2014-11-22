@@ -245,7 +245,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             if (label.length) {
                 label.on("click" + this.ns, function(e) {
                     // if the dropdown is closed, then focus the input, else ignore the click
-                    if (that.countryList.hasClass("hide")) {
+                    if (that.countryList.hasClass("hide")) {	
                         that.telInput.focus();
                     } else {
                         e.preventDefault();
@@ -646,7 +646,7 @@ https://github.com/Bluefieldscom/intl-tel-input.git
             // the input val), the system as a whole has still changed - see country-sync example
             this.telInput.trigger("change");
             // focus the input
-            this.telInput.focus();
+           this.telInput.focus();
         },
         // close the dropdown and unbind any listeners
         _closeDropdown: function() {

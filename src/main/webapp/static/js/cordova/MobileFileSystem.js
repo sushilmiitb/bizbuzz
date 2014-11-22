@@ -133,6 +133,7 @@ MFSConstructor.prototype.getFileEntry = function(args){
  * fail: fail callback function.
  */
 MFSConstructor.prototype.getFile = function(args){
+	//alert("getFile()");
 	var fileEntry = args.fileEntry;
 	function success(file){
 		if(args.success !== undefined){
@@ -152,6 +153,7 @@ MFSConstructor.prototype.getFile = function(args){
  * successArgs: arguments of success callback
  */
 MFSConstructor.prototype.readAsText=function(args){
+	//alert("readAsText()");
 	var reader = new FileReader();
 	reader.onload = function(evt){
 		if(args.success !== undefined){
@@ -234,8 +236,11 @@ MFSConstructor.prototype.write=function(args){
  * fail:
  */
 MFSConstructor.prototype.readAFileAsTextShortcut=function(args){
+	//alert("In ReadFileAsTextShortcut() ... ");
 	function dataRead(dataArgs){
+		//alert("Data : " +dataArgs);
 		var data = dataArgs.data;
+		
 		if(args.success !== undefined){
 			if(args.successArgs === undefined)
 				args.successArgs = new Object();
@@ -247,7 +252,7 @@ MFSConstructor.prototype.readAFileAsTextShortcut=function(args){
 		MobileFileSystem.readAsText({success: dataRead, file:fileSuccessArgs.file, fail:args.fail});
 	}
 	function fileEntrySuccess(fileEntryArgs){
-		MobileFileSystem.getFile({fileEntry: fileEntryArgs.fileEntry, success: fileSuccess, fail:args.fail});
+		MobileFileSystem.getFile({fileEntry: fileEntryArgs.fileEntry,success: fileSuccess, fail:args.fail});
 	}
 	function dirSuccess(dirEntryArgs){
 		MobileFileSystem.getFileEntry({create:true, success: fileEntrySuccess, currentDirEntry: dirEntryArgs.dirEntry, fileName: args.fileName, fail:args.fail});
@@ -300,6 +305,7 @@ MFSConstructor.prototype.readAFileAsDataUrlShortcut=function(args){
  * fail:
  */
 MFSConstructor.prototype.writeInAFileShortcut=function(args){
+	//alert("In Write Function..");
 	function writerSuccess(writerArgs){
 		MobileFileSystem.write({writer: writerArgs.writer, data: args.data, onwriteend: args.onwriteend});
 	}
@@ -321,6 +327,7 @@ MFSConstructor.prototype.writeInAFileShortcut=function(args){
  * fail:
  */
 MFSConstructor.prototype.getDirEntryShortcut=function(args){
+	//alert("In getdirEntryShortcut()..");
 	var that = this;
 	function success(dirEntryArgs){
 		MobileFileSystem.getDirEntryShortcut({path: args.path, currentDirEntry:dirEntryArgs.dirEntry, success:args.success, successArgs: args.successArgs, fail: args.fail});
