@@ -20,6 +20,7 @@ public class Person extends Party{
   @OneToOne
   @JoinColumn(name="user_id")
   private UserLogin userId;
+  
   public String getFirstName() {
     return firstName;
   }
@@ -56,5 +57,5 @@ public class Person extends Party{
   public void setUserId(UserLogin userId) {
     this.userId = userId;
   }
-  
+
 }

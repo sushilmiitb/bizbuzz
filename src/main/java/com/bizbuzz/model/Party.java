@@ -20,6 +20,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Fetch;
@@ -65,6 +66,8 @@ public abstract class Party implements Serializable{
   @JoinColumn(name="category_root", referencedColumnName="id")
   private CategoryTree categoryRoot;
   
+  @OneToOne(mappedBy="party")
+  private RegisterDevice registerDevice;
 
   @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
@@ -282,5 +285,12 @@ public abstract class Party implements Serializable{
 
   public void setRegisterRequests(List<RegisterRequest> registerRequests) {
     this.registerRequests = registerRequests;
+  }
+  
+  public RegisterDevice getRegisterDevice() {
+    return registerDevice;
+  }
+  public void setRegisterDevice(RegisterDevice registerDevice) {
+    this.registerDevice = registerDevice;
   }
 }

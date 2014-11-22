@@ -22,12 +22,11 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity
 public class ChatRoom implements Serializable{
-
   /**
    * 
    */
   private static final long serialVersionUID = 1L;
-  
+
   @Id
   @GeneratedValue
   private Long id;
@@ -48,8 +47,6 @@ public class ChatRoom implements Serializable{
   
   @OneToMany(mappedBy="chatRoom")
   private List<Chat> chats;
-  
-
   
   private Date createdAt;
   
@@ -86,7 +83,6 @@ public class ChatRoom implements Serializable{
   public void setUpdatedAt(Date updatedAt) {
     this.updatedAt = updatedAt;
   }
-
 
   public Date getCreatedAt() {
     return createdAt;

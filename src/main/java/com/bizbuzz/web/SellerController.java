@@ -35,6 +35,7 @@ import org.springframework.web.servlet.tags.form.HiddenInputTag;
 
 import javax.servlet.http.HttpSession;
 
+import com.bizbuzz.dto.PushNotificationContentDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
@@ -65,6 +66,7 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.utils.GcmPushNotificationToDevice;
 import com.bizbuzz.utils.SmsSender;
 
 @Controller
@@ -256,7 +258,7 @@ public class SellerController {
       SmsSender.sendSms(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
       		" Go to " + 
       		" https://play.google.com/store/apps/details?id=com.bizbuzz.cordova.Frotal&hl=en" +
-      		" and install it . ");
+      		" and install it . ");           
     }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
@@ -388,7 +390,6 @@ public class SellerController {
       List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
       m.addAttribute("privateGroups", privateGroups);
       
-
       return "jsp/seller/viewuploadproduct";
     }
     else{
@@ -422,6 +423,15 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
+    List<Person> allContacts = connectionService.getAllSellersConnections(seller);
+    
+    PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
+    for(Person person : allContacts){
+      if(person.getRegisterDevice()!=null)
+          notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
+    }
+    notificationContent.createData("InstaTrade", seller.getFirstName() +" add products which you can see now.");
+    GcmPushNotificationToDevice.pushNotification(notificationContent);
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }

@@ -74,6 +74,7 @@ import com.bizbuzz.model.ImageModel;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.RegisterDevice;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.repository.PersonRepository;
 import com.bizbuzz.service.ChatRoomService;
@@ -83,10 +84,13 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.service.RegisterDeviceService;
 import com.bizbuzz.utils.AtmosphereUtils;
+import com.bizbuzz.utils.GcmPushNotificationToDevice;
 import com.bizbuzz.dto.ChatResponseDTO;
 import com.bizbuzz.dto.Message;
 import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
+import com.bizbuzz.dto.PushNotificationContentDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
@@ -141,6 +145,8 @@ public class ChatController {
   @Autowired
   ChatroomMemberService chatroomMemberService;
 
+  @Autowired
+  RegisterDeviceService registerDeviceService;
 
   @RequestMapping(value = "/test", method = RequestMethod.GET)
   public String test() {
@@ -174,7 +180,7 @@ public class ChatController {
       return null;
     }
     else{
-
+      String chatSenderName="";
       Person person = partyManagementService.getPerson(personId);
       ChatRoom chatRoom = chatRoomService.getChatRoomByChatRoomId(chatRoomId);
       List<Person> members = chatRoomService.getAllMembersOfChatRoomByChatRoomId(chatRoomId);
@@ -182,10 +188,13 @@ public class ChatController {
         if(person.getId().longValue()!=member.getId().longValue()){
           chatResponseDTO.setReceiverId(member.getId());
         }
+        else{
+          chatSenderName=member.getFirstName();
+        }
       }
       
       Chat chat = new Chat();
-      chat.setSender((Party)person);
+      chat.setSender(person);
       chat.setMessage(message);
       chat.setChatRoom(chatRoom);
       if(itemId.intValue()!=0){ 
@@ -235,7 +244,16 @@ public class ChatController {
       chatResponseDTO.setShowMonth(monthForDisplayMap.get(month));
       for(Person member : members){
         if(person.getId().longValue()!=member.getId().longValue()){
-          BroadcasterFactory.getDefault().lookup("/"+member.getId()).broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+          RegisterDevice registerDevice = registerDeviceService.getRegisterDeviceByPartyId(member.getId().longValue());
+          Broadcaster receiverBroadcaster = BroadcasterFactory.getDefault().lookup("/"+member.getId());
+          receiverBroadcaster.broadcast(objectMapper.writeValueAsString(chatResponseDTO));
+          if(receiverBroadcaster==null){ 
+            logger.info("Sending POST to GCM...");
+            PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
+            notificationContent.addDeviceRegId(registerDevice.getDeviceRegistrationId());
+            notificationContent.createData("InstaTrade",chatSenderName +" messages you");
+            GcmPushNotificationToDevice.pushNotification(notificationContent);
+          }
           logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
         }
       }
@@ -253,8 +271,7 @@ public class ChatController {
           }
           else{
             
-          }  */         
-      
+          }  */          
     }
     return  "success";
   }

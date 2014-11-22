@@ -183,12 +183,12 @@
 					$(divOut).append(divInner);
 		
 					var divInner = document.createElement('div');
-					$(divInner).addClass('col-xs-4 col-sm-4 col-md-4 col-lg-4');
+					$(divInner).addClass('col-xs-5 col-sm-5 col-md-5 col-lg-5');
 					$(divInner).html(data.phoneNumber);
 					$(divOut).append(divInner);
 		
 					var divInner = document.createElement('div');
-					$(divInner).addClass('col-xs-4 col-sm-4 col-md-4 col-lg-4');
+					$(divInner).addClass('col-xs-3 col-sm-3 col-md-3 col-lg-3');
 					$(divInner).html(data.groupName);
 					$(divOut).append(divInner);
 		
