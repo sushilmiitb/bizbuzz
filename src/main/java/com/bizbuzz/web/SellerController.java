@@ -407,6 +407,7 @@ public class SellerController {
     Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
     Person seller = getSeller();
     Item item = new Item();
+ 
     item.setItemCategory(categoryService.getCategory(categoryId));
     item.setOwner(seller);
     item = itemService.saveItem(item);
@@ -421,7 +422,7 @@ public class SellerController {
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     Map<Long, PrivateGroup> privateGroupMap = connectionService.convertToMap(privateGroups);
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
-    
+ 
     itemService.saveItem(item);
     List<Person> allContacts = connectionService.getAllSellersConnections(seller);
     
@@ -430,7 +431,7 @@ public class SellerController {
       if(person.getRegisterDevice()!=null)
           notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
     }
-    notificationContent.createData("InstaTrade", seller.getFirstName() +" add products which you can see now.");
+    notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
     GcmPushNotificationToDevice.pushNotification(notificationContent);
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
@@ -470,6 +471,7 @@ public class SellerController {
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     Person seller = getSeller();    
+   
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
@@ -498,8 +500,7 @@ public class SellerController {
     Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
     if(isLeaf){
-      //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      
+      //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId); 
       return "redirect:/seller/viewproduct/category/"+categoryTree.getId();
     }
     else{

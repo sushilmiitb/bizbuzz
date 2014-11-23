@@ -27,6 +27,7 @@
 						<div class="panel-heading center-align-text">${parentCategoryName}</div>
 						 <div class="panel-body">
 						 <c:forEach var="counter" begin="0" end="${totalItems}">
+						     <c:set var="displayImage" scope="page" />
 						       <c:if test="${counter % 4 == 0}">
 									<div class="row">
 								</c:if>
