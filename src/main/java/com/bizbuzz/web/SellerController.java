@@ -35,6 +35,7 @@ import org.springframework.web.servlet.tags.form.HiddenInputTag;
 
 import javax.servlet.http.HttpSession;
 
+import com.bizbuzz.dto.PushNotificationContentDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
@@ -65,6 +66,7 @@ import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.ItemService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PropertyService;
+import com.bizbuzz.utils.GcmPushNotificationToDevice;
 import com.bizbuzz.utils.SmsSender;
 
 @Controller
@@ -256,7 +258,7 @@ public class SellerController {
       SmsSender.sendSms(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
       		" Go to " + 
       		" https://play.google.com/store/apps/details?id=com.bizbuzz.cordova.Frotal&hl=en" +
-      		" and install it . ");
+      		" and install it . ");           
     }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
@@ -388,7 +390,6 @@ public class SellerController {
       List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
       m.addAttribute("privateGroups", privateGroups);
       
-
       return "jsp/seller/viewuploadproduct";
     }
     else{
@@ -406,6 +407,7 @@ public class SellerController {
     Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
     Person seller = getSeller();
     Item item = new Item();
+ 
     item.setItemCategory(categoryService.getCategory(categoryId));
     item.setOwner(seller);
     item = itemService.saveItem(item);
@@ -420,8 +422,17 @@ public class SellerController {
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
     Map<Long, PrivateGroup> privateGroupMap = connectionService.convertToMap(privateGroups);
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
-    
+ 
     itemService.saveItem(item);
+    List<Person> allContacts = connectionService.getAllSellersConnections(seller);
+    
+    PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
+    for(Person person : allContacts){
+      if(person.getRegisterDevice()!=null)
+          notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
+    }
+    notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
+    GcmPushNotificationToDevice.pushNotification(notificationContent);
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
@@ -460,6 +471,7 @@ public class SellerController {
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     Person seller = getSeller();    
+   
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
@@ -488,8 +500,7 @@ public class SellerController {
     Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
     if(isLeaf){
-      //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      
+      //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId); 
       return "redirect:/seller/viewproduct/category/"+categoryTree.getId();
     }
     else{

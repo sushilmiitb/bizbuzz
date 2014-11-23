@@ -517,6 +517,7 @@ function clobber(obj, key, value) {
     }
 }
 
+
 function assignOrWrapInDeprecateGetter(obj, key, value, message) {
     if (message) {
         utils.defineGetter(obj, key, function() {
@@ -2139,6 +2140,7 @@ module.exports.metadata =
     "org.apache.cordova.splashscreen": "0.3.3-dev",
     "org.apache.cordova.file-transfer": "0.4.7-dev",
     "org.apache.cordova.file": "1.3.0"
+
 }
 // BOTTOM OF METADATA
 });

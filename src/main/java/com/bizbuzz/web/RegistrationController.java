@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.jws.WebParam.Mode;
 import javax.servlet.http.HttpServletRequest;
@@ -46,6 +47,7 @@ import com.bizbuzz.model.Company;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PhoneNumber;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.RegisterDevice;
 import com.bizbuzz.model.RegisterRequest;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.model.Connection.ConnectionType;
@@ -56,6 +58,7 @@ import com.bizbuzz.service.ChatroomMemberService;
 import com.bizbuzz.service.ConnectionService;
 import com.bizbuzz.service.PartyManagementService;
 import com.bizbuzz.service.PartyManagementServiceImpl;
+import com.bizbuzz.service.RegisterDeviceService;
 import com.bizbuzz.utils.HelperFunctions;
 import com.bizbuzz.utils.SmsSender;
 
@@ -89,6 +92,9 @@ public class RegistrationController {
   
   @Autowired
   ChatRoomService chatRoomService;
+  
+  @Autowired
+  RegisterDeviceService registerDeviceService;
 
   @Autowired
   @Qualifier("personRegistrationFormValidator")
@@ -119,6 +125,7 @@ public class RegistrationController {
     personRegistration.setCountryCodeDTO(countryCodeDTO); 
     m.addAttribute("personRegistration", personRegistration);
     m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
+    logger.info("register/personregistration");
     // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/personregistration";
   }
@@ -187,7 +194,7 @@ public class RegistrationController {
     // Congratulate the person on registration in InstaTrade By Sending message
     SmsSender.sendSms(personRegistration.getUserLogin().getId(), "Dear " +personRegistration.getPerson().getFirstName() 
         +", Congratulations! You have successfully registered On InstaTrade." 
-        +"  Now You can use the features of InstaTrade.");
+        +"  Now You can use the features of InstaTrade.");           
 /*
     UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
     Authentication auth = new UsernamePasswordAuthenticationToken (userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
@@ -205,8 +212,6 @@ public class RegistrationController {
 
   @RequestMapping(value="/login", method = RequestMethod.GET)
   public String login(Model m){
-
-    // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/login";
   }
 
@@ -244,6 +249,19 @@ public class RegistrationController {
     return "redirect:/home";
   }
   
+  @RequestMapping(value="/register/deviceregistration", method = RequestMethod.POST)
+  public String getRegistationIdFromAndroidDevice(@RequestParam Map<String, String> allRequestParams){
+    String username =allRequestParams.get("username").trim();
+    String deviceRegistrationId = allRequestParams.get("regId");
+    Person person = partyManagementService.getPersonFromUsername("+" +username);
+    
+    RegisterDevice registerDevice = new RegisterDevice();
+    registerDevice.setDeviceRegistrationId(deviceRegistrationId);
+    registerDevice.setParty(person);
+    registerDeviceService.saveRegisterDevice(registerDevice);
+  
+    return "";
+  } 
 
   public Person getPerson(){
     User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
