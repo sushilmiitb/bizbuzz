@@ -2,11 +2,14 @@ package com.bizbuzz.service;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizbuzz.model.Chat;
 import com.bizbuzz.model.ChatRoom;
+import com.bizbuzz.model.ChatroomMember;
 import com.bizbuzz.model.Item;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
@@ -51,7 +54,20 @@ public class ChatRoomServiceImpl implements ChatRoomService{
 
   @Override
   public List<Chat> getSortedChatsOfPerson(Person person) {
-    return  chatRoomRepository.findSortedChatsOfPerson(person.getId()); 
+    return  chatRoomRepository.findSortedChatsOfPerson(person.getId());
+  }
+  
+  @Override
+  @Transactional
+  public List<Chat> getSortedChatsOfPersonWithMembers(Person person) {
+    List<Chat> chats = chatRoomRepository.findSortedChatsOfPerson(person.getId());
+    for (Chat chat : chats) {
+      List<ChatroomMember> members = chat.getChatRoom().getMembers();
+      for (ChatroomMember chatroomMember : members) {
+        Person person1 = (Person)chatroomMember.getMember();
+      }
+    }
+    return chats;
   }
   
   @Override
@@ -62,6 +78,19 @@ public class ChatRoomServiceImpl implements ChatRoomService{
   @Override
   public List<ChatRoom> getAllNewSortedChatRoomsOfPerson(Person person) {  
     return chatRoomRepository.findAllNewSortedChatRoomsOfPerson(person.getId());
+  }
+  
+  @Override
+  @Transactional
+  public List<ChatRoom> getAllNewSortedChatRoomsOfPersonWithMembers(Person person) {  
+    List<ChatRoom> chatRooms = chatRoomRepository.findAllNewSortedChatRoomsOfPerson(person.getId());
+    for (ChatRoom chatRoom : chatRooms) {
+      List<ChatroomMember> chatroomMembers = chatRoom.getMembers();
+      for (ChatroomMember chatroomMember : chatroomMembers) {
+        Person persontemp = (Person)chatroomMember.getMember();
+      }
+    }
+    return chatRooms;
   }
  /* 
   @Override

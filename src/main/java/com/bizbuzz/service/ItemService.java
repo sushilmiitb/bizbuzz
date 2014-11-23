@@ -25,6 +25,7 @@ public interface ItemService {
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId);
   public Item getItemByItemIdAndOwnerAndBuyerWithImageModelsAndPropertyValues(Long itemId, Long sellerId, Long buyerId);
   public Item getItemByItemId(Long itemId);
+  public Item getItemByItemIdWithImageModels(Long itemId);
   public Item populateItemWithSharedPrivateGroups(Item item, Map<Long, PrivateGroup> groupMap, Long[] sharedGroupIds);
   public List<PrivateGroup> getSharedPrivateGroups(Item item);
 }

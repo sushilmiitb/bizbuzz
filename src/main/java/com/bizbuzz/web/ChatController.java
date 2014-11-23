@@ -425,8 +425,8 @@ public class ChatController {
     monthForDisplay.put(10,"Nov");
     monthForDisplay.put(11,"Dec");
     
-    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
-    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPersonWithMembers(person);
+    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPersonWithMembers(person); 
    
     List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
     m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);
@@ -468,7 +468,7 @@ public class ChatController {
     else
       return "jsp/error/usernotfound";
 
-    List<Chat> allChatsOfChatRoomFromDB = chatService.getAllChatsByChatRoomId(chatroomid); 
+    List<Chat> allChatsOfChatRoomFromDB = chatService.getAllChatsByChatRoomIdWithImageModels(chatroomid); 
     List<Chat> normalChats = new ArrayList<Chat>();
 
     Map<Long, List<Chat>> itemChatMap = new LinkedHashMap<Long, List<Chat>>();
@@ -599,7 +599,7 @@ public class ChatController {
       totalNoOfUnreadMessages=totalNoOfUnreadMessages+dto.getNoOfNewMessages();
     }
     
-    Item item = itemService.getItemByItemId(itemid);
+    Item item = itemService.getItemByItemIdWithImageModels(itemid);
     m.addAttribute("item",item);
     m.addAttribute("chatsOfItem", itemChatsFromDatabase);
     m.addAttribute("totalNoOfUnreadChats",totalNoOfUnreadMessages);
@@ -642,7 +642,7 @@ public class ChatController {
       return "jsp/error/usernotfound";
 
     List<Chat> itemChatsFromDatabase  = chatService.getAllChatsByChatRoomIdAndItemId(chatroomid,itemid);
-    Item item = itemService.getItemByItemId(itemid);
+    Item item = itemService.getItemByItemIdWithImageModels(itemid);
     Long totalNoOfUnreadMessages=(long)0;
     List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
     for(NoOfUnreadMessagesWithPersonIdDTO dto : noOfChatsWithPersonIdDTOList){
@@ -687,8 +687,8 @@ public class ChatController {
     monthForDisplay.put(10,"Nov");
     monthForDisplay.put(11,"Dec");
     
-    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPerson(person);
-    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPerson(person); 
+    List<Chat> sortedChatsByTimeOfPerson = chatRoomService.getSortedChatsOfPersonWithMembers(person);
+    List<ChatRoom> sortedNewchatRooms = chatRoomService.getAllNewSortedChatRoomsOfPersonWithMembers(person); 
    
     List<NoOfUnreadMessagesWithPersonIdDTO>  noOfChatsWithPersonIdDTOList = chatService.getCountOfUnreadChatsOfPersonForAllChatroom(person.getId());
     m.addAttribute("noOfChatsWithPersonIdDTOList", noOfChatsWithPersonIdDTOList);

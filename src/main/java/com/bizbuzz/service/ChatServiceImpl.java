@@ -3,6 +3,9 @@ package com.bizbuzz.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.ls.LSInput;
@@ -40,8 +43,24 @@ public class ChatServiceImpl implements ChatService{
         return null;
     else
         return chats;
+}
+  
+  @Override
+  @Transactional
+  public List<Chat> getAllChatsByChatRoomIdWithImageModels(Long chatRoomId) {
+    List<Chat> chats = chatRepository.findChatsByChatRoomId(chatRoomId);
+    if(chats==null)
+        return null;
+    else{
+        for (Chat chat : chats) {
+          Item item = chat.getItem();
+          if(item!=null){
+            Hibernate.initialize(item.getImageModels());
+          }
+        }
+        return chats;
+    }
   }
-
 
   @Override
   public List<Chat> getAllChatsByChatRoomIdAndItemId(Long chatRoomId,Long itemId) {
@@ -51,7 +70,6 @@ public class ChatServiceImpl implements ChatService{
     else
         return chats;
   }
-
 
   @Override
   public List<Chat> getChatsByChatRoomIdAndItemIdNotNull(Long chatRoomId) {
