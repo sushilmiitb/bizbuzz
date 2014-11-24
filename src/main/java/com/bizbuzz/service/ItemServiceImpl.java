@@ -94,6 +94,14 @@ public class ItemServiceImpl implements ItemService{
     return itemRepository.findOne(itemId);
   }
   
+  @Override
+  @Transactional
+  public Item getItemByItemIdWithImageModels(Long itemId) {
+    Item item = itemRepository.findOne(itemId);
+    Hibernate.initialize(item.getImageModels());
+    return item;
+  }
+    
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId){
     return itemRepository.findItemByItemIdAndOwnerIdAndBuyerId(itemId, sellerId, buyerId);
   }
