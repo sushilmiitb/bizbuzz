@@ -510,7 +510,7 @@ public class SellerController {
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");
       m.addAttribute("categoryList", categories);
-      m.addAttribute("parentCategoryName", parentCategoryName);
+      m.addAttribute("parentCategory", categoryTree);
       //m.addAttribute("depth", depth+1);
       return "jsp/seller/viewcategory";
     }
@@ -530,6 +530,14 @@ public class SellerController {
     m.addAttribute("items", items);
     m.addAttribute("categoryId",categoryId);
     return "jsp/seller/viewproduct";
+  }
+  
+  @RequestMapping(value="/seller/addcategory/category/{categoryId}", method = RequestMethod.POST)
+  public String addCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
+    Person person = getSeller();
+    CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+    categoryService.saveCustomCategory(parentCategory, categoryName, person, true);
+    return categoryName;
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)

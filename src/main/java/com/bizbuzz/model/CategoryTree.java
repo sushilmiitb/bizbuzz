@@ -27,7 +27,9 @@ public class CategoryTree implements Serializable{
   
   private String categoryName;
   
-  private Boolean isLeaf;
+  private Boolean isLeaf; //If Leaf it will have PropertyMetadata It may still have children categories
+  
+  private Boolean isCustom;
   
   @ManyToOne
   @JoinColumn(name="parent_category")
@@ -52,6 +54,10 @@ public class CategoryTree implements Serializable{
   @OneToOne
   @JoinColumn(name="property_metadata_id", referencedColumnName="id")
   PropertyMetadata propertyMetadata;
+  
+  @ManyToOne
+  @JoinColumn(name="owner_id")//for custom categories only
+  Party owner;
   
   /**
    * Getters and Setters
@@ -116,7 +122,21 @@ public class CategoryTree implements Serializable{
   public Long getId() {
     return id;
   }
-  
-  
 
+  public Boolean getIsCustom() {
+    return isCustom;
+  }
+
+  public void setIsCustom(Boolean isCustom) {
+    this.isCustom = isCustom;
+  }
+
+  public Party getOwner() {
+    return owner;
+  }
+
+  public void setOwner(Party owner) {
+    this.owner = owner;
+  }
+  
 }
