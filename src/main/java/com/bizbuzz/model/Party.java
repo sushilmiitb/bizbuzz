@@ -99,6 +99,10 @@ public abstract class Party implements Serializable{
   @Fetch(value = FetchMode.SUBSELECT)
   private List<RegisterRequest> registerRequests = new ArrayList<RegisterRequest>();
   
+  @OneToMany(mappedBy="owner", fetch = FetchType.LAZY)
+  @Fetch(value = FetchMode.SUBSELECT)
+  private List<CategoryTree> customCategories = new ArrayList<CategoryTree>();
+  
   Map<ConnectionType, List<Party>>getFromPartiesHashMappedWithConnectionType(){
     Map<ConnectionType, List<Party>> map = new LinkedHashMap<Connection.ConnectionType, List<Party>>();
     for(int i=0; i<fromParties.size(); i++){
@@ -305,4 +309,13 @@ public abstract class Party implements Serializable{
   public void setRegisterDevice(RegisterDevice registerDevice) {
     this.registerDevice = registerDevice;
   }
+
+  public List<CategoryTree> getCustomCategories() {
+    return customCategories;
+  }
+
+  public void setCustomCategories(List<CategoryTree> customCategories) {
+    this.customCategories = customCategories;
+  }
+  
 }

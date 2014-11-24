@@ -65,7 +65,7 @@ public class AdminController {
   @ResponseBody
   public AdminAddCategoryResponseAjaxDTO addCategory(@RequestBody AdminAddCategoryRequestAjaxDTO request){
     CategoryTree parentCategory = categoryService.getCategory(request.getParentId());
-    CategoryTree category = categoryService.saveCategory(parentCategory, request.getCategoryName(), request.getIsLeaf());
+    CategoryTree category = categoryService.saveCategory(parentCategory, request.getCategoryName(), request.getIsLeaf(), false);
     AdminAddCategoryResponseAjaxDTO response = new AdminAddCategoryResponseAjaxDTO(category.getCategoryName(), category.getId());
     return response;
   }
@@ -73,7 +73,7 @@ public class AdminController {
   @RequestMapping(value="/admin/category/edit/{categoryId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public AdminAddCategoryResponseAjaxDTO editCategory(@RequestBody AdminAddCategoryRequestAjaxDTO request, @PathVariable Long categoryId){
-    CategoryTree category = categoryService.updateCategory(categoryId, request.getCategoryName(), request.getIsLeaf());
+    CategoryTree category = categoryService.updateCategory(categoryId, request.getCategoryName(), request.getIsLeaf(), false);
     AdminAddCategoryResponseAjaxDTO response = new AdminAddCategoryResponseAjaxDTO(category.getCategoryName(), category.getId());
     return response;
   }

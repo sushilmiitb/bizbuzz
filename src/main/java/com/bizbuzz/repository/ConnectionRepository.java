@@ -120,6 +120,7 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
    * @param id: id of the party whose connections needs to be deleted
    */
   
+  @Modifying
   @Query("delete from Connection c "
       + "where c.fromPartyId=?1")
   void deleteAllToPartyConnectionById(Long id);

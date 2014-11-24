@@ -30,22 +30,37 @@ public class CategoryServiceImpl implements CategoryService{
     return categoryTreeRepository.findOne(id);
   }
   
-  public CategoryTree saveCategory(CategoryTree parentCategory, String categoryName, Boolean isLeaf){
+  public CategoryTree saveCategory(CategoryTree parentCategory, String categoryName, Boolean isLeaf, Boolean isCustom){
     CategoryTree category = new CategoryTree();
     category.setCategoryName(categoryName);
     category.setParentCategory(parentCategory);
     category.setIsLeaf(isLeaf);
+    category.setIsCustom(isCustom);
     categoryTreeRepository.save(category);
     return category;
   }
   
-  public CategoryTree updateCategory(Long categoryId, String categoryName, Boolean isLeaf){
+  public CategoryTree saveCustomCategory(CategoryTree parentCategory, String categoryName, Person owner, Boolean isLeaf){
+    CategoryTree category = new CategoryTree();
+    category.setCategoryName(categoryName);
+    category.setParentCategory(parentCategory);
+    category.setIsCustom(true);
+    category.setIsLeaf(isLeaf);
+    category.setOwner(owner);
+    categoryTreeRepository.save(category);
+    return category;
+  }
+  
+  public CategoryTree updateCategory(Long categoryId, String categoryName, Boolean isLeaf, Boolean isCustom){
     CategoryTree category = categoryTreeRepository.findOne(categoryId);
     if(categoryName!=null){
       category.setCategoryName(categoryName);
     }
     if(isLeaf!=null){
       category.setIsLeaf(isLeaf);
+    }
+    if(isCustom!=null){
+      category.setIsCustom(isCustom);
     }
     categoryTreeRepository.save(category);
     return category;
