@@ -75,6 +75,8 @@ public class PropertyServiceImpl implements PropertyService{
   @Transactional
   public PropertyMetadata getPropertyMetadata(Long categoryId){
     PropertyMetadata pm = propertyMetadataRepository.findPropertyMetadataByCategoryId(categoryId);
+    if(pm==null)
+      return null;
     Hibernate.initialize(pm.getImageModels().size());
     Hibernate.initialize(pm.getPropertyGroups());
     return pm;

@@ -368,14 +368,14 @@ public class SellerController {
     else{
       categoryTree = categoryService.getCategory(categoryId);
     }
-    Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
-    if(isLeaf){
+    if(categoryTree.getHasProduct()){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryTree.getId());
+      CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
       m.addAttribute("propertyMetadata", propertyMetadata);
 //      ProductDetailDTO pdd = new ProductDetailDTO();
 //      pdd.initialize(propertyMetadata);
@@ -404,18 +404,20 @@ public class SellerController {
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.POST)
   public String saveProductUpload(@PathVariable Long categoryId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(metadataCategory.getId());
     Person seller = getSeller();
     Item item = new Item();
  
-    item.setItemCategory(categoryService.getCategory(categoryId));
+    item.setItemCategory(categoryTree);
     item.setOwner(seller);
     item = itemService.saveItem(item);
     
     List<PropertyValue> propertyValues = propertyService.populatePropertyValues(propertyFieldMap, uploadForm.getFieldIds(), uploadForm.getValues(), item);
     item.setPropertyValues(propertyValues);
     
-    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(metadataCategory.getId());
     List<ImageModel> valueImageModels = propertyService.populateImageModels(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), item);
     item.setImageModels(valueImageModels);
     
@@ -440,7 +442,9 @@ public class SellerController {
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
   public String viewProductUpload(@PathVariable Long categoryId, @PathVariable Long itemId, Model m){
     Person seller = getSeller();
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
     
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
@@ -497,15 +501,16 @@ public class SellerController {
     else{
       categoryTree = categoryService.getCategory(categoryId);
     }
-    Boolean isLeaf = categoryTree.getIsLeaf();
-    String parentCategoryName = categoryTree.getCategoryName();
-    if(isLeaf){
+    
+    Boolean hasProduct = categoryTree.getHasProduct();
+    if(hasProduct){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId); 
       return "redirect:/seller/viewproduct/category/"+categoryTree.getId();
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
       List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      categories = categoryService.sortCategoriesByCustom(categories);//separate admin and custom categories
       m.addAttribute("rootDir", propertyService.getImageDir());
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");
@@ -536,7 +541,7 @@ public class SellerController {
   public String addCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
     Person person = getSeller();
     CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
-    categoryService.saveCustomCategory(parentCategory, categoryName, person, true);
+    categoryService.saveCustomCategory(parentCategory, categoryName, person, true,true);
     return categoryName;
   }
   
@@ -545,7 +550,8 @@ public class SellerController {
     Person seller =  getSeller();
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(item.getItemCategory());
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
     
     Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());

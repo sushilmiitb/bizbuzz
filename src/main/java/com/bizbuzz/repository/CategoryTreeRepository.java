@@ -16,8 +16,9 @@ public interface CategoryTreeRepository extends JpaRepository<CategoryTree, Long
   @Query("select c "
       + "from CategoryTree c inner join c.parentCategory p "
       + "where p.id=?1 "
+      + "and c.iscustom!=true "
       + "order by c.categoryName asc")
-  List<CategoryTree> findByParentCategory(Long id);
+  List<CategoryTree> findNonCustomCategoriesByParentCategory(Long id);
   
   @Query("select ch "
       + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch "

@@ -10,9 +10,9 @@ import com.bizbuzz.model.PropertyMetadata;
 public interface CategoryService {
   List<CategoryTree> getCategories(Long parentId);
   public CategoryTree getCategory(Long id);
-  public CategoryTree saveCategory(CategoryTree parentCategory, String categoryName, Boolean isLeaf, Boolean isCustom);
-  public CategoryTree saveCustomCategory(CategoryTree parentCategory, String categoryName, Person owner, Boolean isLeaf);
-  public CategoryTree updateCategory(Long categoryId, String categoryName, Boolean isLeaf, Boolean isCustom);
+  public CategoryTree saveCategory(CategoryTree parentCategory, String categoryName, Boolean isLeaf, Boolean hasProduct, Boolean isCustom);
+  public CategoryTree saveCustomCategory(CategoryTree parentCategory, String categoryName, Person owner, Boolean hasProduct, Boolean isLeaf);
+  public CategoryTree updateCategory(Long categoryId, String categoryName, Boolean isLeaf,  Boolean hasProduct, Boolean isCustom);
   public void deleteCategory(Long categoryId);
   //public List<PropertyMetadata> getPropertyMetadatas(Long categoryId);
   //public void savePropertyMetadatas(List<PropertyMetadata> propertyMetadatas, CategoryTree category);
@@ -22,4 +22,6 @@ public interface CategoryService {
   //public Map<String, Map<String, Map<String, PropertyMetadata>>> organizeMetadata(List<PropertyMetadata> properties);
   
   public CategoryTree createCategoryMap(CategoryTree categoryTree);
+  public List<CategoryTree> sortCategoriesByCustom(List<CategoryTree> categories);
+  public CategoryTree getCategoryThatHasNearestMetadata(CategoryTree categoryTree);
 }

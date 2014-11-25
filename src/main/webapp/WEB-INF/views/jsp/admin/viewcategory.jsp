@@ -12,7 +12,8 @@
 			  $('#admin_viewcategory_form').submit(function(event) {
 			  	var json = { "categoryName" : $('#admin_viewcategory_inputcategory').val(),
 			  				 "parentId": "${categoryId}",
-			  				 "isLeaf": $('#admin_viewcategory_inputisleaf').val()
+			  				 "isLeaf": $('#admin_viewcategory_inputisleaf').val(),
+			  				 "hasProduct": $('#admin_viewcategory_hasproduct').val()
 			  				};
 			    console.log("test", JSON.stringify(json));
 			    $.ajax({
@@ -72,7 +73,8 @@
 			  	console.log("modifiedisleaf", test);
 			  	var json = { "categoryName" : $(this).find(".modified_category_name").val(),
 			  				 "parentId": "${categoryId}",
-			  				 "isLeaf": $(this).find("select").val()
+			  				 "isLeaf": $(this).find(".modified_isleaf_value").val(),
+			  				 "hasProduct": $(this).find(".modified_hasproduct_value").val()
 			  				};
 			    console.log("test", JSON.stringify(json));
 			    $.ajax({
@@ -110,8 +112,13 @@
 		<form action="${post_url}" id="admin_viewcategory_form">
 			<label for="admin_viewcategory_inputcategory">category name</label> 
 			<input type="text" id="admin_viewcategory_inputcategory" /> 
-			<label for="admin_viewcategory_inputcategory">Is Final Category</label> 
+			<label for="admin_viewcategory_inputcategory">Is Leaf</label> 
 			<select id="admin_viewcategory_inputisleaf">
+				<option value="false">No</option>
+				<option value="true">Yes</option>
+			</select>
+			<label for="admin_viewcategory_inputcategory">Has product</label> 
+			<select id="admin_viewcategory_inputhasproduct">
 				<option value="false">No</option>
 				<option value="true">Yes</option>
 			</select> 
@@ -127,14 +134,7 @@
 			<c:forEach items="${categoryList}" var="item">
 				<tr>
 					<td><span class="group"> 
-						<c:choose>
-							<c:when test="${item.isLeaf}">
-								<a href="${base_property_url}${item.id}">${item.categoryName}</a>
-							</c:when>
-							<c:otherwise>
-								<a href="${base_category_url}${item.id}">${item.categoryName}</a>
-							</c:otherwise>
-						</c:choose>
+						<a href="${base_category_url}${item.id}">${item.categoryName}</a>
 					</span></td>
 					<td>
 						<button id="${base_delete_url}${item.id}"
@@ -143,12 +143,41 @@
 					<td>
 						<form class="admin_viewcategory_modifycategoryform" action="${base_modifycategory_url}${item.id}">
 							<input class="modified_category_name" type="text" /> 
-							<select class="modified_isleaf_value">
-								<option value="false">Non-leaf category</option>
-								<option value="true">Leaf category</option>
-							</select> 
+							<c:choose>
+								<c:when test="${item.isLeaf}">
+									<select class="modified_isleaf_value">
+										<option value="true">Leaf category</option>
+										<option value="false">Non-leaf category</option>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<select class="modified_isleaf_value">
+										<option value="false">Non-leaf category</option>
+										<option value="true">Leaf category</option>
+									</select>
+								</c:otherwise>
+							</c:choose>
+							<c:choose>
+								<c:when test="${item.hasProduct}">
+									<select class="modified_hasproduct_value">
+										<option value="true">Have product</option>
+										<option value="false">Doen't have product</option>
+									</select>
+								</c:when>
+								<c:otherwise>
+									<select class="modified_hasproduct_value">
+										<option value="false">Doen't have product</option>
+										<option value="true">Have product</option>
+									</select>
+								</c:otherwise>
+							</c:choose>
 							<input type="submit" value="Change Name" />
 						</form>
+					</td>
+					<td>
+						<c:if test="${item.isLeaf}">
+							<a href="${base_property_url}${item.id}">Set Properties</a>
+						</c:if>
 					</td>
 				</tr>
 			</c:forEach>

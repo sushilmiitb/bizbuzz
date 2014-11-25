@@ -42,14 +42,26 @@ public interface ItemRepository extends JpaRepository<Item, Long>{
       + "where tp.toPartyId=?1 "
       + "and oi.itemCategory.id=?2 "
       + "order by oi.created desc")
-  List<Person> findSellersByBuyerIdOrderByLatestItemUpload(Long buyerId, Long categoryId);
+  List<Person> findSellersByBuyerIdOrderByLatestItemUploadOfACategory(Long buyerId, Long categoryId);
+  
+  @Query("select distinct s "
+      + "from Person s inner join s.toParties tp inner join s.ownedItems oi "
+      + "where tp.toPartyId=?1 "
+      + "order by oi.created desc")
+  List<Person> findSellersByBuyerIdOrderByLatestItemUpload(Long buyerId);
   
   @Query("select distinct c "
       + "from Company c inner join c.toParties ctp inner join ctp.toParty s inner join s.toParties tp inner join s.ownedItems oi "
       + "where tp.toPartyId=?1 "
       + "and oi.itemCategory.id=?2 "
       + "order by oi.created desc")
-  List<Company> findCompaniesSellersByBuyerIdOrderByLatestItemUpload(Long buyerId, Long categoryId);
+  List<Company> findCompaniesSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(Long buyerId, Long categoryId);
+  
+  @Query("select distinct c "
+      + "from Company c inner join c.toParties ctp inner join ctp.toParty s inner join s.toParties tp inner join s.ownedItems oi "
+      + "where tp.toPartyId=?1 "
+      + "order by oi.created desc")
+  List<Company> findCompaniesSellersByBuyerIdOrderByLatestItemUpload(Long buyerId);
   
   @Query("select distinct i "
       + "from Item i inner join i.owner o inner join i.sharedToParties sp inner join sp.toParties buyerConnection "
