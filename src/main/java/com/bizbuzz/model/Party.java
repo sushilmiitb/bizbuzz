@@ -76,6 +76,7 @@ public abstract class Party implements Serializable{
   @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Item> sharedItems = new ArrayList<Item>();
+
  /* 
   @ManyToMany(mappedBy="members", fetch = FetchType.EAGER)
   @Fetch(value = FetchMode.SUBSELECT)
@@ -285,6 +286,7 @@ public abstract class Party implements Serializable{
     this.sharedItems = sharedItems;
   }
 
+  
   public List<Item> getOwnedItems() {
     return ownedItems;
   }

@@ -33,11 +33,13 @@ public class Item implements Serializable{
   
   private String itemNumber;
   private String styleNumber;
+ 
   
   @ManyToOne
   @JoinColumn(name="category_id")
   private CategoryTree itemCategory;
 
+  
   @ManyToMany(fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   @JoinTable(
@@ -45,11 +47,11 @@ public class Item implements Serializable{
       joinColumns={@JoinColumn(name="item_id", referencedColumnName="id")},
           inverseJoinColumns={@JoinColumn(name="party_id", referencedColumnName="id")})
   private List<Party> sharedToParties;
-  
+ 
   @OneToMany(mappedBy="item", fetch = FetchType.LAZY)
   @Fetch(value = FetchMode.SUBSELECT)
   private List<Chat> chats;
-  
+ 
   @ManyToOne
   @JoinColumn(name="owner_id", referencedColumnName="id")
   private Party owner;
@@ -155,7 +157,7 @@ public class Item implements Serializable{
   public void setPropertyValues(List<PropertyValue> propertyValue) {
     this.propertyValues = propertyValue;
   }
-
+  
   public Party getOwner() {
     return owner;
   }

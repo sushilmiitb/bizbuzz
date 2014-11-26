@@ -10,6 +10,7 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
+		<c:url var="edit_url" value="/seller/editcategory/category/${categoryTree.id}" />
 		<c:url var="base_image_url" value="/${rootDir}" />
 		<c:url var="base_product_url" value="/seller/viewproduct/item/" />
 		<c:url var="base_uploadproduct_url" value="/seller/uploadproduct/category/" />
@@ -24,7 +25,7 @@
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 no-padding">
 					<div class="panel panel-primary">
-						<div class="panel-heading center-align-text">${parentCategoryName}</div>
+						<div class="panel-heading center-align-text">${categoryTree.categoryName}</div>
 						 <div class="panel-body">
 						 <c:forEach var="counter" begin="0" end="${totalItems}">
 						     <c:set var="displayImage" scope="page" />
@@ -33,8 +34,8 @@
 								</c:if>
 								<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
 								 <c:choose>
-								  <c:when test="${counter==0}" >
-									<a href="${base_uploadproduct_url}${categoryId}" class="thumbnail" align="center" >
+								  <c:when test="${counter==0}">
+									<a href="${base_uploadproduct_url}${categoryTree.id}" class="thumbnail" align="center" >
 									  <img src="${uploadImageUrl}" class="image-responsive" alt="Uploaded Poduct" />
 									</a>
 								  </c:when>
@@ -65,10 +66,59 @@
 								</c:if>
 						 </c:forEach>
 	            		</div>
+	            		 <c:if test="${categoryTree.isCustom}">
+	            			 <div class="panel-footer">
+	 							<div class="row">
+	 								<div class="col-xs-3 col-xm-3 col-md-3 col-lg-3"></div>
+								<div class="col-xs-6 col-xm-6 col-md-6 col-lg-6">
+									<button data-target="#editCategoryModal" data-toggle="modal" class="btn btn-primary btn-block">Edit Category Details</button>
+								</div>
+							</div>
+						 </div>
+						</c:if>
 					</div>
 				</div>
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 			</div>
+			<c:if test="${categoryTree.isCustom}">
+				<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="myModalLabel">Edit Category Details</h4>
+						</div>
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<legend>Edit Category</legend>
+									<form:form method="POST" action="${edit_url}"
+										id="seller_editcategory_form" class="form form-signin"
+										modelAttribute="categoryTree">
+										<form:label path="categoryName"
+											for="seller_categoryname_label">Category Name</form:label>
+										<form:input path="categoryName" class="form-control"
+											id="seller_categoryname" type="text" />
+										<input id="seller_viewcategory_edit"
+											class="btn btn-primary btn-block" type="submit"
+											value="Change Category Details" />
+									</form:form>
+									<br />
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal -->
+			</c:if>
+		</div>
 		</div>
 	</tiles:putAttribute>
 </tiles:insertDefinition>

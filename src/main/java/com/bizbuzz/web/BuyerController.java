@@ -161,8 +161,9 @@ public class BuyerController {
   @RequestMapping(value="/buyer/viewcategory/seller/{sellerId}/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategory(Model m, @PathVariable Long categoryId, @PathVariable Long sellerId){
     CategoryTree categoryTree = null;
+    Person buyer = getBuyer();
+    Person seller = connectionService.getSellerByBuyerAndSellerId(buyer, sellerId);
     if(categoryId==null || categoryId==-1){
-      Person buyer = getBuyer();
       categoryTree = buyer.getCategoryRoot();
     }
     else{
@@ -176,7 +177,7 @@ public class BuyerController {
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("rootDir", propertyService.getImageDir());
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");

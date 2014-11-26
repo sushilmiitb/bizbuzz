@@ -252,7 +252,8 @@ public class ChatController {
             PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
             notificationContent.addDeviceRegId(registerDevice.getDeviceRegistrationId());
             notificationContent.createData("InstaTrade",chatSenderName +" messages you");
-            GcmPushNotificationToDevice.pushNotification(notificationContent);
+            GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
+            notifObj.start();
           }
           logger.info("Received message to broadcast: {}"+ personId +" : " +message +"           " +dateOfBroadcast);
         }

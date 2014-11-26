@@ -13,7 +13,7 @@
 			  	var json = { "categoryName" : $('#admin_viewcategory_inputcategory').val(),
 			  				 "parentId": "${categoryId}",
 			  				 "isLeaf": $('#admin_viewcategory_inputisleaf').val(),
-			  				 "hasProduct": $('#admin_viewcategory_hasproduct').val()
+			  				 "hasProduct": $('#admin_viewcategory_inputhasproduct').val()
 			  				};
 			    console.log("test", JSON.stringify(json));
 			    $.ajax({

@@ -144,7 +144,7 @@ public class SellerController {
       return "redirect:/seller/viewgroup";
     }
     List<Person> groupMembers = connectionService.getGroupMembersByPrivateGroup(privateGroup);
-    m.addAttribute("groupMembers", groupMembers);
+    m.addAttribute("groufpMembers", groupMembers);
     m.addAttribute("privateGroup", privateGroup);
     return "jsp/seller/viewsinglegroup";
   }
@@ -394,7 +394,7 @@ public class SellerController {
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("categoryList", categories);
       m.addAttribute("parentCategoryName", parentCategoryName);
       //m.addAttribute("depth", depth+1);
@@ -434,7 +434,8 @@ public class SellerController {
           notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
     }
     notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
-    GcmPushNotificationToDevice.pushNotification(notificationContent);
+    GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
+    notifObj.start();
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
@@ -475,12 +476,13 @@ public class SellerController {
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     Person seller = getSeller();    
-   
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
     item.setPropertyValues(propertyValuesNew);
-    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(metadataCategory.getId());
     item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
     
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
@@ -494,8 +496,8 @@ public class SellerController {
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategory(Model m, @PathVariable Long categoryId){
     CategoryTree categoryTree = null;
+    Person seller = getSeller();
     if(categoryId==null || categoryId==-1){
-      Person seller = getSeller();
       categoryTree = seller.getCategoryRoot();
     }
     else{
@@ -509,8 +511,7 @@ public class SellerController {
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
-      categories = categoryService.sortCategoriesByCustom(categories);//separate admin and custom categories
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("rootDir", propertyService.getImageDir());
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");
@@ -525,7 +526,7 @@ public class SellerController {
   public String viewProducts(Model m, @PathVariable Long categoryId){
     Person seller = getSeller();
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
-    m.addAttribute("parentCategoryName", categoryTree.getCategoryName());
+   // m.addAttribute("parentCategoryName", categoryTree.getCategoryName());
     //PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
     //m.addAttribute("propertyMetadata", propertyMetadata);
     List<Item> items = itemService.getItemsByCategoryIdAndOwnerWithImages(categoryId, seller.getId()); 
@@ -533,16 +534,24 @@ public class SellerController {
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
     m.addAttribute("items", items);
-    m.addAttribute("categoryId",categoryId);
+    m.addAttribute("categoryTree",categoryTree);
     return "jsp/seller/viewproduct";
   }
   
-  @RequestMapping(value="/seller/addcategory/category/{categoryId}", method = RequestMethod.POST)
+  @RequestMapping(value="/seller/addcategory/category/{parengCategoryId}", method = RequestMethod.POST)
   public String addCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
     Person person = getSeller();
     CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
-    categoryService.saveCustomCategory(parentCategory, categoryName, person, true,true);
-    return categoryName;
+    categoryService.saveCustomCategory(parentCategory, categoryName, person, true, false);
+    return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+  }
+  
+  @RequestMapping(value="/seller/editcategory/category/{parentCategoryId}", method = RequestMethod.POST)
+  public String editCustomCategory(@PathVariable Long parentCategoryId, @RequestParam("categoryName") String categoryName){
+    Person person = getSeller();
+  //  CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+    categoryService.updateCustomCategory(parentCategoryId, categoryName, false, true);
+    return "redirect:/seller/viewcategory/category/"+parentCategoryId;
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)
