@@ -15,7 +15,7 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
-		<c:url var="base_product_url" value="/buyer/viewproduct/category/${category.id}/seller/" />
+		<c:url var="base_category_url" value="/buyer/viewcategory/seller" />
 		<c:url var="emptyImageUrl"
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 		<div class="container" role="main">
@@ -28,7 +28,7 @@
 							<div class="row">
 								<c:forEach items="${sellers}" var="item" varStatus="i">
 									<div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
-										<a href="${base_product_url}${item.id}?" class="thumbnail">
+										<a href="${base_category_url}/${item.id}/category/-1?" class="thumbnail">
 											<img src="${emptyImageUrl}" class="image-responsive" alt="Category">
 											<h4 class="center-align-text">${companies[i.index].companyName}</h4>
 										</a>

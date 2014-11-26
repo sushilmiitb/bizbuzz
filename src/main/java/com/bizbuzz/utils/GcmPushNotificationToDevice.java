@@ -16,11 +16,30 @@ import org.slf4j.LoggerFactory;
 
 import com.bizbuzz.dto.PushNotificationContentDTO;
 
-public class GcmPushNotificationToDevice {
+public class GcmPushNotificationToDevice implements Runnable{
 
   public static final Logger LOG = LoggerFactory.getLogger(GcmPushNotificationToDevice.class);
+  Thread t;
+  PushNotificationContentDTO content;
   
-  public static void pushNotification(PushNotificationContentDTO content){
+  public GcmPushNotificationToDevice(PushNotificationContentDTO content){
+    this.content = content;
+  }
+  
+  @Override
+  public void run() {
+    // TODO Auto-generated method stub
+    pushNotification();
+  }
+  
+  public void start(){
+    if(t==null){
+      t = new Thread(this);
+      t.start();
+    }
+  }
+  
+  private void pushNotification(){
 
     String apiKey = "AIzaSyA1PJWtlSNMjX5e42f1_ePFlDnvZvQhTG4";
     try{
@@ -82,5 +101,4 @@ public class GcmPushNotificationToDevice {
             e.printStackTrace();
         }
   }
-  
 }

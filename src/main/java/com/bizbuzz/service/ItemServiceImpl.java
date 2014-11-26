@@ -68,12 +68,20 @@ public class ItemServiceImpl implements ItemService{
     return null;
   }
   
-  public List<Person> getSellersByBuyerIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree){
-    return itemRepository.findSellersByBuyerIdOrderByLatestItemUpload(buyer.getId(), categoryTree.getId());
+  public List<Person> getSellersByBuyerIdOrderByLatestItemUpload(Person buyer){
+    return itemRepository.findSellersByBuyerIdOrderByLatestItemUpload(buyer.getId());
   }
   
-  public List<Company> getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree){
-    return itemRepository.findCompaniesSellersByBuyerIdOrderByLatestItemUpload(buyer.getId(), categoryTree.getId());
+  public List<Person> getSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree){
+    return itemRepository.findSellersByBuyerIdOrderByLatestItemUploadOfACategory(buyer.getId(), categoryTree.getId());
+  }
+  
+  public List<Company> getCompaniesOfSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree){
+    return itemRepository.findCompaniesSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(buyer.getId(), categoryTree.getId());
+  }
+  
+  public List<Company> getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(Person buyer){
+    return itemRepository.findCompaniesSellersByBuyerIdOrderByLatestItemUpload(buyer.getId());
   }
   
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId){

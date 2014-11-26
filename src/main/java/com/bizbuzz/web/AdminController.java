@@ -44,7 +44,7 @@ public class AdminController {
   @RequestMapping(value="/admin/viewcategory/{categoryId}", method = RequestMethod.GET)
   public String viewACategory(@PathVariable Long categoryId, Model m){
     CategoryTree category = categoryService.getCategory(categoryId);
-    List<CategoryTree> categoryList = categoryService.getCategories(categoryId);
+    List<CategoryTree> categoryList = categoryService.getAdminCategories(categoryId);
     m.addAttribute("categoryList", categoryList);
     m.addAttribute("categoryId", categoryId);
     m.addAttribute("parentCategoryName", category.getCategoryName());
@@ -54,7 +54,7 @@ public class AdminController {
   @RequestMapping(value={"/admin/", "/admin/home/", "/admin/viewcategory"}, method = RequestMethod.GET)
   public String viewAllCategories(Model m){
     CategoryTree category = categoryService.getCategory(1L);
-    List<CategoryTree> categoryList = categoryService.getCategories(1L);
+    List<CategoryTree> categoryList = categoryService.getAdminCategories(1L);
     m.addAttribute("categoryList", categoryList);
     m.addAttribute("categoryId", 1);
     m.addAttribute("parentCategoryName", category.getCategoryName());
@@ -65,7 +65,7 @@ public class AdminController {
   @ResponseBody
   public AdminAddCategoryResponseAjaxDTO addCategory(@RequestBody AdminAddCategoryRequestAjaxDTO request){
     CategoryTree parentCategory = categoryService.getCategory(request.getParentId());
-    CategoryTree category = categoryService.saveCategory(parentCategory, request.getCategoryName(), request.getIsLeaf(), false);
+    CategoryTree category = categoryService.saveAdminCategory(parentCategory, request.getCategoryName(), request.getIsLeaf(), request.getHasProduct());
     AdminAddCategoryResponseAjaxDTO response = new AdminAddCategoryResponseAjaxDTO(category.getCategoryName(), category.getId());
     return response;
   }
@@ -73,7 +73,7 @@ public class AdminController {
   @RequestMapping(value="/admin/category/edit/{categoryId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
   public AdminAddCategoryResponseAjaxDTO editCategory(@RequestBody AdminAddCategoryRequestAjaxDTO request, @PathVariable Long categoryId){
-    CategoryTree category = categoryService.updateCategory(categoryId, request.getCategoryName(), request.getIsLeaf(), false);
+    CategoryTree category = categoryService.updateAdminCategory(categoryId, request.getCategoryName(), request.getIsLeaf(), request.getHasProduct());
     AdminAddCategoryResponseAjaxDTO response = new AdminAddCategoryResponseAjaxDTO(category.getCategoryName(), category.getId());
     return response;
   }

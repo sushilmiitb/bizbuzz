@@ -376,14 +376,14 @@ public class SellerController {
     else{
       categoryTree = categoryService.getCategory(categoryId);
     }
-    Boolean isLeaf = categoryTree.getIsLeaf();
     String parentCategoryName = categoryTree.getCategoryName();
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
-    if(isLeaf){
+    if(categoryTree.getHasProduct()){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryTree.getId());
+      CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+      PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
       m.addAttribute("propertyMetadata", propertyMetadata);
 //      ProductDetailDTO pdd = new ProductDetailDTO();
 //      pdd.initialize(propertyMetadata);
@@ -402,7 +402,7 @@ public class SellerController {
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("categoryList", categories);
       m.addAttribute("parentCategoryName", parentCategoryName);
       //m.addAttribute("depth", depth+1);
@@ -412,18 +412,20 @@ public class SellerController {
   
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}", method=RequestMethod.POST)
   public String saveProductUpload(@PathVariable Long categoryId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
-    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(categoryId);
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+    Map<Long, PropertyField> propertyFieldMap = propertyService.getPropertyFieldByCategoryIdMappedByPropertyFieldId(metadataCategory.getId());
     Person seller = getSeller();
     Item item = new Item();
  
-    item.setItemCategory(categoryService.getCategory(categoryId));
+    item.setItemCategory(categoryTree);
     item.setOwner(seller);
     item = itemService.saveItem(item);
     
     List<PropertyValue> propertyValues = propertyService.populatePropertyValues(propertyFieldMap, uploadForm.getFieldIds(), uploadForm.getValues(), item);
     item.setPropertyValues(propertyValues);
     
-    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(metadataCategory.getId());
     List<ImageModel> valueImageModels = propertyService.populateImageModels(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), item);
     item.setImageModels(valueImageModels);
     
@@ -440,7 +442,8 @@ public class SellerController {
           notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
     }
     notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
-    GcmPushNotificationToDevice.pushNotification(notificationContent);
+    GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
+    notifObj.start();
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
@@ -448,7 +451,9 @@ public class SellerController {
   @RequestMapping(value="/seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.GET)
   public String viewProductUpload(@PathVariable Long categoryId, @PathVariable Long itemId, Model m){
     Person seller = getSeller();
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(categoryId);
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
     
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
@@ -479,12 +484,13 @@ public class SellerController {
   @RequestMapping(value="seller/uploadproduct/category/{categoryId}/item/{itemId}", method=RequestMethod.POST)
   public String editProductUpload(@PathVariable Long categoryId, @ModelAttribute("itemId") Long itemId, @ModelAttribute("uploadForm") ProductDetailDTO uploadForm){
     Person seller = getSeller();    
-   
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(categoryTree);
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     Map<Long, PropertyValue> propertyValueMapOld = propertyService.getPropertyValuesMappedByPropertyValue(item.getPropertyValues());
     List<PropertyValue> propertyValuesNew = propertyService.updatePropertyValues(propertyValueMapOld, uploadForm.getValueIds(), uploadForm.getValues());
     item.setPropertyValues(propertyValuesNew);
-    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(categoryId);
+    Map<Long, ImageModel> metaImageModels = propertyService.getImageModelMetaByCategoryIdMappedByImageModelId(metadataCategory.getId());
     item = propertyService.updateImageModelValues(metaImageModels, uploadForm.getByteImagesFromBase64InOrder(), uploadForm.getImagesMetaId(), uploadForm.getImagesValueId(), item);
     
     List<PrivateGroup> privateGroups = connectionService.getPrivateGroupsByGroupOnwer(seller);
@@ -498,22 +504,22 @@ public class SellerController {
   @RequestMapping(value="/seller/viewcategory/category/{categoryId}", method=RequestMethod.GET)
   public String viewCategory(Model m, @PathVariable Long categoryId){
     CategoryTree categoryTree = null;
+    Person seller = getSeller();
     if(categoryId==null || categoryId==-1){
-      Person seller = getSeller();
       categoryTree = seller.getCategoryRoot();
     }
     else{
       categoryTree = categoryService.getCategory(categoryId);
     }
-    Boolean isLeaf = categoryTree.getIsLeaf();
-    String parentCategoryName = categoryTree.getCategoryName();
-    if(isLeaf){
+    
+    Boolean hasProduct = categoryTree.getHasProduct();
+    if(hasProduct){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId); 
       return "redirect:/seller/viewproduct/category/"+categoryTree.getId();
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("rootDir", propertyService.getImageDir());
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");
@@ -546,6 +552,7 @@ public class SellerController {
     Person person = getSeller();
     SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
     CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+<<<<<<< HEAD
     JSONObject jsonObject = JSONObject.fromObject(request);
     String categoryName = jsonObject.getString("categoryName");
     Map<String, String> errors = sellerValidator.validateAddCategory(parengCategoryId,categoryName, person);
@@ -565,9 +572,18 @@ public class SellerController {
   @RequestMapping(value="/seller/editcategory/category/{parengCategoryId}", method = RequestMethod.POST)
   @ResponseBody
   public SellerAddCategoryResponseAjaxDTO editCustomCategory(@PathVariable Long parengCategoryId, @RequestBody String request){
+=======
+    categoryService.saveCustomCategory(parentCategory, categoryName, person, true, false);
+    return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+  }
+  
+  @RequestMapping(value="/seller/editcategory/category/{parentCategoryId}", method = RequestMethod.POST)
+  public String editCustomCategory(@PathVariable Long parentCategoryId, @RequestParam("categoryName") String categoryName){
+>>>>>>> 7bb9af2a961444d2798ab619f882709a40112d5b
     Person person = getSeller();
     SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
   //  CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+<<<<<<< HEAD
     JSONObject jsonObject = JSONObject.fromObject(request);
     String categoryName = jsonObject.getString("categoryName");
     Map<String, String> errors = sellerValidator.validateAddCategory(parengCategoryId,categoryName, person);
@@ -581,6 +597,10 @@ public class SellerController {
     ajaxReply.setCategoryId(parengCategoryId);
     return ajaxReply;
   //  return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+=======
+    categoryService.updateCustomCategory(parentCategoryId, categoryName, false, true);
+    return "redirect:/seller/viewcategory/category/"+parentCategoryId;
+>>>>>>> 7bb9af2a961444d2798ab619f882709a40112d5b
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)
@@ -588,7 +608,8 @@ public class SellerController {
     Person seller =  getSeller();
     Item item = itemService.getItemByItemIdAndOwnerWithImagesAndPropertyValues(itemId, seller);
     
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(item.getItemCategory());
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
     
     Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());

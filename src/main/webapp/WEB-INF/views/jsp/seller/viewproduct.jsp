@@ -104,54 +104,58 @@
 								</c:if>
 						 </c:forEach>
 	            		</div>
-	            		 <div class="panel-footer">
-  							<div class="row">
-  								<div class="col-xs-3 col-xm-3 col-md-3 col-lg-3"></div>
+	            		 <c:if test="${categoryTree.isCustom}">
+	            			 <div class="panel-footer">
+	 							<div class="row">
+	 								<div class="col-xs-3 col-xm-3 col-md-3 col-lg-3"></div>
 								<div class="col-xs-6 col-xm-6 col-md-6 col-lg-6">
 									<button data-target="#editCategoryModal" data-toggle="modal" class="btn btn-primary btn-block">Edit Category Details</button>
 								</div>
 							</div>
- 						 </div>
+						 </div>
+						</c:if>
 					</div>
 				</div>
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 			</div>
-			<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
-			aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal"
-							aria-hidden="true">&times;</button>
-						<h4 class="modal-title" id="myModalLabel">Edit Category Details</h4>
-					</div>
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
-							<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+			<c:if test="${categoryTree.isCustom}">
+				<div class="modal fade" id="editCategoryModal" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">&times;</button>
+							<h4 class="modal-title" id="myModalLabel">Edit Category Details</h4>
 						</div>
-						<div class="row">
-							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-								<legend>Edit Category</legend>
-								<form:form method="POST" action="${edit_url}"
-									id="seller_editcategory_form" class="form form-signin"
-									modelAttribute="categoryTree">
-									<form:label path="categoryName"
-										for="seller_categoryname_label">Category Name</form:label>
-									<form:input path="categoryName" class="form-control"
-										id="seller_categoryname" type="text" />
-									<input id="seller_viewcategory_edit"
-										class="btn btn-primary btn-block" type="submit"
-										value="Change Category Details" />
-								</form:form>
-								<br />
+						<div class="modal-body">
+							<div class="row">
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+								<div class="col-xs-6 col-sm-6 col-md-6 col-lg-6"></div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+									<legend>Edit Category</legend>
+									<form:form method="POST" action="${edit_url}"
+										id="seller_editcategory_form" class="form form-signin"
+										modelAttribute="categoryTree">
+										<form:label path="categoryName"
+											for="seller_categoryname_label">Category Name</form:label>
+										<form:input path="categoryName" class="form-control"
+											id="seller_categoryname" type="text" />
+										<input id="seller_viewcategory_edit"
+											class="btn btn-primary btn-block" type="submit"
+											value="Change Category Details" />
+									</form:form>
+									<br />
+								</div>
 							</div>
 						</div>
 					</div>
+					<!-- /.modal-content -->
 				</div>
-				<!-- /.modal-content -->
-			</div>
-			<!-- /.modal -->
+				<!-- /.modal -->
+			</c:if>
 		</div>
 		</div>
 	</tiles:putAttribute>

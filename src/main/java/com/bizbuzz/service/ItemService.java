@@ -18,8 +18,10 @@ public interface ItemService {
   public List<Item> getItemsByCategoryIdAndOwner(Long categoryId, Long ownerId);
   public List<Item> getItemsByCategoryIdAndOwnerWithImages(Long categoryId, Long ownerId);
   public List<Item> getItemsOfAllSellersByCategoryAndBuyer(CategoryTree category, Person buyer);
-  public List<Person> getSellersByBuyerIdOrderByLatestItemUpload(Person seller, CategoryTree categoryTree);
-  public List<Company> getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree);
+  public List<Person> getSellersByBuyerIdOrderByLatestItemUpload(Person buyer);
+  public List<Person> getSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree);
+  public List<Company> getCompaniesOfSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(Person buyer, CategoryTree categoryTree);
+  public List<Company> getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(Person buyer);
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyer(Long categoryId, Long sellerId, Long buyerId);
   public List<Item> getItemsByCategoryIdAndOwnerAndBuyerWithImageModels(Long categoryId, Long sellerId, Long buyerId);
   public Item getItemByItemIdAndOwnerAndBuyer(Long itemId, Long sellerId, Long buyerId);

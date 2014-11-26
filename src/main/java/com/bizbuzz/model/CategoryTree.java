@@ -16,6 +16,10 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+/**
+ * @author sushil
+ *
+ */
 @Entity
 @Table(name="category_tree")
 public class CategoryTree implements Serializable{
@@ -30,6 +34,8 @@ public class CategoryTree implements Serializable{
   private Boolean isLeaf; //If Leaf it will have PropertyMetadata It may still have children categories
   
   private Boolean isCustom;
+  
+  private Boolean hasProduct; //It will have products
   
   @ManyToOne
   @JoinColumn(name="parent_category")
@@ -137,6 +143,14 @@ public class CategoryTree implements Serializable{
 
   public void setOwner(Party owner) {
     this.owner = owner;
+  }
+
+  public Boolean getHasProduct() {
+    return hasProduct;
+  }
+
+  public void setHasProduct(Boolean hasProduct) {
+    this.hasProduct = hasProduct;
   }
   
 }

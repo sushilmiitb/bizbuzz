@@ -4,6 +4,7 @@ public class AdminAddCategoryRequestAjaxDTO {
   private String categoryName;
   private Long parentId;
   private Boolean isLeaf;
+  private Boolean hasProduct;
   public String getCategoryName() {
     return categoryName;
   }
@@ -21,6 +22,12 @@ public class AdminAddCategoryRequestAjaxDTO {
   }
   public void setIsLeaf(Boolean isLeaf) {
     this.isLeaf = isLeaf;
+  }
+  public Boolean getHasProduct() {
+    return hasProduct;
+  }
+  public void setHasProduct(Boolean hasProduct) {
+    this.hasProduct = hasProduct;
   }
   
 }

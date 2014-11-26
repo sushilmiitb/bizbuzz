@@ -7,3 +7,5 @@ CREATE TABLE register_device(id bigint(20) NOT NULL AUTO_INCREMENT, device_regis
 ########################Changes made by sushil for custom category functionality#######################
 ALTER TABLE category_tree add column is_custom bit(1);
 ALTER TABLE category_tree add column owner_id bigint(20), add foreign key(owner_id) REFERENCES party(id);
+update category_tree set is_custom=false where is_custom is null;
+ALTER TABLE category_tree add column has_product bit(1);

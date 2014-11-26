@@ -233,7 +233,7 @@ public class RegistrationController {
         String authorityString = authority.getAuthority();
         if(authorityString.equals("ROLE_BUYER")){
           session.setAttribute("userRole", "buyer");
-          return "redirect:/buyer/viewcategory/category/-1";
+          return "redirect:/buyer/viewcategory/viewsellers";
         }
         if(authorityString.equals("ROLE_SELLER")){
           session.setAttribute("userRole", "seller");

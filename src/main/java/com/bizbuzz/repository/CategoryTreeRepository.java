@@ -14,14 +14,24 @@ import com.bizbuzz.model.Party;
 @Repository
 @Transactional
 public interface CategoryTreeRepository extends JpaRepository<CategoryTree, Long>{
+  
+  List<CategoryTree> findByOwner(Party owner);
+  List<CategoryTree> findByIsCustom(Boolean isCustom);
+  
   @Query("select c "
       + "from CategoryTree c inner join c.parentCategory p "
       + "where p.id=?1 "
+      + "and c.isCustom=false "
       + "order by c.categoryName asc")
-  List<CategoryTree> findByParentCategory(Long id);
-
-  List<CategoryTree> findByOwner(Party owner);
-  List<CategoryTree> findByIsCustom(Boolean isCustom);
+  List<CategoryTree> findAdminCategoriesByParentCategory(Long id);
+  
+  @Query("select c "
+      + "from CategoryTree c inner join c.parentCategory p inner join c.owner o "
+      + "where p.id=?1 "
+      + "and c.isCustom=true "
+      + "and o.id=?2 "
+      + "order by c.categoryName asc")
+  List<CategoryTree> findCustomCategoriesByParentCategoryAndOwnerId(Long categoryId, Long ownerId);
   
   @Query("select ch "
       + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch "

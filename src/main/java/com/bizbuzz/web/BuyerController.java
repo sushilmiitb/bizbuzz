@@ -158,42 +158,43 @@ public class BuyerController {
     return "redirect:/buyer/viewcontacts";
   }
  
-  @RequestMapping(value="/buyer/viewcategory/category/{categoryId}", method=RequestMethod.GET)
-  public String viewCategory(Model m, @PathVariable Long categoryId){
+  @RequestMapping(value="/buyer/viewcategory/seller/{sellerId}/category/{categoryId}", method=RequestMethod.GET)
+  public String viewCategory(Model m, @PathVariable Long categoryId, @PathVariable Long sellerId){
     CategoryTree categoryTree = null;
+    Person buyer = getBuyer();
+    Person seller = connectionService.getSellerByBuyerAndSellerId(buyer, sellerId);
     if(categoryId==null || categoryId==-1){
-      Person buyer = getBuyer();
       categoryTree = buyer.getCategoryRoot();
     }
     else{
       categoryTree = categoryService.getCategory(categoryId);
     }
-    Boolean isLeaf = categoryTree.getIsLeaf();
+    Boolean hasProduct = categoryTree.getHasProduct();
     String parentCategoryName = categoryTree.getCategoryName();
-    if(isLeaf){
+    if(hasProduct){
       //PropertyMetadata propertyMetadata = categoryService.getPropertyMetadata(seller, depth, categoryId);
-      
       return "redirect:/buyer/viewproduct/category/"+categoryTree.getId();
     }
     else{
       //List<CategoryTree> categories = categoryService.getCategories(seller, depth, categoryId);
-      List<CategoryTree> categories = categoryService.getCategories(categoryTree.getId());
+      List<CategoryTree> categories = categoryService.getAllCategories(categoryTree.getId(), seller.getId());
       m.addAttribute("rootDir", propertyService.getImageDir());
       m.addAttribute("sizeDir", "360");
       m.addAttribute("imageExtn", "jpg");
       m.addAttribute("categoryList", categories);
       m.addAttribute("parentCategoryName", parentCategoryName);
+      m.addAttribute("sellerid", sellerId);
       //m.addAttribute("depth", depth+1);
       return "jsp/buyer/viewcategory";
     }
   }
   
-  @RequestMapping(value="/buyer/viewseller/category/{categoryId}", method=RequestMethod.GET)
+/*  @RequestMapping(value="/buyer/viewseller/category/{categoryId}", method=RequestMethod.GET)
   public String viewSellerOfACategory(Model m, @PathVariable Long categoryId){
     Person buyer = getBuyer();
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
-    List<Person> sellers = itemService.getSellersByBuyerIdOrderByLatestItemUpload(buyer, categoryTree);
-    List<Company> companies = itemService.getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(buyer, categoryTree);
+    List<Person> sellers = itemService.getSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(buyer, categoryTree);
+    List<Company> companies = itemService.getCompaniesOfSellersByBuyerIdAndCategoryIdOrderByLatestItemUpload(buyer, categoryTree);
     m.addAttribute("rootDir", propertyService.getImageDir());
     m.addAttribute("sizeDir", "360");
     m.addAttribute("imageExtn", "jpg");
@@ -201,9 +202,22 @@ public class BuyerController {
     m.addAttribute("sellers", sellers);
     m.addAttribute("companies", companies);
     return "jsp/buyer/viewseller";
+  }*/
+  
+  @RequestMapping(value="/buyer/viewcategory/viewsellers", method=RequestMethod.GET)
+  public String viewProductSellers(Model m){
+    Person buyer = getBuyer();
+    List<Person> sellers = itemService.getSellersByBuyerIdOrderByLatestItemUpload(buyer);
+    List<Company> companies = itemService.getCompaniesOfSellersByBuyerIdOrderByLatestItemUpload(buyer);
+    m.addAttribute("rootDir", propertyService.getImageDir());
+    m.addAttribute("sizeDir", "360");
+    m.addAttribute("imageExtn", "jpg");
+    m.addAttribute("sellers", sellers);
+    m.addAttribute("companies", companies);
+    return "jsp/buyer/viewseller";
   }
   
-  @RequestMapping(value="/buyer/viewproduct/category/{categoryId}/seller/{sellerId}", method=RequestMethod.GET)
+  @RequestMapping(value="/buyer/viewproduct/seller/{sellerId}/category/{categoryId}", method=RequestMethod.GET)
   public String viewProduct(Model m, @PathVariable Long categoryId, @PathVariable Long sellerId){
     Person buyer = getBuyer();
     Person seller = partyManagementService.getPerson(sellerId);
