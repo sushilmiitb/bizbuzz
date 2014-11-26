@@ -136,6 +136,7 @@ public class RegistrationController {
       logger.info("Form validation Error.");
       //model.addAttribute("personRoleList", partyManagementService.getListOfPersonRole());
       model.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
+      logger.info("com.bizbuzz.web.RegistrationController.savePersonRegistrationForm: Error while registering for userId:"+personRegistration.getUserLogin().getId());
       return "jsp/register/personregistration";
     }
     //  String phoneNumberWithCountryCode = personRegistration.getCountryCodeDTO().getNumericCode()+personRegistration.getUserLogin().getId();
@@ -192,14 +193,17 @@ public class RegistrationController {
       e.printStackTrace();
     }
     // Congratulate the person on registration in InstaTrade By Sending message
-    SmsSender.sendSms(personRegistration.getUserLogin().getId(), "Dear " +personRegistration.getPerson().getFirstName() 
+    SmsSender smsSender = new SmsSender(personRegistration.getUserLogin().getId(), "Dear " +personRegistration.getPerson().getFirstName() 
         +", Congratulations! You have successfully registered On InstaTrade." 
-        +"  Now You can use the features of InstaTrade.");           
+        +"  Now You can use the features of InstaTrade.");
+    smsSender.sendSms();
+    
 /*
     UserDetails userDetails = manager.loadUserByUsername (personRegistration.getUserLogin().getId());
     Authentication auth = new UsernamePasswordAuthenticationToken (userDetails.getUsername (),userDetails.getPassword (),userDetails.getAuthorities ());
     SecurityContextHolder.getContext().setAuthentication(auth);*/
     //return "jsp/register/registrationsuccess";
+    logger.info("com.bizbuzz.web.RegistrationController.savePersonRegistrationForm: Registration complete for user id:"+personRegistration.getUserLogin().getId());
     return "redirect:/rolehome";
   }
 
@@ -207,6 +211,7 @@ public class RegistrationController {
   public String errorInLogin(Model model ,@PathVariable final String error){
     model.addAttribute("error", error);
     // model.addAttribute("countryCodeList",partyManagementService.getListOfCountryCodes());
+    logger.info("com.bizbuzz.web.RegistrationController.errorInLogin: Error message:"+error);
     return "jsp/register/login";
   }
 
@@ -233,15 +238,18 @@ public class RegistrationController {
         String authorityString = authority.getAuthority();
         if(authorityString.equals("ROLE_BUYER")){
           session.setAttribute("userRole", "buyer");
+          logger.info("com.bizbuzz.web.RegistrationController.getRoleHome: Login successful for buyer with userid:"+person.getUserId().getId());
           return "redirect:/buyer/viewcategory/viewsellers";
         }
         if(authorityString.equals("ROLE_SELLER")){
           session.setAttribute("userRole", "seller");
           session.setAttribute("senderId", person.getId());
+          logger.info("com.bizbuzz.web.RegistrationController.getRoleHome: Login successful for seller with userid:"+person.getUserId().getId());
           return "redirect:/seller/viewcategory/category/-1";
         }
         if(authorityString.equals("ROLE_ADMIN")){
           session.setAttribute("userRole", "admin");
+          logger.info("com.bizbuzz.web.RegistrationController.getRoleHome: Login successful for admin with userid:"+person.getUserId().getId());
           return "redirect:/admin/home/";
         }
       }
@@ -259,7 +267,7 @@ public class RegistrationController {
     registerDevice.setDeviceRegistrationId(deviceRegistrationId);
     registerDevice.setParty(person);
     registerDeviceService.saveRegisterDevice(registerDevice);
-  
+    
     return "";
   } 
 

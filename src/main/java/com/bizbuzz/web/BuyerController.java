@@ -91,7 +91,8 @@ public class BuyerController {
     Person toPerson = partyManagementService.getPersonFromPhoneNumberUsername(request.getUserId());
     
     if(toPerson == null){
-      SmsSender.sendSms(request.getUserId(),"Hello");   
+      SmsSender smsSender = new SmsSender(request.getUserId(),"Hello");
+      smsSender.sendSms();
       return ajaxReply;
     }
     

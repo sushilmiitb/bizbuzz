@@ -7,11 +7,33 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class SmsSender {
+import com.bizbuzz.dto.PushNotificationContentDTO;
 
+public class SmsSender implements Runnable{
 
-  public static String sendSms(String mobileNo,String msg){
+  Thread t;
+  String mobileNo;
+  String msg;
+  
+  public SmsSender(String mobileNo, String msg){
+    this.mobileNo = mobileNo;
+    this.msg = msg;
+  }
 
+  @Override
+  public void run() {
+    // TODO Auto-generated method stub
+    processSmsSend();
+  }
+  
+  public void sendSms(){
+    if(t==null){
+      t = new Thread(this);
+      t.start();
+    }
+  }
+  
+  private String processSmsSend(){
     String authkey = "71018ALFVaZrXG7c53eef2a4";
     String mobiles = mobileNo;                        
     String senderId = "ITrade";   //Sender ID,While using route4 sender id should be 6 characters long.
@@ -62,7 +84,6 @@ public class SmsSender {
     { 
       e.printStackTrace();
     }
-    return response; 
+    return response;
   }
-
 }

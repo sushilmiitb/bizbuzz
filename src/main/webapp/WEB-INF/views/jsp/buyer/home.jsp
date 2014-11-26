@@ -67,7 +67,7 @@
 						<div class="panel-heading">What do you want to do?</div>
 						<div class="panel-body">
 							<ul class="nav nav-pills nav-stacked n">
-								<li><a href="<c:url value="/buyer/viewcategory/category/-1"/>"><span
+								<li><a href="<c:url value="/buyer/viewcategory/viewsellers"/>"><span
 										class="glyphicon glyphicon-search"></span> Products </a></li>
 								<li><a href="<c:url value="/buyer/viewcontacts"/>"><span class="glyphicon glyphicon-cog"></span>
 										Contacts </a></li>

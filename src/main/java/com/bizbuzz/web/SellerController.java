@@ -165,6 +165,7 @@ public class SellerController {
     partyManagementService.savePrivateGroup(privateGroup);
     connectionService.createConnection(person, privateGroup, ConnectionType.GROUPOWNER_GROUP);
     privateGroupDTO.setId(privateGroup.getId());
+    logger.info("com.bizbuzz.web.SellerController.addPrivateGroup: Seller (user id:"+person.getUserId().getId()+") has created private group (name:"+privateGroup.getPrivateGroupName()+", id:"+privateGroup.getId()+")");
     return privateGroupDTO;
   }
 
@@ -179,6 +180,7 @@ public class SellerController {
     }
     PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
     partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
+    logger.info("com.bizbuzz.web.SellerController.editAGroup: Seller (user id:"+person.getUserId().getId()+") edited Private Group from "+oldPrivateGroup.getPrivateGroupName()+" to "+updatedPrivateGroup.getPrivateGroupName());
     return "redirect:/seller/viewgroup/"+oldGroupId;
   }
   
@@ -192,6 +194,7 @@ public class SellerController {
     connectionService.deleteConnection(person, privateGroup);
     connectionService.deletePrivateGroupGroupMembersConnection(privateGroup);
     partyManagementService.deletePrivateGroup(privateGroup);
+    logger.info("com.bizbuzz.web.SellerController.deleteAGroup: Seller (user id:"+person.getUserId().getId()+") deleted Private:"+privateGroup.getPrivateGroupName());
     return "redirect:/seller/viewgroup";
   }
   
@@ -255,10 +258,11 @@ public class SellerController {
       registerRequest.setPrivateGroup(privateGroup);
       registerRequestsRepository.save(registerRequest);
       //Message will be sent through validator that registration request has been sent
-      SmsSender.sendSms(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
+      SmsSender smsSender = new SmsSender(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
       		" Go to " + 
       		" https://play.google.com/store/apps/details?id=com.bizbuzz.cordova.Frotal&hl=en" +
-      		" and install it . ");           
+      		" and install it . ");
+      smsSender.sendSms();
     }
     
     errors = sellerValidator.validateAddConnection(seller, toPerson);
@@ -295,6 +299,7 @@ public class SellerController {
  // Above  code for add members into chatroom 
     
     ajaxReply.addDetails(toPerson, privateGroup);
+    logger.info("com.bizbuzz.web.SellerController.addConnection: Seller (user id:"+seller.getUserId().getId()+") created Connection to Person (userId:"+toPerson.getUserId().getId()+", private group:"+privateGroup.getPrivateGroupName()+")");
     return ajaxReply;
   }
  
@@ -319,7 +324,7 @@ public class SellerController {
    // ChatRoom chatroom = chatRoomService.getChatRoomByMembers(seller.getId(), toPerson.getId());
    // chatService.deleteAllChatByChatRoomId(chatroom.getId());
     //chatRoomService.deleteChatRoom(chatroom.getId());
-    
+    logger.info("com.bizbuzz.web.SellerController.deleteConnection: Seller (user id:"+seller.getUserId().getId()+") deleted Connection to Person(userId:"+toPerson.getUserId().getId()+", privateGroup:"+privateGroup.getPrivateGroupName());
     return "redirect:/seller/viewcontacts";
   }
   
@@ -355,6 +360,7 @@ public class SellerController {
       connectionService.createConnection(newPrivateGroup, toPerson, ConnectionType.GROUP_MEMBERS);
     }
     ajaxReply.addDetails(toPerson, newPrivateGroup);
+    logger.info("com.bizbuzz.web.SellerController.editConnectionChangeGroup: Seller (user id:"+seller.getUserId().getId()+") edited connection to person (userId:"+toPerson.getUserId().getId()+") from old group("+oldGroup.getPrivateGroupName()+") to new group("+newPrivateGroup.getPrivateGroupName()+")");
     return ajaxReply;
   }
   
@@ -435,7 +441,8 @@ public class SellerController {
     }
     notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
     GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
-    notifObj.start();
+    notifObj.push();
+    logger.info("com.bizbuzz.web.SellerController.saveProductUpload: Seller (user id:"+seller.getUserId().getId()+") added product(itemId:"+item.getId()+")");
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
   }
@@ -490,6 +497,7 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
     
     itemService.saveItem(item);
+    logger.info("com.bizbuzz.web.SellerController.editProductUpload: Seller (user id:"+seller.getUserId().getId()+") edited product(itemId:"+item.getId()+")");
     return "redirect:/seller/viewproduct/category/"+categoryId;
   }
   
@@ -543,6 +551,7 @@ public class SellerController {
     Person person = getSeller();
     CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
     categoryService.saveCustomCategory(parentCategory, categoryName, person, true, false);
+    logger.info("com.bizbuzz.web.SellerController.addCustomCategory: Seller (user id:"+person.getUserId().getId()+") added category(name:"+categoryName+")");
     return "redirect:/seller/viewcategory/category/"+parengCategoryId;
   }
   
@@ -551,6 +560,7 @@ public class SellerController {
     Person person = getSeller();
   //  CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
     categoryService.updateCustomCategory(parentCategoryId, categoryName, false, true);
+    logger.info("com.bizbuzz.web.SellerController.editCustomCategory: Seller (user id:"+person.getUserId().getId()+") edited to category(name:"+categoryName+")");
     return "redirect:/seller/viewcategory/category/"+parentCategoryId;
   }
   
