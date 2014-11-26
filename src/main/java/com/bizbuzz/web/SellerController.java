@@ -187,13 +187,10 @@ public class SellerController {
     }
     PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
     partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
-<<<<<<< HEAD
+    logger.info("com.bizbuzz.web.SellerController.editAGroup: Seller (user id:"+person.getUserId().getId()+") edited Private Group from "+oldPrivateGroup.getPrivateGroupName()+" to "+updatedPrivateGroup.getPrivateGroupName());
     ajaxReply.setPrivateGroupName(groupName);
     return ajaxReply;
-=======
-    logger.info("com.bizbuzz.web.SellerController.editAGroup: Seller (user id:"+person.getUserId().getId()+") edited Private Group from "+oldPrivateGroup.getPrivateGroupName()+" to "+updatedPrivateGroup.getPrivateGroupName());
-    return "redirect:/seller/viewgroup/"+oldGroupId;
->>>>>>> 30bc18480c0b56505ebff3711b53af1d5a23ace6
+    //return "redirect:/seller/viewgroup/"+oldGroupId;
   }
   
   @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
