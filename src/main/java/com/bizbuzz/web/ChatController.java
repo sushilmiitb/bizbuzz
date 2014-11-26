@@ -161,6 +161,7 @@ public class ChatController {
       throws JsonGenerationException, JsonMappingException, IOException {   
     ChatResponseDTO chatResponseDTO = new ChatResponseDTO();
     JSONObject jsonObject = JSONObject.fromObject(request);
+    
     String message = jsonObject.get("message").toString();
     Long personId = (long)jsonObject.get("personId").hashCode();
     Long chatRoomId = (long)jsonObject.get("chatroomId").hashCode();   

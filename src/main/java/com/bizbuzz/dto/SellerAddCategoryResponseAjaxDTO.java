@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SellerAddPrivateGroupResponseAjaxDTO {
-  private String privateGroupName;
-  private Long id;
+public class SellerAddCategoryResponseAjaxDTO {
+  private String categoryName;
+  private Long categoryId;
   private String response;
   Map<String, String> errors;
 
-  public String getPrivateGroupName() {
-    return privateGroupName;
+  
+  public String getCategoryName() {
+    return categoryName;
   }
 
-  public void setPrivateGroupName(String privateGroupName) {
-    this.privateGroupName = privateGroupName;
+  public void setCategoryName(String categoryName) {
+    this.categoryName = categoryName;
   }
 
   public Map<String, String> getErrors() {
@@ -25,15 +26,15 @@ public class SellerAddPrivateGroupResponseAjaxDTO {
   public void setErrors(Map<String, String> errors) {
     this.errors = errors;
   }
-
-  public Long getId() {
-    return id;
-  }
-
-  public void setId(Long id) {
-    this.id = id;
-  }
   
+  public Long getCategoryId() {
+    return categoryId;
+  }
+
+  public void setCategoryId(Long categoryId) {
+    this.categoryId = categoryId;
+  }
+
   public String getResponse() {
     return response;
   }

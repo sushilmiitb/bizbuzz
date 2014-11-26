@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.tags.form.HiddenInputTag;
 import javax.servlet.http.HttpSession;
 
 import com.bizbuzz.dto.PushNotificationContentDTO;
+import com.bizbuzz.dto.SellerAddCategoryResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
@@ -169,17 +171,23 @@ public class SellerController {
   }
 
   @RequestMapping(value="/seller/editgroup/{oldGroupId}", method = RequestMethod.POST)
-  public String editAGroup(@PathVariable final  Long oldGroupId, @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup, Model m){
+  @ResponseBody
+  public SellerAddPrivateGroupResponseAjaxDTO editAGroup(@PathVariable final Long oldGroupId, @RequestBody String request , @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup){
     Person person = getSeller();
+    SellerAddPrivateGroupResponseAjaxDTO ajaxReply = new SellerAddPrivateGroupResponseAjaxDTO();
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String groupName = jsonObject.getString("groupName");
+    updatedPrivateGroup.setPrivateGroupName(groupName);
     Map<String, String> errors = sellerValidator.validateAddPrivateGroup(updatedPrivateGroup, person);
     if(errors.size()>0){
-      m.addAttribute("privateGroup", updatedPrivateGroup);
-      m.addAttribute("errors", errors);
-      return "jsp/seller/viewsinglegroup";
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
     }
     PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
     partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
-    return "redirect:/seller/viewgroup/"+oldGroupId;
+    ajaxReply.setPrivateGroupName(groupName);
+    return ajaxReply;
   }
   
   @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
@@ -533,19 +541,46 @@ public class SellerController {
   }
   
   @RequestMapping(value="/seller/addcategory/category/{parengCategoryId}", method = RequestMethod.POST)
-  public String addCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
+  @ResponseBody
+  public SellerAddCategoryResponseAjaxDTO addCustomCategory(@PathVariable Long parengCategoryId,@RequestBody String request ){
     Person person = getSeller();
+    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
     CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = jsonObject.getString("categoryName");
+    Map<String, String> errors = sellerValidator.validateAddCategory(parengCategoryId,categoryName, person);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
+    }
+    
     categoryService.saveCustomCategory(parentCategory, categoryName, person, true);
-    return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+    ajaxReply.setCategoryName(categoryName);
+    ajaxReply.setCategoryId(parengCategoryId);
+    return ajaxReply;
+  //  return "redirect:/seller/viewcategory/category/"+parengCategoryId;
   }
   
   @RequestMapping(value="/seller/editcategory/category/{parengCategoryId}", method = RequestMethod.POST)
-  public String editCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
+  @ResponseBody
+  public SellerAddCategoryResponseAjaxDTO editCustomCategory(@PathVariable Long parengCategoryId, @RequestBody String request){
     Person person = getSeller();
+    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
   //  CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = jsonObject.getString("categoryName");
+    Map<String, String> errors = sellerValidator.validateAddCategory(parengCategoryId,categoryName, person);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
+    }
     categoryService.updateCategory(parengCategoryId, categoryName, true, true);
-    return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+    ajaxReply.setCategoryName(categoryName);
+    ajaxReply.setCategoryId(parengCategoryId);
+    return ajaxReply;
+  //  return "redirect:/seller/viewcategory/category/"+parengCategoryId;
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)

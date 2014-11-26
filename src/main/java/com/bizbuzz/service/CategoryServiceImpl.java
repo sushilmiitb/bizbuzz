@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.repository.CategoryTreeRepository;
@@ -125,6 +126,14 @@ public class CategoryServiceImpl implements CategoryService{
       children.set(i, createCategoryMap(children.get(i)));
     }
     return categoryTree;
+  }
+
+  public List<CategoryTree> getCategoriesByOwner(Person owner) {
+        return categoryTreeRepository.findByOwner(owner);
+  }
+
+  public List<CategoryTree> getCategoriesByAdmin() {
+    return categoryTreeRepository.findByIsCustom(false);
   }
 
 //  /**

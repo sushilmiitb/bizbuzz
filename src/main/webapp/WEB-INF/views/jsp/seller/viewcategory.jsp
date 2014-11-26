@@ -9,31 +9,40 @@
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
 		$(document).ready(function() {
-/*
+
 		 $('#seller_addcategory_form').submit(function(event) {
 		 	$('#addCategoryModal').modal('toggle');
 		 	
-			$.ajax({
-				url: $("#seller_addcategory_form").attr( "action"),
-				data: {categoryName:$('#seller_addcategory_catname').val()},
-				type: "POST",
+				var json = { "categoryName" : $('#seller_addcategory_catname').val()};
+				console.log("test", JSON.stringify(json));
+				$.ajax({
+					url: $("#seller_addcategory_form").attr( "action"),
+					data: JSON.stringify(json),
+					type: "POST",
 		
-			    success: function(data) {
-				 alert("data: " +data);
-				 $(".loader").remove();
-				 var response = data.response;
-				 if(response=="error"){
-				 	alert("error..");
-					return;
-				 }
-
-			 },
-			 error: function(){
-			 	$(".loader").remove();
-			 }
-			}); 
-			  event.preventDefault();
-		   });*/
+					beforeSend: function(xhr) {
+					xhr.setRequestHeader("Accept", "application/json");
+					xhr.setRequestHeader("Content-Type", "application/json");
+				},
+				success: function(data) {
+					$(".loader").remove();
+					var response = data.response;
+					if(response=="error"){
+						if(data.errors.duplicate_name !== undefined){
+							displayQuickNotification(data.errors.duplicate_name, 3000);
+						}
+						return;
+					}
+					//displayQuickNotification(data.categoryName, 3000);
+					var url = "/seller/viewcategory/category/"+data.categoryId;
+					window.location.assign(url);
+				},
+				error: function(){
+					$(".loader").remove();
+				}
+				}); 
+				event.preventDefault();
+		   });
 		});
 		</script>
 	</tiles:putAttribute>
@@ -86,7 +95,7 @@
 						<div class="modal-body">
 							<form method="POST" action="${add_category_url}/${parentCategory.id}"
 								id="seller_addcategory_form" class="form">
-								<label for="seller_addcategory_catname">Category Name</label>
+								<label for="seller_addcategory_catname_lable">Category Name</label>
 								<input class="form-control" name="categoryName"
 									id="seller_addcategory_catname" type="text" />
 								<input id="seller_addcategory_create"

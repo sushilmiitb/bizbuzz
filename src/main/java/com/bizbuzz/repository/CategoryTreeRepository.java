@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.Party;
 
 @Repository
 @Transactional
@@ -18,6 +19,14 @@ public interface CategoryTreeRepository extends JpaRepository<CategoryTree, Long
       + "where p.id=?1 "
       + "order by c.categoryName asc")
   List<CategoryTree> findByParentCategory(Long id);
+ /* 
+  @Query("select c "
+      + "from CategoryTree c inner join c.owner o "
+      + "where o.id=?1")*/
+  List<CategoryTree> findByOwner(Party owner);
+  List<CategoryTree> findByIsCustom(Boolean isCustom);
+  
+ // List<CategoryTree> findCategoriesByAdmin();
   
   @Query("select ch "
       + "from CategoryTree c inner join c.parentCategory p inner join c.childrenCategory ch "

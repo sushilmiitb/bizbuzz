@@ -10,11 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
+import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.repository.ConnectionRepository;
+import com.bizbuzz.service.CategoryService;
 import com.bizbuzz.service.ConnectionService;
 
 @Component
@@ -22,6 +24,9 @@ public class SellerValidator {
   
   @Autowired
   ConnectionService connectionService;
+  
+  @Autowired
+  CategoryService categoryService;
   
   @Autowired
   MessageSource messageSource;
@@ -44,6 +49,23 @@ public class SellerValidator {
     return errors;
   }
   
+  public Map<String, String> validateAddCategory(Long parentCategoryId, String categoryName, Person person){
+    Map<String, String> errors = new HashMap<String, String>();
+    //Checking duplication of groupname
+    
+    List<CategoryTree> categoyTreeList = categoryService.getCategoriesByOwner(person);
+    List<CategoryTree> categoryTreeListByAdmin = categoryService.getCategoriesByAdmin();
+    categoyTreeList.addAll(categoryTreeListByAdmin);
+    for(int i=0;i<categoyTreeList.size();i++){
+      if(categoryName.toLowerCase().equals(categoyTreeList.get(i).getCategoryName().toLowerCase())){
+        //errors.add(validateprivategroupsaveDuplicatename);
+        errors.put("duplicate_name", messageSource.getMessage("sellervalidator.validateaddcategory.duplicatename", null, "", null));
+        break;
+      }
+    }
+    return errors;
+  }
+  
   public Map<String, String> validateAddConnection(Party fromParty, Party toParty){
     Map<String, String> errors = new HashMap<String, String>();
     //Checking presence of toParty
@@ -59,6 +81,8 @@ public class SellerValidator {
     
     return errors;
   }
+  
+  
   
   public Map<String, String> validateEditConnectionChangeGroup(Party fromParty, Party toParty){
     Map<String, String> errors = new HashMap<String, String>();
