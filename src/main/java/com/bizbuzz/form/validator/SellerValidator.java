@@ -51,7 +51,7 @@ public class SellerValidator {
   
   public Map<String, String> validateAddCategory(Long parentCategoryId, String categoryName, Person person){
     Map<String, String> errors = new HashMap<String, String>();
-    //Checking duplication of groupname
+    //Checking duplication of categoryname
     
     List<CategoryTree> categoyTreeList = categoryService.getCategoriesByOwner(person);
     List<CategoryTree> categoryTreeListByAdmin = categoryService.getCategoriesByAdmin();
@@ -81,8 +81,6 @@ public class SellerValidator {
     
     return errors;
   }
-  
-  
   
   public Map<String, String> validateEditConnectionChangeGroup(Party fromParty, Party toParty){
     Map<String, String> errors = new HashMap<String, String>();
