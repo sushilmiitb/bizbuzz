@@ -53,7 +53,7 @@
 			value="/${rootDir}/${sizeDir}/noimage.${imageExtn}" />
 		<c:url var="add_category_url" value="/seller/addcategory/category"/>
 		<c:url var="addCategoryUrl"
-			value="/${rootDir}/${sizeDir}/uploadimage.${imageExtn}" />
+			value="/${rootDir}/${sizeDir}/addcategory.${imageExtn}" />
 		<div class="container" role="main">
 			<div class="row" id="maincontent">
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
