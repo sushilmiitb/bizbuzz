@@ -26,6 +26,9 @@
 			        success: function(data) {
 			        	$(".loader").remove();
 			        	$("#editModal").modal('hide');
+			        	$("#groupName a").html(data.groupName);
+			        	var base_group_url = "<c:url value='/seller/viewgroup/' />";
+			        	$("#groupName a").attr("href", base_group_url+data.groupId);
 			        },
 			        failure: function(){
 			        	$(".loader").remove();
@@ -62,7 +65,7 @@
 									</tr>
 									<tr>
 										<td>Group</td>
-										<td><a href="${base_group_url}${privateGroup.id}">${privateGroup.privateGroupName}</a></td>
+										<td id="groupName"><a href="${base_group_url}${privateGroup.id}">${privateGroup.privateGroupName}</a></td>
 									</tr>
 								</table>
 							</div>

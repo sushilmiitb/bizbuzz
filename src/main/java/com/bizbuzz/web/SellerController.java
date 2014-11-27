@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import net.sf.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import org.springframework.web.servlet.tags.form.HiddenInputTag;
 import javax.servlet.http.HttpSession;
 
 import com.bizbuzz.dto.PushNotificationContentDTO;
+import com.bizbuzz.dto.SellerAddCategoryResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
@@ -144,7 +146,7 @@ public class SellerController {
       return "redirect:/seller/viewgroup";
     }
     List<Person> groupMembers = connectionService.getGroupMembersByPrivateGroup(privateGroup);
-    m.addAttribute("groufpMembers", groupMembers);
+    m.addAttribute("groupMembers", groupMembers);
     m.addAttribute("privateGroup", privateGroup);
     return "jsp/seller/viewsinglegroup";
   }
@@ -170,18 +172,24 @@ public class SellerController {
   }
 
   @RequestMapping(value="/seller/editgroup/{oldGroupId}", method = RequestMethod.POST)
-  public String editAGroup(@PathVariable final  Long oldGroupId, @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup, Model m){
+  @ResponseBody
+  public SellerAddPrivateGroupResponseAjaxDTO editAGroup(@PathVariable final Long oldGroupId, @RequestBody String request , @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup){
     Person person = getSeller();
+    SellerAddPrivateGroupResponseAjaxDTO ajaxReply = new SellerAddPrivateGroupResponseAjaxDTO();
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String groupName = jsonObject.getString("groupName");
+    updatedPrivateGroup.setPrivateGroupName(groupName);
     Map<String, String> errors = sellerValidator.validateAddPrivateGroup(updatedPrivateGroup, person);
     if(errors.size()>0){
-      m.addAttribute("privateGroup", updatedPrivateGroup);
-      m.addAttribute("errors", errors);
-      return "jsp/seller/viewsinglegroup";
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
     }
     PrivateGroup oldPrivateGroup = connectionService.getPrivateGroupByPersonAndPrivateGroupId(person, oldGroupId);
     partyManagementService.updatePrivateGroup(oldPrivateGroup, updatedPrivateGroup);
     logger.info("com.bizbuzz.web.SellerController.editAGroup: Seller (user id:"+person.getUserId().getId()+") edited Private Group from "+oldPrivateGroup.getPrivateGroupName()+" to "+updatedPrivateGroup.getPrivateGroupName());
-    return "redirect:/seller/viewgroup/"+oldGroupId;
+    ajaxReply.setPrivateGroupName(groupName);
+    return ajaxReply;
   }
   
   @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
@@ -546,22 +554,49 @@ public class SellerController {
     return "jsp/seller/viewproduct";
   }
   
-  @RequestMapping(value="/seller/addcategory/category/{parengCategoryId}", method = RequestMethod.POST)
-  public String addCustomCategory(@PathVariable Long parengCategoryId, @RequestParam("categoryName") String categoryName){
+  @RequestMapping(value="/seller/addcategory/category/{parentCategoryId}", method = RequestMethod.POST)
+  @ResponseBody
+  public SellerAddCategoryResponseAjaxDTO addCustomCategory(@PathVariable Long parentCategoryId,@RequestBody String request ){
     Person person = getSeller();
-    CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
+    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
+    CategoryTree parentCategory = categoryService.getCategory(parentCategoryId);
+    
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = jsonObject.getString("categoryName");
+    Map<String, String> errors = sellerValidator.validateAddCategory(parentCategoryId,categoryName, person);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
+    }
+    
     categoryService.saveCustomCategory(parentCategory, categoryName, person, true, false);
+    ajaxReply.setCategoryName(categoryName);
+    ajaxReply.setCategoryId(parentCategoryId);
     logger.info("com.bizbuzz.web.SellerController.addCustomCategory: Seller (user id:"+person.getUserId().getId()+") added category(name:"+categoryName+")");
-    return "redirect:/seller/viewcategory/category/"+parengCategoryId;
+    return ajaxReply;
+  //  return "redirect:/seller/viewcategory/category/"+parengCategoryId;
   }
   
-  @RequestMapping(value="/seller/editcategory/category/{parentCategoryId}", method = RequestMethod.POST)
-  public String editCustomCategory(@PathVariable Long parentCategoryId, @RequestParam("categoryName") String categoryName){
+  @RequestMapping(value="/seller/editcategory/category/{categoryId}", method = RequestMethod.POST)
+  @ResponseBody
+  public SellerAddCategoryResponseAjaxDTO editCustomCategory(@PathVariable Long categoryId, @RequestBody String request){
     Person person = getSeller();
-  //  CategoryTree parentCategory = categoryService.getCategory(parengCategoryId);
-    categoryService.updateCustomCategory(parentCategoryId, categoryName, false, true);
+    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
+    JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = jsonObject.getString("categoryName");
+    CategoryTree categoryTree = categoryService.getCategory(categoryId);
+    Map<String, String> errors = sellerValidator.validateAddCategory(categoryTree.getParentCategory().getId(),categoryName, person);
+    if(errors.size()>0){
+      ajaxReply.setErrors(errors);
+      ajaxReply.setResponse("error");
+      return ajaxReply;
+    }
+    categoryService.updateCustomCategory(categoryId, categoryName, false, true);
+    ajaxReply.setCategoryName(categoryName);
+    ajaxReply.setCategoryId(categoryId);
     logger.info("com.bizbuzz.web.SellerController.editCustomCategory: Seller (user id:"+person.getUserId().getId()+") edited to category(name:"+categoryName+")");
-    return "redirect:/seller/viewcategory/category/"+parentCategoryId;
+    return ajaxReply;
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)

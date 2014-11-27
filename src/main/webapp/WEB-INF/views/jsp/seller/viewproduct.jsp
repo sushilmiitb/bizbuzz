@@ -7,6 +7,44 @@
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="customJsCode">
+	<script type="text/javascript">
+		
+		$(document).ready(function() {
+			
+			$('#seller_editcategory_form').submit(function(event) {
+				$('#editCategoryModal').modal('toggle');
+				var json = { "categoryName" : $('#seller_categoryname').val()};
+				console.log("test", JSON.stringify(json));
+				$.ajax({
+					url: $("#seller_editcategory_form").attr( "action"),
+					data: JSON.stringify(json),
+					type: "POST",
+		
+					beforeSend: function(xhr) {
+					xhr.setRequestHeader("Accept", "application/json");
+					xhr.setRequestHeader("Content-Type", "application/json");
+				},
+				success: function(data) {
+					$(".loader").remove();
+					var response = data.response;
+					if(response=="error"){
+						if(data.errors.duplicate_name !== undefined){
+							displayQuickNotification(data.errors.duplicate_name, 3000);
+						}
+						return;
+					}
+					$('#category_name').text(data.categoryName);
+				},
+				error: function(){
+					$(".loader").remove();
+				}
+				}); 
+				event.preventDefault();
+			});
+			 
+		});
+		
+		</script>
 	</tiles:putAttribute>
 
 	<tiles:putAttribute name="body">
@@ -25,7 +63,7 @@
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-1"></div>
 				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 no-padding">
 					<div class="panel panel-primary">
-						<div class="panel-heading center-align-text">${categoryTree.categoryName}</div>
+						<div class="panel-heading center-align-text" id="category_name">${categoryTree.categoryName}</div>
 						 <div class="panel-body">
 						 <c:forEach var="counter" begin="0" end="${totalItems}">
 						     <c:set var="displayImage" scope="page" />

@@ -9,10 +9,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.bizbuzz.model.CategoryTree;
+import com.bizbuzz.model.Party;
 
 @Repository
 @Transactional
 public interface CategoryTreeRepository extends JpaRepository<CategoryTree, Long>{
+  
+  List<CategoryTree> findByOwner(Party owner);
+  List<CategoryTree> findByIsCustom(Boolean isCustom);
+  
   @Query("select c "
       + "from CategoryTree c inner join c.parentCategory p "
       + "where p.id=?1 "

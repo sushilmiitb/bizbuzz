@@ -8,6 +8,41 @@
 
 	<tiles:putAttribute name="customJsCode">
 		<script type="text/javascript">
+		
+		$(document).ready(function() {
+			$('#seller_viewsinglegroup_form').submit(function(event) {
+				$('#editModal').modal('toggle');
+				var json = { "groupName" : $('#seller_viewsinglegroup_groupname').val()};
+				console.log("test", JSON.stringify(json));
+				$.ajax({
+					url: $("#seller_viewsinglegroup_form").attr( "action"),
+					data: JSON.stringify(json),
+					type: "POST",
+		
+					beforeSend: function(xhr) {
+					xhr.setRequestHeader("Accept", "application/json");
+					xhr.setRequestHeader("Content-Type", "application/json");
+				},
+				success: function(data) {
+					$(".loader").remove();
+					var response = data.response;
+					if(response=="error"){
+						if(data.errors.duplicate_name !== undefined){
+							displayQuickNotification(data.errors.duplicate_name, 3000);
+						}
+						return;
+					}
+					$('#group_name').text(data.privateGroupName);
+				},
+				error: function(){
+					$(".loader").remove();
+				}
+				}); 
+				event.preventDefault();
+			});
+			 
+		});
+		
 		</script>
 	</tiles:putAttribute>
 
@@ -21,7 +56,7 @@
 				<div class="hidden-xs hidden-sm col-md-1 col-lg-2"></div>
 				<div class="col-xs-12 col-sm-12 col-md-10 col-lg-8">
 					<div class="panel panel-primary">
-						<div class="panel-heading center-align-text">${privateGroup.privateGroupName}</div>
+						<div class="panel-heading center-align-text" id="group_name">${privateGroup.privateGroupName}</div>
 						<div class="panel-body">
 							<div class="row">
 								<div class="col-xs-12 col-xm-12 col-md-12 col-lg-12">
@@ -89,16 +124,16 @@
 										class="btn btn-primary btn-block" type="submit"
 										value="Change Group Name" />
 								</form:form>
-								<br />
+				<!--				<br />
 								<hr>
 								<br />
-								<form:form method="GET" action="${delete_url}"
+				  				<form:form method="GET" action="${delete_url}"
 									id="seller_viewsinglegroup_deleteform">
 									<input id="seller_viewsinglegroup_delete"
 										class="btn btn-danger btn-block" type="submit"
 										value="Delete Group" />
-								</form:form>
-							</div>
+								</form:form>                         -->
+							</div> 
 						</div>
 					</div>
 				</div>

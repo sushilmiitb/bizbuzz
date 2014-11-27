@@ -258,7 +258,7 @@ public class RegistrationController {
   }
   
   @RequestMapping(value="/register/deviceregistration", method = RequestMethod.POST)
-  public String getRegistationIdFromAndroidDevice(@RequestParam Map<String, String> allRequestParams){
+   public String getRegistationIdFromAndroidDevice(@RequestParam Map<String, String> allRequestParams){
     String username =allRequestParams.get("username").trim();
     String deviceRegistrationId = allRequestParams.get("regId");
     Person person = partyManagementService.getPersonFromUsername("+" +username);
