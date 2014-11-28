@@ -15,6 +15,7 @@ import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.RegisterDevice;
 
 @Repository
 @Transactional
@@ -57,6 +58,13 @@ public interface ConnectionRepository extends JpaRepository<Connection, Long>{
       + "order by p.firstName asc")
   List<Person> findPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
  
+  @Query("select r from "
+      + "Connection c inner join c.toParty p inner join p.registerDevice r "
+      + "where c.fromPartyId=?1 and "
+      + "c.connectionType=?2 "
+      + "order by p.firstName asc")
+  List<RegisterDevice> findRegisterDeviceOfPersonByFromPartyIdAndConnectionTypeOrderByFirstName(Long fromPartyId, ConnectionType connectionType);
+  
   @Query("select c from "
       + "Connection c inner join c.fromParty p "
       + "where c.toPartyId=?1 and "

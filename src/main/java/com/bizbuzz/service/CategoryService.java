@@ -22,8 +22,6 @@ public interface CategoryService {
   //public List<PropertyMetadata> getPropertyMetadatas(Long categoryId);
   //public void savePropertyMetadatas(List<PropertyMetadata> propertyMetadatas, CategoryTree category);
   //public void updatePropertyMetadatas(List<PropertyMetadata> propertyMetadatas);
-  public List<CategoryTree> getCategoriesByOwner(Person owner);
-  public List<CategoryTree> getCategoriesByAdmin();
   public List<CategoryTree> getCategories(Person seller, Integer depth, Long categoryId);
   //public Map<String, Map<String, Map<String, PropertyMetadata>>> organizeMetadata(List<PropertyMetadata> properties);
   

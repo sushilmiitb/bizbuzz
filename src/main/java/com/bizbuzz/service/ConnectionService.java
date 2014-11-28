@@ -9,6 +9,7 @@ import com.bizbuzz.model.Connection;
 import com.bizbuzz.model.Party;
 import com.bizbuzz.model.Person;
 import com.bizbuzz.model.PrivateGroup;
+import com.bizbuzz.model.RegisterDevice;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.model.Connection.ConnectionType;
 
@@ -20,6 +21,7 @@ public interface ConnectionService {
   public PrivateGroup getPrivateGroupByPersonAndPrivateGroupId(Person person, Long groupId);
   public void deletePrivateGroupGroupMembersConnection(PrivateGroup privateGroup);
   public List<Person> getAllSellersConnections(Person seller);
+  public List<RegisterDevice> getRegisterDeviceOfPersonOfSellerConnections(Person seller); 
   public List<Connection> getAllBuyersConnection(Person buyer);
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMember(Party groupOwner, Party groupMember);
   public PrivateGroup getPrivateGroupByGroupOwnerAndGroupMemberWithToParties(Party groupOwner, Party groupMember);

@@ -15,6 +15,7 @@ import com.bizbuzz.model.Party;
 import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.Connection.ConnectionType;
 import com.bizbuzz.model.Person;
+import com.bizbuzz.model.RegisterDevice;
 import com.bizbuzz.model.UserLogin;
 import com.bizbuzz.repository.CompanyRepository;
 import com.bizbuzz.repository.ConnectionRepository;
@@ -122,6 +123,11 @@ public class ConnectionServiceImpl implements ConnectionService {
       map.put(list.get(i).getId(), list.get(i));
     }
     return map;
+  }
+
+  @Override
+  public List<RegisterDevice> getRegisterDeviceOfPersonOfSellerConnections(Person seller) {
+    return connectionRepository.findRegisterDeviceOfPersonByFromPartyIdAndConnectionTypeOrderByFirstName(seller.getId(), ConnectionType.SELLER_BUYER);
   }
   
 }

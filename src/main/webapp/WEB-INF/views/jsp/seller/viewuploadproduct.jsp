@@ -22,8 +22,27 @@
 				$(".second").prop("checked",$("#selectall").prop("checked"));
 			});
 			
-			$('.productuploadform').submit(function onsubmit(event){
+			$('.productuploadform').submit(function onsubmit(event){	
+				var submitFlag=false;
 				$('.imageuploadinput').val('');
+				$('.properties').find('input[type=text]').each(function() {
+					var lengthOfInputField =  $(this).val();
+					if(lengthOfInputField.length>0){
+						submitFlag=true;
+					}		
+				});
+				$('.thumbnail').each(function(){
+					alert($(this).attr("src"));
+				});
+				alert(submitFlag);
+				if(!submitFlag){
+					event.preventDefault();
+					$(".loader").remove();
+					displayQuickNotification("Minimum one property should be filled", 3000);     
+				}
+				else{
+					return true;
+				}
 			});
 			
 			var ua = navigator.userAgent.toLowerCase();   
@@ -364,7 +383,7 @@
 											<div class="panel panel-default">
 												<div class="panel-heading">${group.name}</div>
 												<div class="panel-body">
-													<div class="row">
+													<div class="row properties" >
 														<c:forEach var="subgroup"
 															items="${group.propertySubGroups}" varStatus="j">
 															<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">

@@ -21,7 +21,7 @@ import com.bizbuzz.dto.AdminAddCategoryRequestAjaxDTO;
 import com.bizbuzz.dto.AdminAddCategoryResponseAjaxDTO;
 import com.bizbuzz.dto.AdminSavePropertyMetaDataRequestAjaxDTO;
 import com.bizbuzz.dto.GeneralAjaxRequestDTO;
-import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
+import com.bizbuzz.dto.SellerAddPrivateGroupAjaxDTO;
 import com.bizbuzz.dto.GeneralAjaxResponseDTO;
 import com.bizbuzz.model.CategoryTree;
 import com.bizbuzz.model.Person;

@@ -136,14 +136,6 @@ public class CategoryServiceImpl implements CategoryService{
     return categoryTree;
   }
 
-  public List<CategoryTree> getCategoriesByOwner(Person owner) {
-        return categoryTreeRepository.findByOwner(owner);
-  }
-
-  public List<CategoryTree> getCategoriesByAdmin() {
-    return categoryTreeRepository.findByIsCustom(false);
-  }
-
 //  /**
 //   * This functin returns properties in form of map. Here we are assuming two level grouping of PropertyMetadata
 //   * @param properties

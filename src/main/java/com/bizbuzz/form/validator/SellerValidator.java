@@ -53,11 +53,11 @@ public class SellerValidator {
     Map<String, String> errors = new HashMap<String, String>();
     //Checking duplication of categoryname
     
-    List<CategoryTree> categoyTreeList = categoryService.getCategoriesByOwner(person);
-    List<CategoryTree> categoryTreeListByAdmin = categoryService.getCategoriesByAdmin();
-    categoyTreeList.addAll(categoryTreeListByAdmin);
-    for(int i=0;i<categoyTreeList.size();i++){
-      if(categoryName.toLowerCase().equals(categoyTreeList.get(i).getCategoryName().toLowerCase())){
+    List<CategoryTree> categoryTreeListByCustom = categoryService.getCustomCategories(parentCategoryId, person.getId());
+    List<CategoryTree> categoryTreeListByAdmin = categoryService.getAdminCategories(parentCategoryId);
+    categoryTreeListByCustom.addAll(categoryTreeListByAdmin);
+    for(int i=0;i<categoryTreeListByCustom.size();i++){
+      if(categoryName.toLowerCase().equals(categoryTreeListByCustom.get(i).getCategoryName().toLowerCase())){
         //errors.add(validateprivategroupsaveDuplicatename);
         errors.put("duplicate_name", messageSource.getMessage("sellervalidator.validateaddcategory.duplicatename", null, "", null));
         break;
