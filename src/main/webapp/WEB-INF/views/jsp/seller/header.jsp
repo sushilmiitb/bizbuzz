@@ -11,7 +11,7 @@
    		<div>
    			<a class="header-nav-item" href="<c:url value='/seller/viewcategory/category/-1'/>" >Product</a>
    			<a class="header-nav-item" href="<c:url value='/seller/viewcontacts'/>" >Contact</a>
-   			<a class="header-nav-item" href="<c:url value='/j_spring_security_logout'/>" >Logout</a>
+<%--    			<a class="header-nav-item" href="<c:url value='/j_spring_security_logout'/>" >Logout</a> --%>
    		</div>
    </div>
 </nav>

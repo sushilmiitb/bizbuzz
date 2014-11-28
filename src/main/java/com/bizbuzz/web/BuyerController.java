@@ -244,7 +244,8 @@ public class BuyerController {
     
     Item item = itemService.getItemByItemIdAndOwnerAndBuyerWithImageModelsAndPropertyValues(itemId, sellerId, buyer.getId());
     
-    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(item.getItemCategory().getId());
+    CategoryTree metadataCategory = categoryService.getCategoryThatHasNearestMetadata(item.getItemCategory());
+    PropertyMetadata propertyMetadata = propertyService.getPropertyMetadata(metadataCategory.getId());
     m.addAttribute("propertyMetadata", propertyMetadata);
     
     Map<Long, PropertyValue> propertyValueMap = propertyService.getPropertyValuesMappedByPropertyField(item.getPropertyValues());

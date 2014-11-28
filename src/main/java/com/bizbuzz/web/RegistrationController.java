@@ -249,7 +249,7 @@ public class RegistrationController {
         }
         if(authorityString.equals("ROLE_ADMIN")){
           session.setAttribute("userRole", "admin");
-          logger.info("com.bizbuzz.web.RegistrationController.getRoleHome: Login successful for admin with userid:"+person.getUserId().getId());
+          logger.info("com.bizbuzz.web.RegistrationController.getRoleHome: Login successful for admin");
           return "redirect:/admin/home/";
         }
       }

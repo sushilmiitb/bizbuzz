@@ -268,7 +268,7 @@ public class SellerController {
       //Message will be sent through validator that registration request has been sent
       SmsSender smsSender = new SmsSender(request.getUserId(), seller.getFirstName() +" invites you to connect with him on InstaTrade. " +
       		" Go to " + 
-      		" https://play.google.com/store/apps/details?id=com.bizbuzz.cordova.Frotal&hl=en" +
+      		" https://play.google.com/store/apps/details?id=com.bizbuzz.instatrade " +
       		" and install it . ");
       smsSender.sendSms();
     }
