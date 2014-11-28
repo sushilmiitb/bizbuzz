@@ -367,7 +367,7 @@
 													<div class="row">
 														<c:forEach var="subgroup"
 															items="${group.propertySubGroups}" varStatus="j">
-															<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+															<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 no-padding">
 																<h3>${subgroup.name}</h3>
 																<table>
 																	<c:forEach var="field"
@@ -375,24 +375,24 @@
 																		<c:choose>
 																			<c:when test="${not empty newItem}">
 																				<tr>
-																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6 no-padding"><label>${field.value}</label></td>
 																					<input type="hidden"
 																						name="fieldIds[${value_count}]"
 																						value="${field.id}" />
-																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
-																						name="values[${value_count}]" value="" type="text" /></td>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6 no-padding"><input
+																						style="width:100%;" name="values[${value_count}]" value="" type="text" /></td>
 																					<c:set var="value_count" value="${value_count + 1}"
 																						scope="page" />
 																				</tr>
 																			</c:when>
 																			<c:otherwise>
 																				<tr>
-																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><label>${field.value}</label></td>
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6 no-padding"><label>${field.value}</label></td>
 																					<input type="hidden"
 																						name="valueIds[${value_count}]"
 																						value="${propertyValueMap[field.id].id}" />
-																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6"><input
-																						name="values[${value_count}]"
+																					<td class="col-xs-6 col-sm-6 col-md-6 col-lg-6 no-padding"><input
+																						style="width:100%;" name="values[${value_count}]"
 																						value="${propertyValueMap[field.id].value}"
 																						type="text" /></td>
 																					<c:set var="value_count" value="${value_count + 1}"

@@ -3,6 +3,10 @@ body {
 	padding-bottom: 30px;
 }
 
+h4{
+	font-size: 1em !important;
+}
+
 label {
 	display: inline-block;
 	margin-bottom: 5px;
