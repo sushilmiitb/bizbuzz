@@ -37,8 +37,8 @@ import org.springframework.web.servlet.tags.form.HiddenInputTag;
 import javax.servlet.http.HttpSession;
 
 import com.bizbuzz.dto.PushNotificationContentDTO;
-import com.bizbuzz.dto.SellerAddCategoryResponseAjaxDTO;
-import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
+import com.bizbuzz.dto.SellerAddCategoryAjaxDTO;
+import com.bizbuzz.dto.SellerAddPrivateGroupAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
 import com.bizbuzz.dto.SellerAddConnectionResponseAjaxDTO;
 import com.bizbuzz.dto.SellerEditConnectionChangeGroupRequestAjaxDTO;
@@ -58,6 +58,7 @@ import com.bizbuzz.model.PrivateGroup;
 import com.bizbuzz.model.PropertyField;
 import com.bizbuzz.model.PropertyMetadata;
 import com.bizbuzz.model.PropertyValue;
+import com.bizbuzz.model.RegisterDevice;
 import com.bizbuzz.model.RegisterRequest;
 import com.bizbuzz.repository.RegisterRequestsRepository;
 import com.bizbuzz.service.CategoryService;
@@ -153,7 +154,7 @@ public class SellerController {
   
   @RequestMapping(value="/seller/addgroup", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public SellerAddPrivateGroupResponseAjaxDTO addPrivateGroup(@RequestBody SellerAddPrivateGroupResponseAjaxDTO privateGroupDTO){
+  public SellerAddPrivateGroupAjaxDTO addPrivateGroup(@RequestBody SellerAddPrivateGroupAjaxDTO privateGroupDTO){
 
     //SellerValidator sellerValidator = new SellerValidator();
     PrivateGroup privateGroup = new PrivateGroup();
@@ -173,9 +174,9 @@ public class SellerController {
 
   @RequestMapping(value="/seller/editgroup/{oldGroupId}", method = RequestMethod.POST)
   @ResponseBody
-  public SellerAddPrivateGroupResponseAjaxDTO editAGroup(@PathVariable final Long oldGroupId, @RequestBody String request , @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup){
+  public SellerAddPrivateGroupAjaxDTO editAGroup(@PathVariable final Long oldGroupId, @RequestBody String request , @ModelAttribute("privateGroup") PrivateGroup updatedPrivateGroup){
     Person person = getSeller();
-    SellerAddPrivateGroupResponseAjaxDTO ajaxReply = new SellerAddPrivateGroupResponseAjaxDTO();
+    SellerAddPrivateGroupAjaxDTO ajaxReply = new SellerAddPrivateGroupAjaxDTO();
     JSONObject jsonObject = JSONObject.fromObject(request);
     String groupName = jsonObject.getString("groupName");
     updatedPrivateGroup.setPrivateGroupName(groupName);
@@ -190,6 +191,7 @@ public class SellerController {
     logger.info("com.bizbuzz.web.SellerController.editAGroup: Seller (user id:"+person.getUserId().getId()+") edited Private Group from "+oldPrivateGroup.getPrivateGroupName()+" to "+updatedPrivateGroup.getPrivateGroupName());
     ajaxReply.setPrivateGroupName(groupName);
     return ajaxReply;
+    //return "redirect:/seller/viewgroup/"+oldGroupId;
   }
   
   @RequestMapping(value="/seller/deletegroup/{groupId}", method = RequestMethod.GET)
@@ -440,16 +442,18 @@ public class SellerController {
     itemService.populateItemWithSharedPrivateGroups(item, privateGroupMap, uploadForm.getShare());
  
     itemService.saveItem(item);
-    List<Person> allContacts = connectionService.getAllSellersConnections(seller);
+    List<RegisterDevice> allContactsRegisterDevice = connectionService.getRegisterDeviceOfPersonOfSellerConnections(seller);
     
-    PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
-    for(Person person : allContacts){
-      if(person.getRegisterDevice()!=null)
-          notificationContent.addDeviceRegId(person.getRegisterDevice().getDeviceRegistrationId());
+    if(allContactsRegisterDevice!=null){
+      PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
+      for(RegisterDevice rd : allContactsRegisterDevice){
+        if(rd.getDeviceRegistrationId()!=null)
+            notificationContent.addDeviceRegId(rd.getDeviceRegistrationId());
+      }
+      notificationContent.createData("InstaTrade", seller.getFirstName() +" adds new item which you can see now.");
+      GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
+      notifObj.push();
     }
-    notificationContent.createData("InstaTrade", seller.getFirstName() +" add new item which you can see now.");
-    GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
-    notifObj.push();
     logger.info("com.bizbuzz.web.SellerController.saveProductUpload: Seller (user id:"+seller.getUserId().getId()+") added product(itemId:"+item.getId()+")");
     return "redirect:/seller/viewproduct/category/"+categoryId;
     //return "redirect:/seller/uploadproduct/category/"+categoryId+"/item/"+item.getId();
@@ -554,49 +558,47 @@ public class SellerController {
     return "jsp/seller/viewproduct";
   }
   
-  @RequestMapping(value="/seller/addcategory/category/{parentCategoryId}", method = RequestMethod.POST)
+  @RequestMapping(value="/seller/addcategory/category/{parentCategoryId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public SellerAddCategoryResponseAjaxDTO addCustomCategory(@PathVariable Long parentCategoryId,@RequestBody String request ){
+  public SellerAddCategoryAjaxDTO addCustomCategory(@PathVariable Long parentCategoryId,@RequestBody SellerAddCategoryAjaxDTO categoryTreeDTO ){
     Person person = getSeller();
-    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
+  //  SellerAddCategoryAjaxDTO ajaxReply = new SellerAddCategoryAjaxDTO();
     CategoryTree parentCategory = categoryService.getCategory(parentCategoryId);
-    
-    JSONObject jsonObject = JSONObject.fromObject(request);
-    String categoryName = jsonObject.getString("categoryName");
+  //  JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = categoryTreeDTO.getCategoryName();
     Map<String, String> errors = sellerValidator.validateAddCategory(parentCategoryId,categoryName, person);
     if(errors.size()>0){
-      ajaxReply.setErrors(errors);
-      ajaxReply.setResponse("error");
-      return ajaxReply;
+      categoryTreeDTO.setErrors(errors);
+      categoryTreeDTO.setResponse("error");
+      return categoryTreeDTO;
     }
-    
     categoryService.saveCustomCategory(parentCategory, categoryName, person, true, false);
-    ajaxReply.setCategoryName(categoryName);
-    ajaxReply.setCategoryId(parentCategoryId);
     logger.info("com.bizbuzz.web.SellerController.addCustomCategory: Seller (user id:"+person.getUserId().getId()+") added category(name:"+categoryName+")");
-    return ajaxReply;
+    categoryTreeDTO.setCategoryName(categoryName);
+    categoryTreeDTO.setCategoryId(parentCategoryId);
+    return categoryTreeDTO;
   //  return "redirect:/seller/viewcategory/category/"+parengCategoryId;
   }
-  
-  @RequestMapping(value="/seller/editcategory/category/{categoryId}", method = RequestMethod.POST)
+
+  @RequestMapping(value="/seller/editcategory/category/{categoryId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
   @ResponseBody
-  public SellerAddCategoryResponseAjaxDTO editCustomCategory(@PathVariable Long categoryId, @RequestBody String request){
+  public SellerAddCategoryAjaxDTO editCustomCategory(@PathVariable Long categoryId, @RequestBody SellerAddCategoryAjaxDTO categoryTreeDTO){
     Person person = getSeller();
-    SellerAddCategoryResponseAjaxDTO ajaxReply = new SellerAddCategoryResponseAjaxDTO();
-    JSONObject jsonObject = JSONObject.fromObject(request);
-    String categoryName = jsonObject.getString("categoryName");
+   // SellerAddCategoryAjaxDTO ajaxReply = new SellerAddCategoryAjaxDTO();
+   // JSONObject jsonObject = JSONObject.fromObject(request);
+    String categoryName = categoryTreeDTO.getCategoryName();
     CategoryTree categoryTree = categoryService.getCategory(categoryId);
     Map<String, String> errors = sellerValidator.validateAddCategory(categoryTree.getParentCategory().getId(),categoryName, person);
     if(errors.size()>0){
-      ajaxReply.setErrors(errors);
-      ajaxReply.setResponse("error");
-      return ajaxReply;
+      categoryTreeDTO.setErrors(errors);
+      categoryTreeDTO.setResponse("error");
+      return categoryTreeDTO;
     }
     categoryService.updateCustomCategory(categoryId, categoryName, false, true);
-    ajaxReply.setCategoryName(categoryName);
-    ajaxReply.setCategoryId(categoryId);
+    categoryTreeDTO.setCategoryName(categoryName);
+    categoryTreeDTO.setCategoryId(categoryId);
     logger.info("com.bizbuzz.web.SellerController.editCustomCategory: Seller (user id:"+person.getUserId().getId()+") edited to category(name:"+categoryName+")");
-    return ajaxReply;
+    return categoryTreeDTO;
   }
   
   @RequestMapping(value="/seller/viewproduct/item/{itemId}", method=RequestMethod.GET)

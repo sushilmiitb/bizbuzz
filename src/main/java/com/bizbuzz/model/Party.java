@@ -70,7 +70,7 @@ public abstract class Party implements Serializable{
   @JoinColumn(name="category_root", referencedColumnName="id")
   private CategoryTree categoryRoot;
   
-  @OneToOne(mappedBy="party")
+  @OneToOne(mappedBy="party", fetch = FetchType.LAZY)
   private RegisterDevice registerDevice;
 
   @ManyToMany(mappedBy="sharedToParties", fetch = FetchType.LAZY)

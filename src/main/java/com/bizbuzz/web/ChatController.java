@@ -92,7 +92,7 @@ import com.bizbuzz.dto.Message;
 import com.bizbuzz.dto.NoOfUnreadMessagesWithPersonIdDTO;
 import com.bizbuzz.dto.PushNotificationContentDTO;
 import com.bizbuzz.dto.SellerAddConnectionRequestAjaxDTO;
-import com.bizbuzz.dto.SellerAddPrivateGroupResponseAjaxDTO;
+import com.bizbuzz.dto.SellerAddPrivateGroupAjaxDTO;
 import com.bizbuzz.dto.SortedMixedChatsForChatRoomDTO;
 
 import org.springframework.web.bind.annotation.RequestParam;

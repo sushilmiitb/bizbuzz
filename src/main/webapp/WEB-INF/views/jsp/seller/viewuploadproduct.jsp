@@ -17,13 +17,30 @@
 		var compressionRatio = 0.7;
 		var imageIndex;
 		var CameraAndroidObj;
+		var imageUploadFlag=false;
 		$(document).ready(function(){
 			$("#selectall").click(function(){
 				$(".second").prop("checked",$("#selectall").prop("checked"));
 			});
 			
-			$('.productuploadform').submit(function onsubmit(event){
+			$('.productuploadform').submit(function onsubmit(event){	
+				var submitFlag=false;
 				$('.imageuploadinput').val('');
+				$('.properties').find('input[type=text]').each(function() {
+					var lengthOfInputField =  $(this).val();
+					if(lengthOfInputField.length>0){
+						submitFlag=true;
+					}		
+				});
+				
+				if(!submitFlag || !imageUploadFlag){
+					event.preventDefault();
+					$(".loader").remove();
+					displayQuickNotification("Product information and image should be filled.", 3000);     
+				}
+				else{
+					return true;
+				}
 			});
 			
 			var ua = navigator.userAgent.toLowerCase();   
@@ -58,13 +75,14 @@
 						newinput = input[0];
 						newinput.value = imageData;
 					}
-					else{
+					else{    
 						newinput = document.createElement("input");
 						newinput.type = 'hidden';
 						newinput.name = "imagesHidden["+imageIndex+"]";
 						newinput.id = "images"+"Hidden_"+imageIndex;
 						newinput.value = imageData; // put result from canvas into new hidden input
 						$('.productuploadform').append(newinput);
+						imageUploadFlag=true;
 					}
 					$("#thumbnail_images"+"_"+imageIndex).attr("src", imageData);
 				};
@@ -166,6 +184,7 @@
 								$(form).append(newinput);
 								//putting image into thumbnail
 								$("#thumbnail_"+nameArray[0]+"_"+index[0]).attr("src", resized);
+								imageUploadFlag=true;
 							}
 						};
 					}
@@ -364,7 +383,7 @@
 											<div class="panel panel-default">
 												<div class="panel-heading">${group.name}</div>
 												<div class="panel-body">
-													<div class="row">
+													<div class="row properties" >
 														<c:forEach var="subgroup"
 															items="${group.propertySubGroups}" varStatus="j">
 															<div class="col-xs-12 col-sm-6 col-md-4 col-lg-4 no-padding">
