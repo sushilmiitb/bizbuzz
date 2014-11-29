@@ -141,7 +141,7 @@ input.error {
 	height: 100%;
 	z-index: 9999;
 	background: url('/static/css/images/icons/loader.gif') 50% 50% no-repeat
-		rgba(0, 0, 0, 0.1);
+		rgba(0, 0, 0, 0.4);
 }
 .no-padding{
 	padding:0px;
