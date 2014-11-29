@@ -33,7 +33,7 @@
 					}		
 				});
 				
-				if(!submitFlag || !imageUploadFlag){
+				if(!submitFlag && !imageUploadFlag){
 					event.preventDefault();
 					$(".loader").remove();
 					displayQuickNotification("Product information and image should be filled.", 3000);     
