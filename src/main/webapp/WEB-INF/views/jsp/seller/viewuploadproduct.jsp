@@ -17,6 +17,7 @@
 		var compressionRatio = 0.7;
 		var imageIndex;
 		var CameraAndroidObj;
+		var imageUploadFlag=false;
 		$(document).ready(function(){
 			$("#selectall").click(function(){
 				$(".second").prop("checked",$("#selectall").prop("checked"));
@@ -31,14 +32,11 @@
 						submitFlag=true;
 					}		
 				});
-				$('.thumbnail').each(function(){
-					alert($(this).attr("src"));
-				});
-				alert(submitFlag);
-				if(!submitFlag){
+				
+				if(!submitFlag || !imageUploadFlag){
 					event.preventDefault();
 					$(".loader").remove();
-					displayQuickNotification("Minimum one property should be filled", 3000);     
+					displayQuickNotification("Product information and image should be filled.", 3000);     
 				}
 				else{
 					return true;
@@ -77,13 +75,14 @@
 						newinput = input[0];
 						newinput.value = imageData;
 					}
-					else{
+					else{    
 						newinput = document.createElement("input");
 						newinput.type = 'hidden';
 						newinput.name = "imagesHidden["+imageIndex+"]";
 						newinput.id = "images"+"Hidden_"+imageIndex;
 						newinput.value = imageData; // put result from canvas into new hidden input
 						$('.productuploadform').append(newinput);
+						imageUploadFlag=true;
 					}
 					$("#thumbnail_images"+"_"+imageIndex).attr("src", imageData);
 				};
@@ -185,6 +184,7 @@
 								$(form).append(newinput);
 								//putting image into thumbnail
 								$("#thumbnail_"+nameArray[0]+"_"+index[0]).attr("src", resized);
+								imageUploadFlag=true;
 							}
 						};
 					}
