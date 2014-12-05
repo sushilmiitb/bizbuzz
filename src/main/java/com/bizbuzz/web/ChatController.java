@@ -247,14 +247,15 @@ public class ChatController {
         if(person.getId().longValue()!=member.getId().longValue()){
           RegisterDevice registerDevice = registerDeviceService.getRegisterDeviceByPartyId(member.getId().longValue());
           Broadcaster receiverBroadcaster = BroadcasterFactory.getDefault().lookup("/"+member.getId());
-          if(receiverBroadcaster==null){ 
+//          if(receiverBroadcaster==null){ 
             logger.info("Sending POST to GCM...");
             PushNotificationContentDTO notificationContent = new PushNotificationContentDTO();
             notificationContent.addDeviceRegId(registerDevice.getDeviceRegistrationId());
             notificationContent.createData("InstaTrade",chatSenderName +" messages you");
             GcmPushNotificationToDevice notifObj = new GcmPushNotificationToDevice(notificationContent);
             notifObj.push();
-          }
+//          }
+if(receiverBroadcaster==null){}            
           else{
             receiverBroadcaster.broadcast(objectMapper.writeValueAsString(chatResponseDTO));
           }
