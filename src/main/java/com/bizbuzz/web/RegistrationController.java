@@ -125,6 +125,11 @@ public class RegistrationController {
     personRegistration.setCountryCodeDTO(countryCodeDTO); 
     m.addAttribute("personRegistration", personRegistration);
     m.addAttribute("companyRoleList", partyManagementService.getListOfCompanyRole());
+    
+    List<String> industryList = new ArrayList<String> ();
+    industryList.add("sarees");
+    industryList.add("jewellery");
+    m.addAttribute("industryList", industryList);
     logger.info("register/personregistration");
     // m.addAttribute("countryCodeList", partyManagementService.getListOfCountryCodes());
     return "jsp/register/personregistration";
@@ -146,7 +151,7 @@ public class RegistrationController {
     partyManagementService.saveUserLogin(personRegistration.getUserLogin(), personRegistration.getCompany().getCompanyRole().toLowerCase());
     personRegistration.getPerson().setUserId(personRegistration.getUserLogin());
     Person person = personRegistration.getPerson();
-    Long categoryId = Long.parseLong(HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), "sarees").get(0));
+    Long categoryId = Long.parseLong(HelperFunctions.retrieveResourcesAppConatants(getClass().getResourceAsStream("/application/AppConstants.xml"), personRegistration.getIndustry()).get(0));
     CategoryTree categoryRoot = categoryService.getCategory(categoryId);
     person.setCategoryRoot(categoryRoot);
     partyManagementService.savePerson(personRegistration.getPerson());

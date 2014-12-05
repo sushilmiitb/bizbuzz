@@ -12,6 +12,7 @@ public class RegistrationPersonRegistrationFormDTO {
   private UserLogin userLogin;
   private PhoneNumber phoneNumber;
   private CountryCodeDTO countryCodeDTO;
+  private String industry;
   
   public Company getCompany() {
     return company;
@@ -43,6 +44,12 @@ public class RegistrationPersonRegistrationFormDTO {
   }
   public void setCountryCodeDTO(CountryCodeDTO countryCodeDTO) {
     this.countryCodeDTO = countryCodeDTO;
+  }
+  public String getIndustry() {
+    return industry;
+  }
+  public void setIndustry(String industry) {
+    this.industry = industry;
   }
   
 }

@@ -173,7 +173,8 @@
 					emptyErrorDisplay($('#register_personregistration_companyname'), "Company name cannot be empty");
 					//emptyErrorDisplay($('#register_personregistration_contactnumber'), "Contact number cannot be empty");
 					companyRoleFormCheckErrorDisplay("Please select a user type");
-					noneSelectErrorDisplay($('#register_personregistration_countrycode'), "Please select a country code");
+					//noneSelectErrorDisplay($('#register_personregistration_countrycode'), "Please select a country code");
+					noneSelectErrorDisplay($('#register_personregistration_industry'), "Please select your operating industry");
 					//invalidEmailErrorDisplay($('#register_personregistration_email'), "Please enter a valid email address");
 					passwordMisMatchErrorDisplay($('#register_personregistration_repassword'), $('#register_personregistration_password'), "Password mismatch");
 					//invalidPhoneErrorDisplay($('#register_personregistration_contactnumber'), "Please enter a valid phone number");
@@ -309,7 +310,14 @@
 		<%-- 							<form:option value="${item}">${item}</form:option> --%>
 		<%-- 						</c:forEach> --%>
 		<%-- 					</form:select> --%>
-							
+		
+							<form:label path="industry" for="register_personregistration_industry" class="select">Industry</form:label>
+							<form:select path="industry" id="register_personregistration_industry" class="form-control" >
+								<form:option value="None">None</form:option>
+								<c:forEach var="item" items="${industryList}">
+									<form:option value="${item}">${item}</form:option>
+								</c:forEach>
+							</form:select>
 							
 							<br/>
 							<input type="submit" class="btn btn-md btn-primary btn-block" id="register_personregistration_submit"value="Register" />
